@@ -10,6 +10,7 @@ void main() {
   final stringName = "독거노인"; // var처럼 타입 추론 가능
   const stringName2  = "아이유"; 
   
+  // final과 const의 차이점
   customDateTime();
 }
 

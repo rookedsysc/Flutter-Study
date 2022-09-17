@@ -47,7 +47,6 @@ void main() {
   // name = null // Error 발생
   
   String? name2 = "블랙핑크";
-  print(name2!); // name2는 지금 null이 아니다
   name2 = null; 
   print(name2);  
   name2 = null;
