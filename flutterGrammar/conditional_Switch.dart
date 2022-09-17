@@ -1,6 +1,6 @@
 void main(List<String> args) {
   // switch문
-  int number = 158;
+  int number = 157;
 
   switch(number % 3) {
     case 0:
