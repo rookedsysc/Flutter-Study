@@ -2,7 +2,7 @@ void main() {
   print('Hello Code Factory'); // 세미콜론 필요함
   
   // variable, 타입 유추
-  var name = "백종인";
+  var name = "독거노인";
   print(name);
   name = "플러터 프로그래밍";
   print(name); 
@@ -43,12 +43,12 @@ void main() {
   // non-nullable - null이 될 수 없다.
   // null - 아무런 값도 있지 않다.
   
-  String name = "백종인";
+  String stringName = "독거노인";
   // name = null // Error 발생
-  print(!name); // ! (절대로 null이 아니다.라는 뜻임)
   
   String? name2 = "블랙핑크";
-  name2 = null; 
-  print(name2);
   print(name2!); // name2는 지금 null이 아니다
+  name2 = null; 
+  print(name2);  
+  name2 = null;
 }
