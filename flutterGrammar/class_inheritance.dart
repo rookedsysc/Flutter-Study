@@ -17,8 +17,8 @@ void main() {
   redVelvet.sayFemale(); // bts, apink는 사용불가
 
   print('---- Type Comparison ----');
-  print(redVelvet is Idol); // true
-  print(redVelvet is GirlGroup); // true
+  print(redVelvet is GirlGroup); // true 
+  print(redVelvet is Idol); // true, 타입을 상속받았기 때문에 부모 클래스의 타입도 갖게 됨
 }
 
 // 상속 - inheritance
