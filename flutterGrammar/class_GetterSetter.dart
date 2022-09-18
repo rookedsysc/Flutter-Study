@@ -40,5 +40,4 @@ class Idol {
   set firstMemeber(String name) {
     this.members[0] = name;
   } 
- 
 }
