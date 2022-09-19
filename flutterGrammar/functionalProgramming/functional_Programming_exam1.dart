@@ -14,13 +14,16 @@ void example2() {
     "Hermione Granger" : "헤르미온느 그레인저"
   };
 
+  // map > map // Map Entry는 class 임. MapEntry(key, value)순으로 되어 있으며 key와 value에 각각 접근해서 return 해줌.
   final result = harryPoter.map((key, value) => MapEntry(
     'Harry Poter Character $key',
     '해리포터 캐릭터 $value',
     ),
   );
-
   print(result);
+
+  final keys = harryPoter.keys.map((x) => 'HPC $x').toList;
+  print(keys);
 }
 
 void example3() {

@@ -22,7 +22,6 @@ void main() {
   // where((x) => 조건); 조건이 true인 값만 return 해줌
   final blackPink = people.where((x) => x["group"] == '블랙핑크');
   final bts = people.where((x) => x["group"] == 'BTS');
-
   print(bts);
   print(blackPink);
 }
