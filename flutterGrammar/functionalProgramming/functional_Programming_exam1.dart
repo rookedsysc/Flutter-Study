@@ -22,7 +22,7 @@ void example2() {
   );
   print(result);
 
-  final keys = harryPoter.keys.map((x) => 'HPC $x').toList;
+  final keys = harryPoter.keys.map((x) => 'HPC $x').toList();
   print(keys);
 }
 
