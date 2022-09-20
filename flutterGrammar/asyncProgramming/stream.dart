@@ -1,18 +1,18 @@
 import 'dart:async';
 
 void main() {
-	final controller = StreamController();
+  final controller = StreamController();
   // asBroadcastStream을 이용해줘야 여러번 listening을 할 수 있음.
-	final Stream = controller.stream.asBroadcastStream();  
+  final Stream = controller.stream.asBroadcastStream();
 
   // 짝수만 출력
   // 리스너 생성, 이 리스너가 리스닝을 하고 있을 때 값이 들어오면 함수가 실행됨.
-  final streamListener1 = Stream.where((val) => val % 2 == 0).listen((val){
+  final streamListener1 = Stream.where((val) => val % 2 == 0).listen((val) {
     print('Listener1 : $val');
   });
 
-  // 홀수만 출력 
-  final streamListener2 = Stream.where((val) => val % 2 == 1).listen((val){
+  // 홀수만 출력
+  final streamListener2 = Stream.where((val) => val % 2 == 1).listen((val) {
     print('Listener2 : $val');
   });
 
@@ -22,4 +22,3 @@ void main() {
   controller.sink.add(3);
   controller.sink.add(4);
 }
-

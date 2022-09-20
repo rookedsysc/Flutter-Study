@@ -12,7 +12,7 @@ void main() {
   Future.delayed(Duration(seconds: 2), () {
     print('Delay 끝');
   });
-  addNumbers(1, 1); 
+  addNumbers(1, 1);
   addNumbers(2, 2);
 }
 
