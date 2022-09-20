@@ -14,8 +14,18 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Hot Reload는 build 함수에 있는 코드만 재실행을 함.
     return Scaffold(
-      body: Center(
-        child: Text('Hello World'),
+      backgroundColor: Colors.orange,
+      // chilren을 통해서 여러 개의 위젯을 넣을 수 있게 해줌.
+      body: Column( // 가장 위에 chidlren 값을 배치함, Column의 주축은 세로임.
+        mainAxisAlignment: MainAxisAlignment.center, // children을 중앙에 배치함.(세로기준)
+        children: [
+          Image.asset("asset/img/logo.png"),
+
+          // 로딩바
+          CircularProgressIndicator(
+            color: Colors.white,
+          )
+        ],
       ),
     );
   }
