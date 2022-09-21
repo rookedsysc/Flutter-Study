@@ -11,7 +11,9 @@ class HomeScreen extends StatelessWidget {
         // Container 안에 widget들을 넣을 수 있음.
         child: Container(
           color: Colors.black,
-          child: Column(
+          width: MediaQuery.of(context).size.width, // 핸드폰의 전체 사이즈
+          height: MediaQuery.of(context).size.height,
+          child: Row( // 가로 배치.
             /* MainAxisAlignment - 주축 정렬.
             start - 시작에 정렬.
             end - 끝에 정렬.
@@ -20,7 +22,10 @@ class HomeScreen extends StatelessWidget {
             spaceEvenly - 위젯을 같은 간격으로 배치하지만 끝과 끝에도 위젯이 아닌 빈 간격으로 시작함.
             spaceArround - spaceEvenly에서 끝과 끝의 간격을 반만 줌.
              */
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.start,
+            // CrossAxisAlignment - 반대축 정렬, 기본값은 center
+            // strech - 사이즈 최대 사이즈로 늘림.
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
                 color: Colors.red,
