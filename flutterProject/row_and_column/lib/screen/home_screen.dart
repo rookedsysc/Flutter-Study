@@ -11,7 +11,7 @@ class HomeScreen extends StatelessWidget {
         // Container 안에 widget들을 넣을 수 있음.
         child: Container(
           color: Colors.black,
-          child: Row( // 가로 배치.
+          child: Column( // 가로 배치.
             /* MainAxisAlignment - 주축 정렬.
             start - 시작에 정렬.
             end - 끝에 정렬.
@@ -29,25 +29,34 @@ class HomeScreen extends StatelessWidget {
             // 주축 크기, max - 최대, min - 최소
             mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                color: Colors.red,
-                width: 50.0,
-                height: 50.0,
+              // Expanded / Flexible - column이나 row안에다가만 사용할 수 있음.
+              Flexible( // 밑에 지정되어 있는만큼의 공간을 차지하고 남은 부분을 Column에 돌려줌.
+                child: Container(
+                  color: Colors.red,
+                  width: 50.0,
+                  height: 50.0,
+                ),
               ),
-              Container(
-                color: Colors.green,
-                width: 50.0,
-                height: 50.0,
+              Expanded( // 남아있는 공간을 모두 차지하라는 뜻.
+                child: Container(
+                  color: Colors.green,
+                  width: 50.0,
+                  height: 50.0,
+                ),
               ),
-              Container(
-                color: Colors.yellow,
-                width: 50.0,
-                height: 50.0,
+              Expanded(
+                child: Container(
+                  color: Colors.yellow,
+                  width: 50.0,
+                  height: 50.0,
+                ),
               ),
-              Container(
-                color: Colors.blue,
-                width: 50.0,
-                height: 50.0,
+              Expanded(
+                child: Container(
+                  color: Colors.blue,
+                  width: 50.0,
+                  height: 50.0,
+                ),
               ),
             ],
           ),
