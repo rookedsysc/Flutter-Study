@@ -36,6 +36,7 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
+  webview_flutter: ^3.0.4 # webview_flutter / 맨 앞에 ^이 붙어 있는 이유는 major 버전의 자동 업데이트를 사용하지 않겠다는 뜻임.
 
 dev_dependencies:
   flutter_test:
