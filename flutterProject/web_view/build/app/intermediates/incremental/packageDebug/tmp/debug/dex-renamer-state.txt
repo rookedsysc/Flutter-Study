@@ -1,0 +1,4 @@
+#Thu Sep 22 13:06:01 KST 2022
+base.0=/Users/rookedsysc/Documents/Github/flutterStudy/flutterProject/web_view/build/app/intermediates/dex/debug/mergeDexDebug/classes.dex
+renamed.0=classes.dex
+path.0=classes.dex
