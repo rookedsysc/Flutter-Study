@@ -16,6 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
             .map(
               (e) => Image.asset(
                 'asset/img/image_$e.jpeg',
+                // 전체화면, 위아래나 좌우 중 짤려서 나올 수 있음.
                 fit: BoxFit.cover,
               ),
             )
