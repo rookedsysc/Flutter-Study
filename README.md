@@ -23,14 +23,15 @@ Studying Flutter (09/17 ~<br>
 <details>
 <summary>Skill & Stack</summary>
 <div markdown="1">
-### Stack & Skills 
+```markdown
+  <h3> Stack & Skills </h3> 
 - PageView (터치로 좌, 우 스크롤 가능하도록)
 - Timer (특정 기간마다 지정 함수 실행)
 - StatefulWidget
 - Life Cycle
 - controller
 - System Chrome
-### Main
+  <h3> Main </h>
 [main](https://github.com/rookedsysc/Flutter-Study/blob/main/flutterProject/image_carousel/lib/main.dart)
 </div>
 </details>
