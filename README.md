@@ -8,12 +8,12 @@ Studying Flutter (09/17 ~<br>
 <details>
 <summary>Skill & Stack</summary>
 <div markdown="1">
+  
 ### Stack & Skill <br>
 - Web View<br>
 - AppBar <br>
 - pub.dev(open source project 활용법)<br><br>
-  
-### Main<br>
+
 [main](https://github.com/rookedsysc/Flutter-Study/blob/main/flutterProject/web_view/lib/main.dart)
 </div>
 </details>
@@ -33,7 +33,6 @@ Studying Flutter (09/17 ~<br>
 - controller<br>
 - System Chrome<br><br>
   
-### Main <br>
 [main](https://github.com/rookedsysc/Flutter-Study/blob/main/flutterProject/image_carousel/lib/main.dart)
 </div>
 </details>
