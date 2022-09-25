@@ -49,8 +49,9 @@ Studying Flutter (09/17 ~<br>
 - DatePicker <br>
 - 날짜 다루기<br>
 - 테마 적용하기<br>
+</div>
+</details>
 
-[main](https://github.com/rookedsysc/Flutter-Study/blob/main/flutterProject/image_carousel/lib/main.dart)
 # Blog Posting
 [Blog Posting](http://rookedsysc.github.io/flutter/DartGrammar/)
 [Flutter Docs](http://lokigem.github.io/docs/)
