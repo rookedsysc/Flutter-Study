@@ -37,6 +37,20 @@ Studying Flutter (09/17 ~<br>
 </div>
 </details>
 
+## 우리 처음 만난 날 
+환상의 동물을 처음 발견한 날을 기념해주는 앱
+
+<details>
+<summary>Skill & Stack</summary>
+<div markdown="1">
+
+### Stack & Skills <br>
+- Font 적용<br>
+- DatePicker <br>
+- 날짜 다루기<br>
+- 테마 적용하기<br>
+
+[main](https://github.com/rookedsysc/Flutter-Study/blob/main/flutterProject/image_carousel/lib/main.dart)
 # Blog Posting
 [Blog Posting](http://rookedsysc.github.io/flutter/DartGrammar/)
 [Flutter Docs](http://lokigem.github.io/docs/)
