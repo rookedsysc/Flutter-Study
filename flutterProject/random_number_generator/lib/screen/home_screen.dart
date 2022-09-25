@@ -86,15 +86,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 onPressed: () {
                   // 버튼을 누를 때마다 1000이하의 숫자 3개를 리스트로 생성해줌.
                   final rand = Random();
-                  final List<int> newNumbers = [];
-                  for (int i = 0; i < 3; i++) {
+                  final Set<int> newNumbers = {}; // 리스트로 값을 받게 되면 중복 값이 들어감.
+                  // for문을 사용하게 되면 중복값이 들어갔을 때 최종적으로 2개만 들어가 있게 됨. (Set 특성상)
+                  while (newNumbers.length < 3) {
                     final number = rand.nextInt(1000); // nextInt(1000) > 최대값.
                     newNumbers.add(number);
                   }
 
                   // 값이 바뀔 때마다 setState가 실행되면서 randomNumbers에 난수 넣어주고 rebuilding됨.
                   setState(() {
-                    randomNumbers = newNumbers;
+                    randomNumbers = newNumbers.toList(); // List > Set로 넣음.
                     print(randomNumbers);
                   });
                 },
