@@ -29,8 +29,16 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class _TopPart extends StatelessWidget {
+class _TopPart extends StatefulWidget {
   const _TopPart({Key? key}) : super(key: key);
+
+  @override
+  State<_TopPart> createState() => _TopPartState();
+}
+
+class _TopPartState extends State<_TopPart> {
+  final DateTime now = DateTime.now();
+  DateTime selectedDate = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +68,7 @@ class _TopPart extends StatelessWidget {
                 ),
               ),
               Text(
-                '2451-09-24',
+                '${selectedDate.year}-${selectedDate.month}-${selectedDate.day}',
                 style: TextStyle(
                   color: Colors.white,
                   fontFamily: 'sunflower',
@@ -85,8 +93,15 @@ class _TopPart extends StatelessWidget {
                       height: 300.0,
                       child: CupertinoDatePicker(
                         mode: CupertinoDatePickerMode.date,
+
+                        initialDateTime: DateTime(now.year, now.month, now.day), // DatePicker가 처음에 실행될 때 실행되는 날짜, 기본값은 현재 시간.
+                        maximumDate: DateTime(now.year, now.month, now.day), // 최대 시간 지정.
                         onDateTimeChanged: (DateTime date){
-                          print(date);
+                          // Sateful Widget에서 변경을 실행할 때 Widget을 통하지 않고 State 내부에서 직접 실행함.
+                          setState(() {
+                            // 선택한 date값을 넣어줌.
+                            selectedDate = date;
+                          });
                         }
                         ,
                       ),
@@ -102,7 +117,13 @@ class _TopPart extends StatelessWidget {
             ),
           ),
           Text(
-            'D+1',
+            'D+${
+            DateTime(
+              now.year,
+              now.month,
+              now.day,
+            ).difference(selectedDate).inDays + 1 // 현재 시간 - selectedDate + 1 (오늘부터 1일)
+            }',
             style: TextStyle(
               color: Colors.white,
               fontFamily: 'sunflower',
