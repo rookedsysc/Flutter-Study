@@ -83,7 +83,6 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class _TopPart extends StatelessWidget {
-  final DateTime now = DateTime.now();
   final DateTime selectedDate;
   final VoidCallback onPressed;
 
@@ -92,6 +91,12 @@ class _TopPart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final DateTime now = DateTime.now();
+
+    // of라는 contructor를 사용하는 class들의 특징: Inherit Widget임.
+    // 가장 가까이 있는 인스턴스를 가져올 수 있음. ex) MediaQuery.of(context) >> 가장 가까이 있는 Media Query 인스턴스를 가져옴.
+    final theme = Theme.of(context); // 위젯 트리에서 가장 가까운 테마 인스턴스를 가져올 수 있음.
+    final textTheme = theme.textTheme;
     // 화면에 꽉 채움 Column 내부의 두 child를 Expanded로 감쌋기 때문에 50/50으로 감싸줌.
     // 여기서 Expanded를 넣는거랑 위에서 넣는거랑 다를바가 없음.
     return Expanded(
@@ -100,30 +105,18 @@ class _TopPart extends StatelessWidget {
         children: [
           Text(
             'U & I',
-            style: TextStyle(
-              color: Colors.white,
-              fontFamily: 'parisienne',
-              fontSize: 80,
-            ),
+            style: textTheme.headline1,
           ),
           // 우리 처음 만난 날 글자와 날짜의 간격이 다른 간격이랑 다르게 만들어주기 위해서 두 개를 또 하나의 Column으로 묶어줌.
           Column(
             children: [
               Text(
                 "우리 처음 만난 날",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontFamily: 'sunflower',
-                  fontSize: 30.0,
-                ),
+                style: textTheme.bodyText1,
               ),
               Text(
                 '${selectedDate.year}-${selectedDate.month}-${selectedDate.day}',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontFamily: 'sunflower',
-                  fontSize: 20.0,
-                ),
+                style: textTheme.bodyText2
               ),
             ],
           ),
@@ -142,12 +135,7 @@ class _TopPart extends StatelessWidget {
                   now.day,
                 ).difference(selectedDate).inDays + 1 // 현재 시간 - selectedDate + 1 (오늘부터 1일)
             }',
-            style: TextStyle(
-              color: Colors.white,
-              fontFamily: 'sunflower',
-              fontSize: 50.0,
-              fontWeight: FontWeight.w700, // 텍스트 굵기
-            ),
+            style: textTheme.headline2,
           ),
         ],
       ),
