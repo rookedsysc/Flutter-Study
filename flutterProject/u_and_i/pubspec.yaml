@@ -58,6 +58,24 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  assets:
+    - asset/img
+
+  fonts:
+    - family: parissienne
+      fonts:
+        - asset: asset/fonts/Parisienne-Regular.ttf
+    - family:
+      fonts:
+        - asset: asset/fonts/Sunflower-Bold.ttf
+        - asset: asset/fonts/Sunflower-Light.ttf
+          weight: 500 # 100 ~ 900 까지
+        - asset: asset/fonts/Sunflower-Medium.ttf
+          weight: 900
+    - family: nanum_pen
+      fonts:
+        - asset:  asset/fonts/NanumPenScript-Regular.ttf
+
 
   # To add assets to your application, add an assets section, like this:
   # assets:
