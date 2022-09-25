@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -70,7 +71,31 @@ class _TopPart extends StatelessWidget {
           ),
           IconButton(
             iconSize: 100,
-            onPressed: () {},
+            onPressed: () {
+              // 화면을 덮는 또 하나의 화면을 만들 수 있게 해줌, 화면 안에 들어갈 위젯을 builder에 넣어줌.
+              showCupertinoDialog(
+                context: context,
+                builder: (BuildContext contecxt) {
+                  return Align(
+                    // Flutter는 기본적으로 정렬할 위치가 정의되지 않으면 화면 전체를 차지하도록 프로그래밍 되어있음.
+                    // Align Widget의 alignment를 통해서 해당하는 부분(showCuperTinoDialog(Button Click시 생성되는 창))에 Bottom.center로 정렬할 위치를 지정해줌.
+                    alignment: Alignment.bottomCenter,
+                    child: Container(
+                      color: Colors.white,
+                      height: 300.0,
+                      child: CupertinoDatePicker(
+                        mode: CupertinoDatePickerMode.date,
+                        onDateTimeChanged: (DateTime date){
+                          print(date);
+                        }
+                        ,
+                      ),
+                    ),
+                  );
+                },
+                barrierDismissible: true, // 화면 바깥 부분을 누르면 CupertinoDialog 닫힘.
+              );
+            },
             icon: Icon(
               Icons.favorite,
               color: Colors.red,
