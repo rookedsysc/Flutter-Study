@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:random_number_generator/contant/color.dart';
+import 'package:random_number_generator/screen/setting_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -72,7 +73,16 @@ class _Header extends StatelessWidget {
       ),
       IconButton(
         // 설정 버튼
-        onPressed: () {},
+        onPressed: () {
+          // 화면을 이동하기 위해서 사용하는 Class
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (BuildContext context) {
+                return SettingScreen(); // context에 Screen을 반환해줌.
+              },
+            ),
+          );
+        },
         icon: Icon(
           Icons.settings,
           color: redColor,
