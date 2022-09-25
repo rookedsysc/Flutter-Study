@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:random_number_generator/contant/color.dart';
 
@@ -9,6 +10,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  List<int> randomNumbers = [123, 456, 789];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,24 +50,28 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                   // 가운데 부분의 숫자가 남은 공간 전부를 차지함.
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    123,
-                    456,
-                    789,
-                  ]
+                  children: randomNumbers
+                      .asMap()
+                      .entries // List > asMap 형식으로 변경하면 Key(index 번호): Value(원래 있던 값)으로 바뀜.
                       .map(
-                        (x) => Row(
-                          children: x
-                              .toString()
-                              .split('')
-                              .map(
-                                (e) => Image.asset(
-                                  'asset/img/$e.png',
-                                  height: 70.0,
-                                  width: 50.0,
-                                ),
-                              )
-                              .toList(),
+                        (x) => Padding(
+                          padding:
+                              EdgeInsets.only(bottom: x.key == 2 ? 0 : 16.0),
+                          // Index(x.key)가 2라면 0을 넣고 아니라면 16.0을 넣어라.
+                          child: Row(
+                            children: x
+                                .value // Map 형태로 변경해줬기 때문에 Map(index number: value)에서 value 값만 따옴.
+                                .toString()
+                                .split('')
+                                .map(
+                                  (e) => Image.asset(
+                                    'asset/img/$e.png',
+                                    height: 70.0,
+                                    width: 50.0,
+                                  ),
+                                )
+                                .toList(),
+                          ),
                         ),
                       )
                       .toList()),
@@ -76,7 +83,21 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: ElevatedButton.styleFrom(
                   primary: redColor, // 활성화 됐을 때의 색상
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  // 버튼을 누를 때마다 1000이하의 숫자 3개를 리스트로 생성해줌.
+                  final rand = Random();
+                  final List<int> newNumbers = [];
+                  for (int i = 0; i < 3; i++) {
+                    final number = rand.nextInt(1000); // nextInt(1000) > 최대값.
+                    newNumbers.add(number);
+                  }
+
+                  // 값이 바뀔 때마다 setState가 실행되면서 randomNumbers에 난수 넣어주고 rebuilding됨.
+                  setState(() {
+                    randomNumbers = newNumbers;
+                    print(randomNumbers);
+                  });
+                },
                 child: Text('생성하기!'),
               ),
             )
