@@ -29,6 +29,7 @@ void main(){
       ).toList(),
     ).toList());
 
+	// 출력값 : what is entry? : (MapEntry(0: 123), MapEntry(1: 456), MapEntry(2: 789))
     print('what is entry? : ${numbers.asMap().entries}');
 
 }
