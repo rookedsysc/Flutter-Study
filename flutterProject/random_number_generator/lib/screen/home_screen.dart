@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:random_number_generator/component/num_to_img.dart';
 import 'package:random_number_generator/contant/color.dart';
 import 'package:random_number_generator/screen/setting_screen.dart';
 
@@ -46,7 +47,9 @@ class _HomeScreenState extends State<HomeScreen> {
     final result = await Navigator.of(context).push<int>( // 항상 navigation에서 return 해주는 값은 null 값이 있을 수도 있다는 것은 가정.
       MaterialPageRoute(
         builder: (BuildContext context) {
-          return SettingScreen(); // context에 Screen을 반환해줌.
+          // context에 Screen을 반환해줌.
+          // push 함수로 push를 하는 widget의 contructor는 호출하는 부분에서 넣어줌.
+          return SettingScreen(maxNumber: maxNumber,);
         },
       ),
     );
@@ -121,20 +124,7 @@ class _Body extends StatelessWidget {
                 (x) => Padding(
                   padding: EdgeInsets.only(bottom: x.key == 2 ? 0 : 16.0),
                   // Index(x.key)가 2라면 0을 넣고 아니라면 16.0을 넣어라.
-                  child: Row(
-                    children: x
-                        .value // Map 형태로 변경해줬기 때문에 Map(index number: value)에서 value 값만 따옴.
-                        .toString()
-                        .split('')
-                        .map(
-                          (e) => Image.asset(
-                            'asset/img/$e.png',
-                            height: 70.0,
-                            width: 50.0,
-                          ),
-                        )
-                        .toList(),
-                  ),
+                  child: NumberToImageFileName(number: x.value.toInt(),)
                 ),
               )
               .toList()),

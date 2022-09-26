@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:random_number_generator/contant/color.dart';
 
+import '../component/num_to_img.dart';
+
 class SettingScreen extends StatefulWidget {
-  const SettingScreen({Key? key}) : super(key: key);
+  final int maxNumber;
+  const SettingScreen({required this.maxNumber, Key? key}) : super(key: key);
 
   @override
   State<SettingScreen> createState() => _SettingScreenState();
@@ -10,6 +13,19 @@ class SettingScreen extends StatefulWidget {
 
 class _SettingScreenState extends State<SettingScreen> {
   double maxNumber = 1000;
+
+  // setting State가 재생성되는 순간에만 이 인스턴스가 실행됨.
+  // pop을 했다가 push를 하면 Stateful Widget을 재생성해줌.
+  @override
+  void initState() {
+    super.initState();
+    /******** widget Keyword를 사용해서 Stateful Widget에서 선언한 변수에 접근이 가능함.
+    즉, home_screen에서 전달해준 maxNumber는 Stateful Widget에 담기고 initState()로
+    State가 생성이 될 때 widget keyword를 사용해서 Stateful widget에 전달받은 maxNumber를
+        State의 maxNumber에 넣어줌.
+     */
+    maxNumber = widget.maxNumber.toDouble();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,19 +70,7 @@ class _NumberArea extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Row(
-        children: maxNumber
-            .toString()
-            .split('')
-            .map(
-              (e) => Image.asset(
-                'asset/img/$e.png',
-                width: 50.0,
-                height: 70.0,
-              ),
-            )
-            .toList(),
-      ),
+      child: NumberToImageFileName(number: maxNumber),
     );
   }
 }
