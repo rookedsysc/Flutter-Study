@@ -21,6 +21,14 @@ class RouteTwoScreen extends StatelessWidget {
         },
         child: Text('Pop'),
       ),
+      ElevatedButton(
+        onPressed: () {
+          // routes의 key값을 전달해주면 됨.
+          // pushNamed는 기본적으로 인자값을 arguments를 지원해줌. 여기에 전달할 값을 전달하면 됨.
+          Navigator.of(context).pushNamed('/three',arguments: 2002002);
+        },
+        child: Text('Push Named'),
+      )
     ]);
   }
 }

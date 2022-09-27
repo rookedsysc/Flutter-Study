@@ -19,9 +19,10 @@ class _HomeScreenState extends State<HomeScreen> {
             // 이 때 push를 해주고 pop에서 값을 받을 때까지 기다려야 하기 때문에 await을 사용해줘야 함.
             final result = await Navigator.of(context).push(
               MaterialPageRoute(
-                  builder: (BuildContext cotnext) => RouteMainScreen(
-                        number: 55555,
-                      )), // push로 값을 보내는 경우는 costructor로 보냄.
+                builder: (BuildContext cotnext) => RouteMainScreen(
+                  number: 55555,
+                ),
+              ), // push로 값을 보내는 경우는 costructor로 보냄.
             );
           },
           child: Text('Push'))

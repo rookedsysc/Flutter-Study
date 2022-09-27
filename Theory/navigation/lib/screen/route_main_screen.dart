@@ -3,8 +3,8 @@ import 'package:navigation/layout/main_layout.dart';
 import 'package:navigation/screen/route_two_screen.dart';
 
 class RouteMainScreen extends StatelessWidget {
-  final int number;
-  const RouteMainScreen({required this.number, Key? key}) : super(key: key);
+  final int? number;
+  const RouteMainScreen({this.number, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
