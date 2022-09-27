@@ -30,15 +30,49 @@ class RouteTwoScreen extends StatelessWidget {
         },
         child: Text('Push Named'),
       ),
+      Padding(
+        padding: const EdgeInsets.only(top: 16.0),
+        child: Text('Push Replacement',
+        textAlign: TextAlign.center,),
+      ),
       ElevatedButton(
           onPressed: () {
+            // 현재 Route를 대체해서 Push를 함. 즉, 현재 Route Pop > builder Screen Push 이런식으로 동작 됨.
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(
                 builder: (_) => RouteThreeScreen(),
               ),
             );
           },
-          child: Text('Push Replacement'))
+          child: Text('Push Replacement')),
+      // pushReplacementNamed
+      ElevatedButton(
+          onPressed: () {
+            Navigator.of(context).pushReplacementNamed('/three');
+          },
+          child: Text('Push Replacement')),
+      Padding(
+        padding: const EdgeInsets.only(top: 16.0),
+        child: Text('Push And Remove Until'
+        ,textAlign: TextAlign.center,),
+      ),
+      ElevatedButton(
+          onPressed: () {
+            // 현재까지 넣어줬떤 모든 Route들을 다 삭제해줌.
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (_) => RouteThreeScreen()),
+                // False가 전달이 되면 Stack에 있는 모든 Route들이 다 삭제됨.
+                // true 값을 넘겨주면 모든 Route들이 살아있게 됨.
+                // 아래와 같이 route.settings.name에 해당하는 route key값을 넘겨주게 되면 해당 route만 true가 됨.
+                // 즉, 해당 route를 제외한 모든 route들은 Stack에서 지워짐.
+                (route) => route.settings.name == '/');
+          },
+          child: Text('Push And Remove Until')),
+      ElevatedButton(
+          onPressed: () {
+            Navigator.of(context).pushNamedAndRemoveUntil('/three',(route) => route.settings.name == '/');
+          },
+          child: Text('Push Named And Remove Until')),
     ]);
   }
 }
