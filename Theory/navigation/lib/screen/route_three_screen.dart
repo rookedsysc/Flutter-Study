@@ -9,18 +9,18 @@ class RouteThreeScreen extends StatelessWidget {
     final argument = ModalRoute.of(context)!.settings.arguments;
 
     return MainLayout(
-      title: 'Route Three Screen',
+      title: 'Route Three',
       children: [
         Text(
-          'arguments : ${argument}',
+          'argument : ${argument}',
           textAlign: TextAlign.center,
         ),
         ElevatedButton(
           onPressed: () {
-            Navigator.of(context).pop;
+            Navigator.of(context).pop();
           },
           child: Text('Pop'),
-        )
+        ),
       ],
     );
   }

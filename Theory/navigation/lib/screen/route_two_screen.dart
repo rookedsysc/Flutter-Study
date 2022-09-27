@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:navigation/layout/main_layout.dart';
+import 'package:navigation/screen/route_three_screen.dart';
 
 class RouteTwoScreen extends StatelessWidget {
   const RouteTwoScreen({Key? key}) : super(key: key);
@@ -25,10 +26,19 @@ class RouteTwoScreen extends StatelessWidget {
         onPressed: () {
           // routes의 key값을 전달해주면 됨.
           // pushNamed는 기본적으로 인자값을 arguments를 지원해줌. 여기에 전달할 값을 전달하면 됨.
-          Navigator.of(context).pushNamed('/three',arguments: 2002002);
+          Navigator.of(context).pushNamed('/three', arguments: 2002002);
         },
         child: Text('Push Named'),
-      )
+      ),
+      ElevatedButton(
+          onPressed: () {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (_) => RouteThreeScreen(),
+              ),
+            );
+          },
+          child: Text('Push Replacement'))
     ]);
   }
 }
