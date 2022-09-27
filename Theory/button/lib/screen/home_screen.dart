@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-
-
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
@@ -69,6 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
               textStyle: TextStyle(
                 fontWeight: FontWeight.w700,
                 fontSize: 20.0,
+                color: Colors.blue,
               ),
               // Text Style의 padding
               padding: EdgeInsets.all(32.0),
