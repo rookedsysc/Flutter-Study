@@ -47,5 +47,11 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSPhotoLibraryUsageDescription</key>
+    <string>사진첩 권한을 허가해주세요.</string>
+    <key>NSCameraUsageDescription</key>
+    <string>카메라 권한을 허가해주세요.</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>마이크 권한을 허가해주세요.</string>
 </dict>
 </plist>
