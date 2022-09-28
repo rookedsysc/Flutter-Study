@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -8,8 +7,9 @@ import 'package:video_player/video_player.dart';
 class CustomVideoPlayer extends StatefulWidget {
   // Image Picker에서 사용하는 Custom File Type
   final XFile video;
+  final VoidCallback onNewVideoPressed; // 외부에서 실행시킬 비디오 파일의 path를 받아옴
 
-  const CustomVideoPlayer({required this.video, Key? key}) : super(key: key);
+  const CustomVideoPlayer({required this.video, required this.onNewVideoPressed, Key? key}) : super(key: key);
 
   @override
   State<CustomVideoPlayer> createState() => _CustomVideoPlayerState();
@@ -18,6 +18,7 @@ class CustomVideoPlayer extends StatefulWidget {
 class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
   VideoPlayerController? videoController;
   Duration currentPosition = Duration();
+  bool showControls = false; // 동영상 시작시에만 Stack 화면 보이게 구현
 
   @override
   void initState() {
@@ -27,8 +28,23 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
     initializeController();
   }
 
+  @override
+  void didUpdateWidget(covariant CustomVideoPlayer oldWidget){
+    super.didUpdateWidget(oldWidget);
+
+    // oldWidget에 있던 video의 path와 현재 widget의 video의 path가 다르면 initializeController 재실행
+    // 이는 동영상 실행창에 떠 있는 onNewVideoPressed에서 Video를 선택했을 때 initState()가 재실행되지 않아서(initState는 State를 생성할 때만 딱 한번 실행되기 때문)
+    // 발생하는 버그를 고치기 위함임.
+    if(oldWidget.video.path != widget.video.path) {
+      initializeController(); //
+    }
+
+  }
+
   // initState()에서 실행할 함수.
   initializeController() async {
+    // 새로운 영상 틀었을 때 Duration 새로 넣어줌.
+    currentPosition = Duration();
     // 여기서 등장하는 file은 File 타입임.(File file)
     videoController = VideoPlayerController.file(
       // dart.io import 해줘야 사용 가능.
@@ -47,8 +63,6 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
         this.currentPosition = currentPosition;
       });
     });
-    // 비디오 컨트롤러에 맞게 UI 컨트롤 해주기 위함.
-    setState(() {});
   }
 
   @override
@@ -60,24 +74,33 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
       return AspectRatio(
         // 비디오의 원래 화면 비율 구현.
         aspectRatio: videoController!.value.aspectRatio,
-        // Stack은 처음으로 들어간 값 위에다가 화면을 덧 씌워주는 Widget임.
-        child: Stack(
-          children: [
-            VideoPlayer(
-              videoController!,
-            ),
-            _Controls(
-              onPlayPressed: onPlayPressed,
-              onForwardPressed: onForwardPressed,
-              onReversePressed: onReversePressed,
-              isPlaying: videoController!.value.isPlaying,
-            ),
-            _NewVideo(onPressed: onVideoNewPressed),
-            _SliderBottom(
-                currentPosition: currentPosition,
-                maxPosition: videoController!.value.duration,
-                onSliderChanged: onSliderChanged)
-          ],
+        child: GestureDetector(
+          // 클릭하면 활성화 상태일 때 > 비활성화, 비활성화 상태일 때 > 활성화
+          onTap: () {
+            setState(() {
+              showControls = !showControls;
+            });
+          },
+          // Stack은 처음으로 들어간 값 위에다가 화면을 덧 씌워주는 Widget임.
+          child: Stack(
+            children: [
+              VideoPlayer(
+                videoController!,
+              ),
+              if (showControls) // if showControls가 true일 때만 아래 버튼 활성화
+                _Controls(
+                  onPlayPressed: onPlayPressed,
+                  onForwardPressed: onForwardPressed,
+                  onReversePressed: onReversePressed,
+                  isPlaying: videoController!.value.isPlaying,
+                ),
+              if (showControls) _NewVideo(onPressed: widget.onNewVideoPressed), // showControls가 true일 때만 _NewVideo 실행
+              _SliderBottom(
+                  currentPosition: currentPosition,
+                  maxPosition: videoController!.value.duration,
+                  onSliderChanged: onSliderChanged)
+            ],
+          ),
         ),
       );
     }
@@ -90,20 +113,21 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
       ),
     );
   }
-  void onVideoNewPressed() {}
-
   void onReversePressed() {
     final currentPosition = videoController!.value.position;
     print(currentPosition);
 
     // 0초를 대입해줌.
     Duration position = Duration();
-    if(currentPosition.inSeconds > 3) { // 3초보다 시간이 더 긴 경우에는
-      position = currentPosition - Duration(seconds: 3); // 현재 길이보다 3초 더 짧은 position에 전달
+    if (currentPosition.inSeconds > 3) {
+      // 3초보다 시간이 더 긴 경우에는
+      position = currentPosition -
+          Duration(seconds: 3); // 현재 길이보다 3초 더 짧은 position에 전달
     }
 
     // seeTo(Duration) : 해당하는 Duration의 위치로 영상 이동
-    videoController!.seekTo(position);  // 해당 Duration(현재 시간보다 3초 더 이른 position)의 위치로 비디오 이동.
+    videoController!
+        .seekTo(position); // 해당 Duration(현재 시간보다 3초 더 이른 position)의 위치로 비디오 이동.
   }
 
   void onForwardPressed() {
@@ -113,11 +137,15 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
 
     // 0초를 대입해줌.
     Duration position = maxPosition;
-    if((maxPosition - Duration(seconds: 3)).inSeconds > currentPosition.inSeconds) { // (영상 전체 길이 - 3초)보다 현재 위치가 더 짧으면
-      position = currentPosition + Duration(seconds: 3); // 현재 시간보다 3초 늦은 시간을 position에 대입해줌.
+    if ((maxPosition - Duration(seconds: 3)).inSeconds >
+        currentPosition.inSeconds) {
+      // (영상 전체 길이 - 3초)보다 현재 위치가 더 짧으면
+      position = currentPosition +
+          Duration(seconds: 3); // 현재 시간보다 3초 늦은 시간을 position에 대입해줌.
     }
 
-    videoController!.seekTo(position);  // 해당 Duration(현재 시간보다 3초 더 늦은 시간)의 위치로 비디오 이동.
+    videoController!
+        .seekTo(position); // 해당 Duration(현재 시간보다 3초 더 늦은 시간)의 위치로 비디오 이동.
   }
 
   void onPlayPressed() {
@@ -150,9 +178,11 @@ class _Controls extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.black.withOpacity(0.5), // withOpacity : 투명도를 추가함.
+      color: Colors.black.withOpacity(0.5),
+      // withOpacity : 투명도를 추가함.
+      // 이전 버전에서 버튼 이외의 곳을 눌러도 버튼이 동작하는 버그가 있었음. AxisAlignment의 Stretch로 인한 버그라 픽스함.
+      height: MediaQuery.of(context).size.height,
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           renderIconButton(
@@ -203,7 +233,12 @@ class _NewVideo extends StatelessWidget {
 }
 
 class _SliderBottom extends StatelessWidget {
-  const _SliderBottom({required this.currentPosition, required this.maxPosition, required this.onSliderChanged, Key? key}) : super(key: key);
+  const _SliderBottom(
+      {required this.currentPosition,
+      required this.maxPosition,
+      required this.onSliderChanged,
+      Key? key})
+      : super(key: key);
   final Duration currentPosition;
   final Duration maxPosition;
   final ValueChanged<double> onSliderChanged;
@@ -222,9 +257,7 @@ class _SliderBottom extends StatelessWidget {
             Text(
               // padLeft(minNumber, padding) : 글자에 패딩 넣어줌 첫번째 인스턴스에 들어간 숫자가 최소 글자의 길이고 만약 그 길이를 채우지 못하면 남은 글자를 padding으로 채워줌.
               '${currentPosition.inMinutes}:${(currentPosition.inSeconds % 60).toString().padLeft(2, '0')}',
-              style: TextStyle(
-                  color: Colors.white
-              ),
+              style: TextStyle(color: Colors.white),
             ),
             Expanded(
               child: Slider(
@@ -237,9 +270,7 @@ class _SliderBottom extends StatelessWidget {
             Text(
               // padLeft(minNumber, padding) : 글자에 패딩 넣어줌 첫번째 인스턴스에 들어간 숫자가 최소 글자의 길이고 만약 그 길이를 채우지 못하면 남은 글자를 padding으로 채워줌.
               '${maxPosition.inMinutes}:${(maxPosition.inSeconds % 60).toString().padLeft(2, '0')}',
-              style: TextStyle(
-                  color: Colors.white
-              ),
+              style: TextStyle(color: Colors.white),
             ),
           ],
         ),
@@ -247,4 +278,3 @@ class _SliderBottom extends StatelessWidget {
     );
   }
 }
-

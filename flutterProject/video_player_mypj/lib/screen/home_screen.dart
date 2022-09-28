@@ -25,6 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: CustomVideoPlayer(
         // 애초에 실행되는 타이밍이 null이 아닐 경우에 실행되는 함수이므로 !를 붙여줌.
         video: video!,
+        onNewVideoPressed: onNewVideoTap,
       ),
     );
   }
@@ -40,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           _Logo(
-            onTap: onLogoTap,
+            onTap: onNewVideoTap,
           ),
           SizedBox(
             height: 30,
@@ -51,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void onLogoTap() async {
+  void onNewVideoTap() async {
     // 앱에서 사진을 선택할 때까지 기다려야 하므로 await 사용.
     final video = await ImagePicker().pickVideo(source: ImageSource.gallery);
 
