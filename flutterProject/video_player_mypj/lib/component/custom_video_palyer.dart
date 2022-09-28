@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -16,6 +17,7 @@ class CustomVideoPlayer extends StatefulWidget {
 
 class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
   VideoPlayerController? videoController;
+  Duration currentPosition = Duration();
 
   @override
   void initState() {
@@ -34,6 +36,17 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
       File(widget.video.path),
     );
     await videoController!.initialize();
+
+    // 비디오 컨트롤러가 값이 바뀔 때마다 실행이 됨.
+    // 슬라이더가 움직이지 않는 것을 해결해줌.
+    videoController!.addListener(() {
+      // 컨트롤러에서 가져온 position 값을 현재 값에 저장해줌.
+      final currentPosition = videoController!.value.position;
+
+      setState(() {
+        this.currentPosition = currentPosition;
+      });
+    });
     // 비디오 컨트롤러에 맞게 UI 컨트롤 해주기 위함.
     setState(() {});
   }
@@ -59,19 +72,25 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
               onReversePressed: onReversePressed,
               isPlaying: videoController!.value.isPlaying,
             ),
-            // Stack 내부에서 정렬할 때 사용.
-            Positioned(
-                right: 0, // 오른쪽 끝에 배치.
-                child: IconButton(
-                    onPressed: () {},
-                    color: Colors.white,
-                    iconSize: 30.0,
-                    icon: Icon(Icons.photo_camera_back))),
+            _NewVideo(onPressed: onVideoNewPressed),
+            _SliderBottom(
+                currentPosition: currentPosition,
+                maxPosition: videoController!.value.duration,
+                onSliderChanged: onSliderChanged)
           ],
         ),
       );
     }
   }
+
+  void onSliderChanged(double context) {
+    videoController!.seekTo(
+      Duration(
+        seconds: context.toInt(),
+      ),
+    );
+  }
+  void onVideoNewPressed() {}
 
   void onReversePressed() {
     final currentPosition = videoController!.value.position;
@@ -163,3 +182,69 @@ class _Controls extends StatelessWidget {
     );
   }
 }
+
+class _NewVideo extends StatelessWidget {
+  const _NewVideo({required this.onPressed, Key? key}) : super(key: key);
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    // Stack 내부에서 정렬할 때 사용.
+    return Positioned(
+      right: 0, // 오른쪽 끝에 배치.
+      child: IconButton(
+        onPressed: onPressed,
+        color: Colors.white,
+        iconSize: 30.0,
+        icon: Icon(Icons.photo_camera_back),
+      ),
+    );
+  }
+}
+
+class _SliderBottom extends StatelessWidget {
+  const _SliderBottom({required this.currentPosition, required this.maxPosition, required this.onSliderChanged, Key? key}) : super(key: key);
+  final Duration currentPosition;
+  final Duration maxPosition;
+  final ValueChanged<double> onSliderChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      bottom: 0,
+      right: 0,
+      left: 0,
+      // 슬라이더 생성
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+        child: Row(
+          children: [
+            Text(
+              // padLeft(minNumber, padding) : 글자에 패딩 넣어줌 첫번째 인스턴스에 들어간 숫자가 최소 글자의 길이고 만약 그 길이를 채우지 못하면 남은 글자를 padding으로 채워줌.
+              '${currentPosition.inMinutes}:${(currentPosition.inSeconds % 60).toString().padLeft(2, '0')}',
+              style: TextStyle(
+                  color: Colors.white
+              ),
+            ),
+            Expanded(
+              child: Slider(
+                value: currentPosition.inSeconds.toDouble(),
+                onChanged: onSliderChanged,
+                max: maxPosition.inSeconds.toDouble(),
+                min: 0,
+              ),
+            ),
+            Text(
+              // padLeft(minNumber, padding) : 글자에 패딩 넣어줌 첫번째 인스턴스에 들어간 숫자가 최소 글자의 길이고 만약 그 길이를 채우지 못하면 남은 글자를 padding으로 채워줌.
+              '${maxPosition.inMinutes}:${(maxPosition.inSeconds % 60).toString().padLeft(2, '0')}',
+              style: TextStyle(
+                  color: Colors.white
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
