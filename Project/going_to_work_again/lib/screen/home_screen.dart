@@ -32,6 +32,10 @@ class _HomeScreenState extends State<HomeScreen> {
     strokeWidth: 1, // 원 둘레의 두께 
   );
 
+  // 지도에 화살표 표시해줌.
+  static final Marker marker = Marker(markerId: MarkerId('marker')
+  , position: companyLatLng);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,6 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 _CustomGoogleMap(
                   initialPosition: initialPosition,
                   circle: circle,
+                  marker: marker,
                 ),
                 _ChoolCheckButton(),
               ],
@@ -117,10 +122,11 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class _CustomGoogleMap extends StatelessWidget {
-  const _CustomGoogleMap({required this.circle, required this.initialPosition, Key? key})
+  const _CustomGoogleMap({required this.marker, required this.circle, required this.initialPosition, Key? key})
       : super(key: key);
   final CameraPosition initialPosition;
   final Circle circle;
+  final Marker marker;
 
   @override
   Widget build(BuildContext context) {
@@ -132,6 +138,7 @@ class _CustomGoogleMap extends StatelessWidget {
         myLocationEnabled: true,  // 내 위치권한 활성화.
         myLocationButtonEnabled: false, // 내 위치권한 Button.
         circles: Set.from([circle]), // list 안에 여러 값을 넣으면 다수의 원 생성 가능.
+        markers: Set.from([marker]), // marker 넣어줌.
       ),
     );
   }
