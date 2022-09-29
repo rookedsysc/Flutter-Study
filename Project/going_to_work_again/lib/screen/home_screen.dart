@@ -21,15 +21,31 @@ class _HomeScreenState extends State<HomeScreen> {
   static final CameraPosition initialPosition =
       CameraPosition(target: companyLatLng, zoom: 15); // zoom 값이 커질수록 가까이서 보임.
 
-  static final double distance= 100;
+  static final double okDistance = 100;
   // 지도에 원을 그려줌
-  static final Circle circle = Circle(
-    circleId: CircleId('circle'),  // 화면에 여러개의 동그라미를 그렸을 때 같은 동그라미인지 확인
+  static final Circle withinDistanceCircle = Circle(
+    circleId: CircleId('withinDistanceCircle '),  // 화면에 여러개의 동그라미를 그렸을 때 같은 동그라미인지 확인
     center: companyLatLng, // 
     fillColor: Colors.blue.withOpacity(0.5), // 투명도
-    radius: distance, // 반지름 (Meter 단위)
+    radius: okDistance, // 반지름 (Meter 단위)
     strokeColor: Colors.blue, // 원의 둘레 색상
     strokeWidth: 1, // 원 둘레의 두께 
+  );
+  static final Circle notWithinDistanceCircle = Circle(
+    circleId: CircleId('notWithinDistanceCircle '),  // 화면에 여러개의 동그라미를 그렸을 때 같은 동그라미인지 확인
+    center: companyLatLng, //
+    fillColor: Colors.red.withOpacity(0.5), // 투명도
+    radius: okDistance, // 반지름 (Meter 단위)
+    strokeColor: Colors.red, // 원의 둘레 색상
+    strokeWidth: 1, // 원 둘레의 두께
+  );
+  static final Circle checkDoneCircle = Circle(
+    circleId: CircleId('checkDoneCircle '),  // 화면에 여러개의 동그라미를 그렸을 때 같은 동그라미인지 확인
+    center: companyLatLng, //
+    fillColor: Colors.green.withOpacity(0.5), // 투명도
+    radius: okDistance, // 반지름 (Meter 단위)
+    strokeColor: Colors.green, // 원의 둘레 색상
+    strokeWidth: 1, // 원 둘레의 두께
   );
 
   // 지도에 화살표 표시해줌.
@@ -59,10 +75,29 @@ class _HomeScreenState extends State<HomeScreen> {
           if(snapshot.data == '위치 권한이 허가되었습니다.') {
             return Column(
               children: [
-                _CustomGoogleMap(
-                  initialPosition: initialPosition,
-                  circle: circle,
-                  marker: marker,
+                StreamBuilder<Position>( // getPositionStream이 Position Generic
+                  // 위치가 바뀔 때 마다 불러와서 snapshot.data에 저장해줌.
+                  stream: Geolocator.getPositionStream(),
+                  builder: (context, snapshot) {
+                    bool isWithinRange = false; // Circle 안에 위치해 있는지
+
+                    if(snapshot.hasData) {
+                      final start = snapshot.data!; // 내 현재 위치
+                      final end = companyLatLng; // 회사 위치
+
+                      final distance = Geolocator.distanceBetween(start.latitude, start.longitude, end.latitude, end.longitude); // start <> end 사이의 거리를 구해줌.
+                      if(distance < okDistance) { // okDistance(100)보다 거리가 작으면 현재 핸드폰이 거리 안에 들어가 있음.
+                        isWithinRange = true;
+                      }
+                    }
+
+                    return _CustomGoogleMap(
+                      initialPosition: initialPosition,
+                      circle: isWithinRange ? withinDistanceCircle : notWithinDistanceCircle, // 거리 안에 있으면 파란색 원 : 거리 밖에 있으면 빨간색 원
+                      marker: marker,
+
+                    );
+                  }
                 ),
                 _ChoolCheckButton(),
               ],
