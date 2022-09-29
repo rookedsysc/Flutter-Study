@@ -21,6 +21,17 @@ class _HomeScreenState extends State<HomeScreen> {
   static final CameraPosition initialPosition =
       CameraPosition(target: companyLatLng, zoom: 15); // zoom 값이 커질수록 가까이서 보임.
 
+  static final double distance= 100;
+  // 지도에 원을 그려줌
+  static final Circle circle = Circle(
+    circleId: CircleId('circle'),  // 화면에 여러개의 동그라미를 그렸을 때 같은 동그라미인지 확인
+    center: companyLatLng, // 
+    fillColor: Colors.blue.withOpacity(0.5), // 투명도
+    radius: distance, // 반지름 (Meter 단위)
+    strokeColor: Colors.blue, // 원의 둘레 색상
+    strokeWidth: 1, // 원 둘레의 두께 
+  );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,6 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 _CustomGoogleMap(
                   initialPosition: initialPosition,
+                  circle: circle,
                 ),
                 _ChoolCheckButton(),
               ],
@@ -105,9 +117,10 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class _CustomGoogleMap extends StatelessWidget {
-  const _CustomGoogleMap({required this.initialPosition, Key? key})
+  const _CustomGoogleMap({required this.circle, required this.initialPosition, Key? key})
       : super(key: key);
   final CameraPosition initialPosition;
+  final Circle circle;
 
   @override
   Widget build(BuildContext context) {
@@ -116,6 +129,9 @@ class _CustomGoogleMap extends StatelessWidget {
         // hybrid - 위성, satellite - 위성,
         mapType: MapType.normal,
         initialCameraPosition: initialPosition,
+        myLocationEnabled: true,  // 내 위치권한 활성화.
+        myLocationButtonEnabled: false, // 내 위치권한 Button.
+        circles: Set.from([circle]), // list 안에 여러 값을 넣으면 다수의 원 생성 가능.
       ),
     );
   }
