@@ -72,36 +72,41 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           }
           // 위치 권한이 허가 되었을 때
-          if(snapshot.data == '위치 권한이 허가되었습니다.') {
-            return Column(
-              children: [
-                StreamBuilder<Position>( // getPositionStream이 Position Generic
-                  // 위치가 바뀔 때 마다 불러와서 snapshot.data에 저장해줌.
-                  stream: Geolocator.getPositionStream(),
-                  builder: (context, snapshot) {
-                    bool isWithinRange = false; // Circle 안에 위치해 있는지
+          if (snapshot.data == '위치 권한이 허가되었습니다.') {
+            return StreamBuilder<Position>(
+                // getPositionStream이 Position Generic
+                // 위치가 바뀔 때 마다 불러와서 snapshot.data에 저장해줌.
+                stream: Geolocator.getPositionStream(),
+                builder: (context, snapshot) {
+                  bool isWithinRange = false; // Circle 안에 위치해 있는지
 
-                    if(snapshot.hasData) {
-                      final start = snapshot.data!; // 내 현재 위치
-                      final end = companyLatLng; // 회사 위치
+                  if (snapshot.hasData) {
+                    final start = snapshot.data!; // 내 현재 위치
+                    final end = companyLatLng; // 회사 위치
 
-                      final distance = Geolocator.distanceBetween(start.latitude, start.longitude, end.latitude, end.longitude); // start <> end 사이의 거리를 구해줌.
-                      if(distance < okDistance) { // okDistance(100)보다 거리가 작으면 현재 핸드폰이 거리 안에 들어가 있음.
-                        isWithinRange = true;
-                      }
+                    final distance = Geolocator.distanceBetween(
+                        start.latitude,
+                        start.longitude,
+                        end.latitude,
+                        end.longitude); // start <> end 사이의 거리를 구해줌.
+                    if (distance < okDistance) {
+                      // okDistance(100)보다 거리가 작으면 현재 핸드폰이 거리 안에 들어가 있음.
+                      isWithinRange = true;
                     }
+                  }
 
-                    return _CustomGoogleMap(
-                      initialPosition: initialPosition,
-                      circle: isWithinRange ? withinDistanceCircle : notWithinDistanceCircle, // 거리 안에 있으면 파란색 원 : 거리 밖에 있으면 빨간색 원
-                      marker: marker,
-
+                    return Column(
+                      children: [
+                        _CustomGoogleMap(
+                          initialPosition: initialPosition,
+                          circle: isWithinRange ? withinDistanceCircle : notWithinDistanceCircle, // 거리 안에 있으면 파란색 원 : 거리 밖에 있으면 빨간색 원
+                          marker: marker,
+                        ),
+                        _ChoolCheckButton(),
+                      ],
                     );
                   }
-                ),
-                _ChoolCheckButton(),
-              ],
-            );
+                );
           }
           // 위치 권한이 허가가 안되었을 때
           return Center(
@@ -184,6 +189,12 @@ class _ChoolCheckButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(child: Text('출근'));
+    return Expanded(
+      child: Column(
+        children: [
+          Text('출근'),
+        ],
+      ),
+    );
   }
 }
