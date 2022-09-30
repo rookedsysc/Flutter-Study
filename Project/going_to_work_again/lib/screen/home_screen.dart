@@ -15,6 +15,7 @@ class _HomeScreenState extends State<HomeScreen> {
     37.5233273, // Latitude
     126.921252, // Longitude
   );
+  bool choolCheckDone = false; // 출근 체크 상태 관리
 
   // 우주에서부터 지구를 바라보는 시점.
   // google 맵이 시작되는 위치를 명시해줌.
@@ -22,17 +23,19 @@ class _HomeScreenState extends State<HomeScreen> {
       CameraPosition(target: companyLatLng, zoom: 15); // zoom 값이 커질수록 가까이서 보임.
 
   static final double okDistance = 100;
+
   // 지도에 원을 그려줌
   static final Circle withinDistanceCircle = Circle(
-    circleId: CircleId('withinDistanceCircle '),  // 화면에 여러개의 동그라미를 그렸을 때 같은 동그라미인지 확인
-    center: companyLatLng, // 
+    circleId: CircleId('withinDistanceCircle '), // 화면에 여러개의 동그라미를 그렸을 때 같은 동그라미인지 확인
+    center: companyLatLng, //
     fillColor: Colors.blue.withOpacity(0.5), // 투명도
+
     radius: okDistance, // 반지름 (Meter 단위)
     strokeColor: Colors.blue, // 원의 둘레 색상
-    strokeWidth: 1, // 원 둘레의 두께 
+    strokeWidth: 1, // 원 둘레의 두께
   );
   static final Circle notWithinDistanceCircle = Circle(
-    circleId: CircleId('notWithinDistanceCircle '),  // 화면에 여러개의 동그라미를 그렸을 때 같은 동그라미인지 확인
+    circleId: CircleId('notWithinDistanceCircle '), // 화면에 여러개의 동그라미를 그렸을 때 같은 동그라미인지 확인
     center: companyLatLng, //
     fillColor: Colors.red.withOpacity(0.5), // 투명도
     radius: okDistance, // 반지름 (Meter 단위)
@@ -40,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
     strokeWidth: 1, // 원 둘레의 두께
   );
   static final Circle checkDoneCircle = Circle(
-    circleId: CircleId('checkDoneCircle '),  // 화면에 여러개의 동그라미를 그렸을 때 같은 동그라미인지 확인
+    circleId: CircleId('checkDoneCircle '), // 화면에 여러개의 동그라미를 그렸을 때 같은 동그라미인지 확인
     center: companyLatLng, //
     fillColor: Colors.green.withOpacity(0.5), // 투명도
     radius: okDistance, // 반지름 (Meter 단위)
@@ -49,8 +52,8 @@ class _HomeScreenState extends State<HomeScreen> {
   );
 
   // 지도에 화살표 표시해줌.
-  static final Marker marker = Marker(markerId: MarkerId('marker')
-  , position: companyLatLng);
+  static final Marker marker =
+      Marker(markerId: MarkerId('marker'), position: companyLatLng);
 
   @override
   Widget build(BuildContext context) {
@@ -62,11 +65,12 @@ class _HomeScreenState extends State<HomeScreen> {
         future: checkPermission(), // checkPermission() 상태가 바뀔 때마다 builder가 재실행.
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           // waiting - Future가 로딩 중, done - 함수 실행이 다 끝났음.
-          print('##### snapshot.connectionState ##### \n${snapshot.connectionState}');
+          print(
+              '##### snapshot.connectionState ##### \n${snapshot.connectionState}');
           print('##### sapshot.data ##### \n${snapshot.data}');
 
           // 로딩 중 일때
-          if(snapshot.connectionState == ConnectionState.waiting) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
               child: CircularProgressIndicator(),
             );
@@ -95,18 +99,29 @@ class _HomeScreenState extends State<HomeScreen> {
                     }
                   }
 
-                    return Column(
-                      children: [
-                        _CustomGoogleMap(
-                          initialPosition: initialPosition,
-                          circle: isWithinRange ? withinDistanceCircle : notWithinDistanceCircle, // 거리 안에 있으면 파란색 원 : 거리 밖에 있으면 빨간색 원
-                          marker: marker,
-                        ),
-                        _ChoolCheckButton(),
-                      ],
-                    );
-                  }
-                );
+                  return Column(
+                    children: [
+                      _CustomGoogleMap(
+                        initialPosition: initialPosition,
+                        // chooCheckDone이 true면 나머지 값을 보지도 않고 checkDoneCircle을 사용
+                        circle: choolCheckDone
+                            ? checkDoneCircle
+                            : isWithinRange
+                                ? withinDistanceCircle
+                                : isWithinRange
+                                    ? withinDistanceCircle
+                                    : notWithinDistanceCircle,
+                        // 거리 안에 있으면 파란색 원 : 거리 밖에 있으면 빨간색 원
+                        marker: marker,
+                      ),
+                      _ChoolCheckButton(
+                        onPressed: onChoolCheckPressed,
+                        choolCheckDone: choolCheckDone,
+                        isWithinRange: isWithinRange,
+                      ),
+                    ],
+                  );
+                });
           }
           // 위치 권한이 허가가 안되었을 때
           return Center(
@@ -115,6 +130,38 @@ class _HomeScreenState extends State<HomeScreen> {
         },
       ),
     );
+  }
+
+  // Material Alert Dialog
+  // 출근 버튼 누르면 동작하는 알람
+  onChoolCheckPressed() async {
+    final result = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('출근하기'),
+          content: Text('출근을 하시겠습니까?'),
+          // Button 아래에 배치 순서대로 왼쪽부터 정렬
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+                child: Text('취소')),
+            TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+                child: Text('출근하기'))
+          ],
+        );
+      },
+    );
+    if (result) {
+      setState(() {
+        choolCheckDone = true;
+      });
+    }
   }
 
   // 위치 설정권한 확인
@@ -162,7 +209,11 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class _CustomGoogleMap extends StatelessWidget {
-  const _CustomGoogleMap({required this.marker, required this.circle, required this.initialPosition, Key? key})
+  const _CustomGoogleMap(
+      {required this.marker,
+      required this.circle,
+      required this.initialPosition,
+      Key? key})
       : super(key: key);
   final CameraPosition initialPosition;
   final Circle circle;
@@ -175,9 +226,12 @@ class _CustomGoogleMap extends StatelessWidget {
         // hybrid - 위성, satellite - 위성,
         mapType: MapType.normal,
         initialCameraPosition: initialPosition,
-        myLocationEnabled: true,  // 내 위치권한 활성화.
-        myLocationButtonEnabled: false, // 내 위치권한 Button.
-        circles: Set.from([circle]), // list 안에 여러 값을 넣으면 다수의 원 생성 가능.
+        myLocationEnabled: true,
+        // 내 위치권한 활성화.
+        myLocationButtonEnabled: false,
+        // 내 위치권한 Button.
+        circles: Set.from([circle]),
+        // list 안에 여러 값을 넣으면 다수의 원 생성 가능.
         markers: Set.from([marker]), // marker 넣어줌.
       ),
     );
@@ -185,14 +239,31 @@ class _CustomGoogleMap extends StatelessWidget {
 }
 
 class _ChoolCheckButton extends StatelessWidget {
-  const _ChoolCheckButton({Key? key}) : super(key: key);
+  const _ChoolCheckButton(
+      {required this.choolCheckDone, required this.onPressed, required this.isWithinRange, Key? key})
+      : super(key: key);
+  final bool isWithinRange;
+  final VoidCallback onPressed;
+  final bool choolCheckDone;
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('출근'),
+          Icon(
+            Icons.timelapse_outlined,
+            size: 50.0,
+            color: choolCheckDone ? Colors.green : isWithinRange
+                ? Colors.blue
+                : Colors.red, // 거리 내에 있으면 파랑, 아니면 빨강
+          ),
+          SizedBox(
+            height: 20.0,
+          ),
+          if (!choolCheckDone && isWithinRange)
+            TextButton(onPressed: onPressed, child: Text('출근하기'))
         ],
       ),
     );
