@@ -20,9 +20,18 @@ class _HomeScreenState extends State<HomeScreen> {
         child: FutureBuilder(
           future: getNumber(), // snapshot과 관련된 어떠한 값이 바뀌더라도 builder가 재실행됨.
           builder: (context, snapshot) {
-            if(!snapshot.hasData){ // 프로그램 최초 실행시에 캐싱 된 데이터도 없을 때 최초 실행됨.
-              return Center(child: CircularProgressIndicator());
+            if(snapshot.hasData) {
+              // 데이터가 있을 때 위젯 렌더링
             }
+            if(snapshot.hasError) {
+              // 에러가 났을 때 위젯 렌더링
+            }
+            // 로딩중일 때 위젯 렌더링
+
+           /*  에러가 발생하면 snapshot.data가 없음. 그래서 주석처리.
+           if(!snapshot.hasData){ // 프로그램 최초 실행시에 캐싱 된 데이터도 없을 때 최초 실행됨.
+             return Center(child: CircularProgressIndicator());
+             } */
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -67,6 +76,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<int> getNumber() async {
     await Future.delayed(Duration(seconds: 3));
     final random = Random();
+
+    // 원하는 error 출력
+    throw Exception('에러가 발생했습니다.');
 
     return random.nextInt(100);
   }
