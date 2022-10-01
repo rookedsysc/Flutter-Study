@@ -16,6 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
     126.921252, // Longitude
   );
   bool choolCheckDone = false; // 출근 체크 상태 관리
+  GoogleMapController? mapController;
 
   // 우주에서부터 지구를 바라보는 시점.
   // google 맵이 시작되는 위치를 명시해줌.
@@ -113,6 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     : notWithinDistanceCircle,
                         // 거리 안에 있으면 파란색 원 : 거리 밖에 있으면 빨간색 원
                         marker: marker,
+                        onMapCreated: onMapCreated,
                       ),
                       _ChoolCheckButton(
                         onPressed: onChoolCheckPressed,
@@ -130,6 +132,10 @@ class _HomeScreenState extends State<HomeScreen> {
         },
       ),
     );
+  }
+
+  onMapCreated(GoogleMapController controller) {
+    mapController = controller;
   }
 
   // Material Alert Dialog
@@ -204,6 +210,29 @@ class _HomeScreenState extends State<HomeScreen> {
           fontWeight: FontWeight.w700,
         ),
       ),
+      actions: [
+        IconButton(
+          onPressed: () async {
+            if(mapController == null) {
+              print('mapController is null');
+              return;
+            }
+            print('hi-lo');
+            final location = await Geolocator.getCurrentPosition(); // 현재 위치를 받아옴.
+
+            print(location.latitude.toString());
+
+            // 새 위치로 Camera 옮겨줌.
+            mapController!.animateCamera(
+              CameraUpdate.newLatLng(
+                LatLng(location.latitude, location.longitude),
+              ),
+            );
+          },
+          icon: Icon(Icons.my_location),
+          color: Colors.blue,
+        )
+      ],
     );
   }
 }
@@ -213,11 +242,13 @@ class _CustomGoogleMap extends StatelessWidget {
       {required this.marker,
       required this.circle,
       required this.initialPosition,
+      required this.onMapCreated,
       Key? key})
       : super(key: key);
   final CameraPosition initialPosition;
   final Circle circle;
   final Marker marker;
+  final MapCreatedCallback onMapCreated;
 
   @override
   Widget build(BuildContext context) {
@@ -233,6 +264,7 @@ class _CustomGoogleMap extends StatelessWidget {
         circles: Set.from([circle]),
         // list 안에 여러 값을 넣으면 다수의 원 생성 가능.
         markers: Set.from([marker]), // marker 넣어줌.
+        onMapCreated: onMapCreated, // Google Map Controller
       ),
     );
   }
