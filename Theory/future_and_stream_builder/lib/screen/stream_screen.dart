@@ -2,47 +2,36 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:future_and_stream_builder/screen/stream_screen.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+class StreamScreen extends StatefulWidget {
+  const StreamScreen({Key? key}) : super(key: key);
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<StreamScreen> createState() => _StreamScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _StreamScreenState extends State<StreamScreen> {
   final textStyle = TextStyle(fontSize: 16.0,);
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: FutureBuilder(
-          future: getNumber(), // snapshot과 관련된 어떠한 값이 바뀌더라도 builder가 재실행됨.
+        child: StreamBuilder<int>( // Stream과 Future Builder 모두 generic을 넣을 수 있음.
+          stream: streamNumber(), // snapshot과 관련된 어떠한 값이 바뀌더라도 builder가 재실행됨.
           builder: (context, snapshot) {
-            if(snapshot.hasData) {
-              // 데이터가 있을 때 위젯 렌더링
-            }
-            if(snapshot.hasError) {
-              // 에러가 났을 때 위젯 렌더링
-            }
-            // 로딩중일 때 위젯 렌더링
 
-           /*  에러가 발생하면 snapshot.data가 없음. 그래서 주석처리.
-           if(!snapshot.hasData){ // 프로그램 최초 실행시에 캐싱 된 데이터도 없을 때 최초 실행됨.
-             return Center(child: CircularProgressIndicator());
-             } */
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  'FutureBuilder',
+                  'StreamBuilder',
                   style: textStyle.copyWith(
                       fontWeight: FontWeight.w700, fontSize: 20.0),
                 ),
                 Text(
+                  // Future builder와 비교해서 Connection.active 상태가 추가
                   'conState: ${snapshot.connectionState}',
                   style: textStyle,
                 ),
@@ -65,10 +54,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         // setState에서 함수를 재실행해도 이전 실행의 data를 담고 있음.
                         getNumber();
                       });
-                    }, child: Text('setState')),
-                ElevatedButton(onPressed: () async {
-                  final result = await Navigator.of(context).push(MaterialPageRoute(builder: (_) => StreamScreen()));
-                }, child: Text('Push Stream Builder'))
+                    },
+                    child: Text('setState')),
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).maybePop();
+                    },
+                    child: Text('Pop to HomeScreen'))
               ],
             );
           },
@@ -85,5 +77,16 @@ class _HomeScreenState extends State<HomeScreen> {
     throw Exception('에러가 발생했습니다.');
 
     return random.nextInt(100);
+  }
+
+  Stream <int> streamNumber() async* {
+    for(int i = 0; i < 10; i ++) {
+      await Future.delayed(Duration(seconds: 1));
+      if (i == 5) {
+        throw Exception('에러가 발생했습니다.');
+      }
+
+      yield i;
+    }
   }
 }
