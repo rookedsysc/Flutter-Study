@@ -2,6 +2,8 @@ import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:flutter/material.dart';
 import 'package:live_video_chat/const/agora.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:agora_rtc_engine/rtc_local_view.dart' as RtcLocalView;
+import 'package:agora_rtc_engine/rtc_remote_view.dart' as RtcRemoteView;
 
 class CamScreen extends StatefulWidget {
   const CamScreen({Key? key}) : super(key: key);
@@ -39,11 +41,40 @@ class _CamScreenState extends State<CamScreen> {
                 child: CircularProgressIndicator(),
               );
             }
-            return Center(
-              child: Text("권한이 있습니다."),
+            ;
+            // 정상적으로 API가 호출된 경우
+            return Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  renderMainView(),
+                  // 나가기
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: ElevatedButton(
+                        onPressed: () async {
+                          if (engine != null) {
+                            // 채널 나가기
+                            await engine!.leaveChannel();
+                          }
+
+                          Navigator.of(context).pop();
+                        },
+                        child: Text('나가기 ')),
+                  )
+                ],
+              ),
             );
           }),
     );
+  }
+
+  Widget renderMainView() {
+    if (uid == null) {
+      return Center(child: Text('채널에 입장하여주세요.'));
+    } else {
+      return RtcLocalView.SurfaceView();
+    }
   }
 
   // 모든 권한을 여기서 컨트롤 함.
@@ -62,7 +93,7 @@ class _CamScreenState extends State<CamScreen> {
 
     if (engine == null) {
       // Agora API 넣어줌.
-      RtcEngineContext context = RtcEngineContext(appID);
+      RtcEngineContext context = RtcEngineContext(myAppID);
       engine = await RtcEngine.createWithContext(context);
       // 특정 기능이 실행 되었을 때 특정 함수를 실행할 수 있음.(stream같은 기능)
       engine!.setEventHandler(
@@ -99,7 +130,7 @@ class _CamScreenState extends State<CamScreen> {
       // 비디오 활성화
       await engine!.enableVideo();
       // 채널에 들어가기
-      // await engine!.joinChannel(appCertificate, channelName, null, 0); // 0은 agora에서 자동으로 unique한 ID를 넣어줌.
+      await engine!.joinChannel(myToken, myChannelName, null, 0);
     }
     return true;
   }
