@@ -1,4 +1,6 @@
+import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:flutter/material.dart';
+import 'package:live_video_chat/const/agora.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class CamScreen extends StatefulWidget {
@@ -9,6 +11,10 @@ class CamScreen extends StatefulWidget {
 }
 
 class _CamScreenState extends State<CamScreen> {
+  RtcEngine? engine; // 아고라 api의 controller
+  int? uid;
+  int? othreUid;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,6 +58,48 @@ class _CamScreenState extends State<CamScreen> {
     if (cameraPermission != PermissionStatus.granted ||
         micPermission != PermissionStatus.granted) {
       throw '카메라 또는 마이크 권한이 없습니다.';
+    }
+
+    if (engine == null) {
+      // Agora API 넣어줌.
+      RtcEngineContext context = RtcEngineContext(appID);
+      engine = await RtcEngine.createWithContext(context);
+      // 특정 기능이 실행 되었을 때 특정 함수를 실행할 수 있음.(stream같은 기능)
+      engine!.setEventHandler(
+        RtcEngineEventHandler(
+          joinChannelSuccess: (channel, uid, elapsed) {
+            print("채널에 입장했습니다. uid : $uid");
+            setState(() {
+              this.uid = uid;
+            });
+          },
+          leaveChannel: (state) {
+            print('채널퇴장');
+            setState(() {
+              this.uid = null;
+            });
+          },
+          userJoined: (uid, elapsed) {
+            print('상대가 채널에 입장했습니다. uid : $uid');
+
+            setState(() {
+              this.othreUid = uid;
+            });
+          },
+          userOffline: (uid, reason) {
+            // reason : 유저가 나간 이유
+            print('상대가 채널에서 나갔습니다. uid : $uid');
+            setState(() {
+              this.othreUid = null;
+            });
+          },
+        ),
+      );
+
+      // 비디오 활성화
+      await engine!.enableVideo();
+      // 채널에 들어가기
+      // await engine!.joinChannel(appCertificate, channelName, null, 0); // 0은 agora에서 자동으로 unique한 ID를 넣어줌.
     }
     return true;
   }
