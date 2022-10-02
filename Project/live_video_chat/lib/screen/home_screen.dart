@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:live_video_chat/screen/cam_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -28,7 +29,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-
 class _Logo extends StatelessWidget {
   const _Logo({Key? key}) : super(key: key);
 
@@ -38,32 +38,43 @@ class _Logo extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: Colors.blue,
-          borderRadius: BorderRadius.circular(16.0), // 둥글게 해줌, 숫자가 크면 클수록 더 둥글어짐.
+          borderRadius:
+              BorderRadius.circular(16.0), // 둥글게 해줌, 숫자가 크면 클수록 더 둥글어짐.
           // 그림자 넣을 수 있음.
-          boxShadow: [BoxShadow(
-            color: Colors.blue[300]!,
-            blurRadius: 12.0, // blur가 형성되는 크기
-            spreadRadius: 2.0, // 그림자가 퍼지는 정도
-          ),],
-        ),
-        child:
-      Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.videocam, color: Colors.white, size: 40.0,),
-            SizedBox(width: 12.0,),
-            Text('LIVE', style: TextStyle(
-                color: Colors.white,
-                fontSize: 30.0,
-                letterSpacing: 4.0 // 글자 사이의 간격
-            ),),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.blue[300]!,
+              blurRadius: 12.0, // blur가 형성되는 크기
+              spreadRadius: 2.0, // 그림자가 퍼지는 정도
+            ),
           ],
-
         ),
-      ),),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.videocam,
+                color: Colors.white,
+                size: 40.0,
+              ),
+              SizedBox(
+                width: 12.0,
+              ),
+              Text(
+                'LIVE',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 30.0,
+                    letterSpacing: 4.0 // 글자 사이의 간격
+                    ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -88,7 +99,15 @@ class _EntryButton extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.end,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        ElevatedButton(onPressed: (){}, child: Text('입장하기')),
+        ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => CamScreen(),
+                ),
+              );
+            },
+            child: Text('입장하기')),
       ],
     );
   }
