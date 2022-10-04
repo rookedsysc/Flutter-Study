@@ -13,7 +13,7 @@ class Calendar extends StatefulWidget {
 
 class _CalendarState extends State<Calendar> {
   DateTime? selectedDay;
-  DateTime? focusedDay;
+  DateTime focusedDay = DateTime.now();
 
   final defaultBoxDeco = BoxDecoration(
     color: Colors.grey[200],
@@ -26,7 +26,8 @@ class _CalendarState extends State<Calendar> {
   @override
   Widget build(BuildContext context) {
     return TableCalendar(
-      focusedDay: DateTime.now(),
+      locale: 'ko_KR',
+      focusedDay: focusedDay,
       firstDay: DateTime(1800),
       lastDay: DateTime(3000),
       headerStyle: HeaderStyle(
@@ -45,6 +46,11 @@ class _CalendarState extends State<Calendar> {
           borderRadius: BorderRadius.circular(6.0),
           border: Border.all(color: PRIMARY_COLOR, width: 1.0),
         ),
+        outsideDecoration: BoxDecoration(
+          // 이번 달 이외의 날짜를 선택하면 BoxShape이 circle이면서 Radius 값을 가지고 있는게 되어버려서 error를 return 해줌
+          // BoxShape을 바꿔줘서 이 Error를 우회할 것임.
+           shape: BoxShape.rectangle,
+        ),
         // 평일, 주말 글자 스타일
         defaultTextStyle: defaultTextStyle,
         weekendTextStyle: defaultTextStyle,
@@ -55,6 +61,8 @@ class _CalendarState extends State<Calendar> {
       onDaySelected: ((selectedDay, focusedDay) {
         setState(() {
           this.selectedDay = selectedDay;
+          // 이전 or 이후의 달을 선택하게 되면 해당 월로 focus 이동함.
+          this.focusedDay = selectedDay;
         });
       }),
       // 선택된 날짜가 맞는지 Boolean값으로 넣어줌.
