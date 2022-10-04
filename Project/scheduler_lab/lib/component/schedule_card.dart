@@ -36,7 +36,6 @@ class ScheduleCard extends StatelessWidget {
   }
 }
 
-
 class _Time extends StatelessWidget {
   final int startTime;
   final int endTime;
@@ -66,7 +65,6 @@ class _Time extends StatelessWidget {
     );
   }
 }
-
 
 class _Content extends StatelessWidget {
   const _Content({required this.content, Key? key}) : super(key: key);
