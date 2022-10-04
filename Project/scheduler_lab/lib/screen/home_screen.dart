@@ -28,13 +28,24 @@ class _HomeScreenState extends State<HomeScreen> {
             Calendar(onDaySelected: onDaySelected, selectedDay: selectedDay, focusedDay: focusedDay),
             SizedBox(height: 8,),
             TodayBanner(selectedDay: selectedDay, scheduleCount: 3),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: ScheduleCard(
-                  color: Colors.red,
-                  content: '프로그래밍 공부하기',
-                  startTime: 8,
-                  endTime: 9),
+            Expanded(
+              child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: ListView.separated(
+                      // 생성되는 List 사이에 SizedBox를 넣어줌
+                      separatorBuilder: (context, index) {
+                        return SizedBox(
+                          height: 4.0,
+                        );
+                      },
+                      itemCount: 15,
+                      itemBuilder: (context, index) {
+                        return ScheduleCard(
+                            color: Colors.orange,
+                            content: 'content',
+                            startTime: 7,
+                            endTime: 8);
+                      })),
             )
           ],
         ),
