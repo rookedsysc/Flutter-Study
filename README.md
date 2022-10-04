@@ -14,9 +14,11 @@ Studying Flutter (09/17 ~<br>
 - AppBar <br>
 - pub.dev(open source project 활용법)<br><br>
 
-[main](https://github.com/rookedsysc/Flutter-Study/blob/main/flutterProject/web_view/lib/main.dart)
 </div>
 </details>
+
+
+[Fast Link](https://github.com/rookedsysc/Flutter-Study/blob/main/flutterProject/web_view/lib/main.dart)
 
 #### Image Carousel
 이미지 자동으로 넘겨주는 Application
@@ -33,9 +35,10 @@ Studying Flutter (09/17 ~<br>
 - controller<br>
 - System Chrome<br><br>
   
-[main](https://github.com/rookedsysc/Flutter-Study/blob/main/flutterProject/image_carousel/lib/main.dart)
 </div>
 </details>
+
+[Fast Link](https://github.com/rookedsysc/Flutter-Study/blob/main/flutterProject/image_carousel/lib/main.dart)
 
 #### u_and_i Project
 연인이 만난 일자를 DatePicker로 입력해주면 그 시간을 기록해주고 이후로 시간이 얼마나 지났는지 Tracking 해주는 앱.
@@ -52,6 +55,7 @@ Studying Flutter (09/17 ~<br>
 - 최상위 class에서 data 정렬 <br>
 - Theme 설정해서 main에서 UI 관리하기<br>
 - .of(context) constructor의 의미 <br>
+- showCupertinoDialog (밑에서 올라오는 알림창)<br>
 <br>
 </div>
 </details>
