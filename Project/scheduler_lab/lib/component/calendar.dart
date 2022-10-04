@@ -4,30 +4,30 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:scheduler_lab/const/colors.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-class Calendar extends StatefulWidget {
-  const Calendar({super.key});
+class Calendar extends StatelessWidget {
+  final DateTime? selectedDay;
+  final DateTime focusedDay;
+  final OnDaySelected? onDaySelected;
 
-  @override
-  State<Calendar> createState() => _CalendarState();
-}
+  const Calendar({
+    required this.onDaySelected,
+    required this.selectedDay,
+    required this.focusedDay,
+    Key? key,
+  }) : super(key: key);
 
-class _CalendarState extends State<Calendar> {
-  DateTime? selectedDay;
-  DateTime focusedDay = DateTime.now();
-
-  final defaultBoxDeco = BoxDecoration(
-    color: Colors.grey[200],
-    borderRadius: BorderRadius.circular(6.0),
-  );
-
-  final defaultTextStyle =
-      TextStyle(color: Colors.grey[600], fontWeight: FontWeight.w700);
 
   @override
   Widget build(BuildContext context) {
+    final defaultTextStyle = TextStyle(color: Colors.grey[600], fontWeight: FontWeight.w700);
+    final defaultBoxDeco = BoxDecoration(
+      color: Colors.grey[200],
+      borderRadius: BorderRadius.circular(6.0),
+    );
+
     return TableCalendar(
       locale: 'ko_KR',
-      focusedDay: focusedDay,
+      focusedDay: this.focusedDay,
       firstDay: DateTime(1800),
       lastDay: DateTime(3000),
       headerStyle: HeaderStyle(
@@ -58,22 +58,16 @@ class _CalendarState extends State<Calendar> {
           color: PRIMARY_COLOR,
         ),
       ),
-      onDaySelected: ((selectedDay, focusedDay) {
-        setState(() {
-          this.selectedDay = selectedDay;
-          // 이전 or 이후의 달을 선택하게 되면 해당 월로 focus 이동함.
-          this.focusedDay = selectedDay;
-        });
-      }),
+      onDaySelected: this.onDaySelected,
       // 선택된 날짜가 맞는지 Boolean값으로 넣어줌.
       // true값을 return 받으면 해당 값 Calendar에 표시해줌.
       selectedDayPredicate: (DateTime dateTime) {
-        if (selectedDay == null) {
+        if (this.selectedDay == null) {
           return false;
         }
-        return dateTime.year == selectedDay!.year &&
-            dateTime.month == selectedDay!.month &&
-            dateTime.day == selectedDay!.day;
+        return dateTime.year == this.selectedDay!.year &&
+            dateTime.month == this.selectedDay!.month &&
+            dateTime.day == this.selectedDay!.day;
       },
     );
   }
