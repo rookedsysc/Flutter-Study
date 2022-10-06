@@ -1,4 +1,5 @@
 import 'package:date_time_picker/date_time_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/date_time_patterns.dart';
@@ -21,6 +22,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
   int? startTime;
   int? endTime;
   String? content;
+  int? selectedColorId;
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +44,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
             child: Form(
               key: formKey,
               // 어떠한 동작으로 인해서가 아니라 자동으로 validate를 검증함.
-              autovalidateMode: AutovalidateMode.always,
+              // autovalidateMode: AutovalidateMode.always,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -65,11 +67,20 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                     // main에 있는 LocalDatabase의 값을 code에 바로 주입시킴.
                     future: GetIt.I<LocalDatabase>().getCategoryColors(),
                     builder: (context, snapshot) {
+                      // 초기 ID값 설정.
+                      if(snapshot.hasData && selectedColorId == null && snapshot.data!.isNotEmpty) {
+                        selectedColorId = snapshot.data![0].id;
+                      }
                       // parse('FFFFFF',radix = 16) : 16진수로 변환.
-                      return _ColorPicker(colors: snapshot.hasData
-                          ? snapshot.data!.map((e) =>
-                          Color(int.parse('FF${e.hexCode}',radix: 16))).toList()
-                          : []);
+                      return _ColorPicker(
+                        colors: snapshot.hasData ? snapshot.data! : [],
+                        selectedColorId: selectedColorId!,
+                        colorIdSetter: (int id) {
+                          setState(() {
+                            selectedColorId = id;
+                          });
+                        },
+                      );
                     }
                   ),
                   SizedBox(height: 4.0,),
@@ -209,9 +220,14 @@ class _Content extends StatelessWidget {
     );
   }
 }
+// 외부에서 Color ID 값을 받기 위해서 typedef 해줌.
+typedef colorIdSetter = void Function(int id);
+
 class _ColorPicker extends StatelessWidget {
-  final List<Color> colors;
-  const _ColorPicker({required this.colors, Key? key}) : super(key: key);
+  final List<CategoryColor> colors;
+  final int selectedColorId;
+  final colorIdSetter;
+  const _ColorPicker({required this.colorIdSetter, required this.selectedColorId, required this.colors, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -220,15 +236,28 @@ class _ColorPicker extends StatelessWidget {
       child: Wrap(
         spacing: 8.0, // child 사이사이의 간격.
         runSpacing: 8.0, // 위 아래 간격.
-        children: colors.map((e) => renderColor(e)).toList(),
+        children: colors.map((e) => GestureDetector(
+          // 탭이 될 때마다 colorIdSetter가 실행됨.
+          onTap: () {
+            // 현재 color의 인자값을 외부의 colorIdSetter를 호출해준 지점에서 참조할 수 있음.
+            colorIdSetter(e.id);
+          },
+           // selectedColorId 값과 같은 ID의 Color가 들어가는지 true / false 넣어줌.
+          child: renderColor(e, selectedColorId == e.id)
+        )).toList()
       ),
     );
   }
-  Widget renderColor(Color color) {
+  Widget renderColor(CategoryColor color, bool isSelected) {
     return Container(
       decoration: BoxDecoration(
-        color: color,
-        shape: BoxShape.circle
+        color: isSelected ? Color(int.parse('FF${color.hexCode}',radix: 16)) : Color(int.parse('33${color.hexCode}',radix: 16)),
+        shape: BoxShape.circle,
+
+        border: isSelected ? Border.all(
+          color: Colors.black,
+          width: 4.0
+        ) : null,
       ),
       width: 32, height: 32,
     );
@@ -256,4 +285,11 @@ class _SaveButton extends StatelessWidget {
     );
   }
 }
+class dfds extends StatelessWidget {
+  const dfds({Key? key}) : super(key: key);
 
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}
