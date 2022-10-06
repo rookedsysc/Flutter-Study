@@ -1,8 +1,8 @@
 import 'package:drift/drift.dart';
 
-class CategeryColors extends Table {
+class CategoryColors extends Table {
   // PRIMARY KEY
-  IntColumn get id => integer()();
+  IntColumn get id => integer().autoIncrement()();
 
   // 색상 코드
   TextColumn get hexCode => text()();
