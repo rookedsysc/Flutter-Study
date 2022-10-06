@@ -26,8 +26,6 @@ void main() async {
       );
     }
   }
-  print('---------- GET COLORS ------------');
-  print(('CategoryColors : ${await database.getCategoryColors()}'));
 
   runApp(MaterialApp(
     theme: ThemeData(colorScheme: ColorScheme.dark(
