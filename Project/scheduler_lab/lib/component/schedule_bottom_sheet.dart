@@ -87,10 +87,8 @@ class _TimeState extends State<_Time> {
               // 입력시 밑 줄 색상 변경
               focusedBorder: UnderlineInputBorder(
                   borderSide: BorderSide(color: PRIMARY_COLOR)),
-              labelStyle: TextStyle(),
+              labelText: isStart ? '시작일' : '마감일'
             ),
-            dateLabelText: isStart ? '시작일' : '마감일',
-            cursorColor: PRIMARY_COLOR,
             // 캘린더 선택 위에 글자 입력할 수 있는 Edit Buttom 사라짐.
             initialEntryMode: DatePickerEntryMode.calendarOnly,
 
