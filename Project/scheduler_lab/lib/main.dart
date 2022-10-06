@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scheduler_lab/const/colors.dart';
 import 'package:scheduler_lab/screen/home_screen.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
@@ -10,7 +11,9 @@ void main() async {
   await initializeDateFormatting();
 
   runApp(MaterialApp(
-    theme: ThemeData(fontFamily: 'Dongle'),
+    theme: ThemeData(colorScheme: ColorScheme.dark(
+      primary: PRIMARY_COLOR
+    ), fontFamily: 'Dongle'),
     home: HomeScreen(),
   ));
 }

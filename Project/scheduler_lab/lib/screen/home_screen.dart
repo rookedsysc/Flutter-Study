@@ -64,6 +64,8 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 }
 
+
+
 class _Schedule extends StatelessWidget {
   const _Schedule({Key? key}) : super(key: key);
 
@@ -73,7 +75,7 @@ class _Schedule extends StatelessWidget {
       child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: ListView.separated(
-            // 생성되는 List 사이에 SizedBox를 넣어줌
+              // 생성되는 List 사이에 SizedBox를 넣어줌
               separatorBuilder: (context, index) {
                 return SizedBox(
                   height: 4.0,
