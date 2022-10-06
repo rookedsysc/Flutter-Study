@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:scheduler_lab/const/colors.dart';
 import 'package:scheduler_lab/datebase/drift_database.dart';
 import 'package:scheduler_lab/screen/home_screen.dart';
@@ -14,6 +15,8 @@ void main() async {
 
   // DB 쿼리 있는 Class
   final database = LocalDatabase();
+  // Getit을 통해서 어디에서든 database를 호출할 수 있음.
+  GetIt.I.registerSingleton<LocalDatabase>(database); // I는 인스턴스를 뜻함.
 
   final colors = await database.getCategoryColors();
   if(colors.isEmpty) {

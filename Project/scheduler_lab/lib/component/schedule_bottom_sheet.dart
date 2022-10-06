@@ -1,9 +1,12 @@
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:intl/date_time_patterns.dart';
 import 'package:path/path.dart';
 import 'package:scheduler_lab/component/custom_text_field.dart';
 import 'package:scheduler_lab/const/colors.dart';
+import 'package:scheduler_lab/datebase/drift_database.dart';
+import 'package:scheduler_lab/model/category_color.dart';
 
 class ScheduleBottomSheet extends StatefulWidget {
   const ScheduleBottomSheet({Key? key}) : super(key: key);
@@ -15,6 +18,9 @@ class ScheduleBottomSheet extends StatefulWidget {
 class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
   // form의 상태를 관리해주는 일종의 controller
   final GlobalKey<FormState> formKey = GlobalKey();
+  int? startTime;
+  int? endTime;
+  String? content;
 
   @override
   Widget build(BuildContext context) {
@@ -35,18 +41,37 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
             padding: const EdgeInsets.only(top: 4.0, right: 8.0, left: 8.0),
             child: Form(
               key: formKey,
+              // 어떠한 동작으로 인해서가 아니라 자동으로 validate를 검증함.
+              autovalidateMode: AutovalidateMode.always,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _Time(), // _Time >> Row _CompactDatePicker
+                  _Time(onStartSaved: (String? val) {
+                    startTime = int.parse(val!.split('-')[2]);
+                  }, onEndSaved: (String? val) {
+                    endTime = int.parse(val!.split('-')[2]);
+                  }
+                    ,), // _Time >> Row _CompactDatePicker
                   SizedBox(
                     height: 8.0,
                   ),
-                  _Content(),
+                  _Content(onContentSaved: (String? val) {
+                    content = val;
+                  },),
                   SizedBox(
                     height: 8,
                   ),
-                  _ColorPicker(),
+                  FutureBuilder<List<CategoryColor>>(
+                    // main에 있는 LocalDatabase의 값을 code에 바로 주입시킴.
+                    future: GetIt.I<LocalDatabase>().getCategoryColors(),
+                    builder: (context, snapshot) {
+                      // parse('FFFFFF',radix = 16) : 16진수로 변환.
+                      return _ColorPicker(colors: snapshot.hasData
+                          ? snapshot.data!.map((e) =>
+                          Color(int.parse('FF${e.hexCode}',radix: 16))).toList()
+                          : []);
+                    }
+                  ),
                   SizedBox(height: 4.0,),
                   _SaveButton(onPressed: onSavePressed,)
                 ],
@@ -60,13 +85,18 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
   void onSavePressed() {
     // formKey는 생성을 했는데 Form 위젯과 결합을 안했을 때
     if(formKey.currentState == null) {
-      return;
+      return null;
     }
-
     // 모든 textFormField에서 에러가 없으면 해당 if구문 통과함.
     // 모든 textFormField에서 validator() 실행됨.
     if(formKey.currentState!.validate()){
-      print('에러가 없습니다.');
+      formKey.currentState!.save();
+
+      print('----------------------');
+      print('startTime: $startTime');
+      print('endTime: $endTime');
+      print('content: $content');
+
     } else {
       print('에러가 있습니다.');
     }
@@ -74,7 +104,10 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
 }
 
 class _Time extends StatefulWidget {
-  const _Time({Key? key}) : super(key: key);
+  final FormFieldSetter<String> onStartSaved;
+  final FormFieldSetter<String> onEndSaved;
+
+  const _Time({required this.onStartSaved, required this.onEndSaved, Key? key}) : super(key: key);
 
   @override
   State<_Time> createState() => _TimeState();
@@ -83,7 +116,6 @@ class _Time extends StatefulWidget {
 class _TimeState extends State<_Time> {
   DateTime? minimumDay = DateTime.now();
   DateTime? maximumDay = DateTime(3000);
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -102,10 +134,39 @@ class _TimeState extends State<_Time> {
     );
   }
 
-  Widget _CompactDatePicker(bool isStart) {
+  Widget _CompactDatePicker(bool isStart,  ) {
     return Expanded(
         child: Column(children: [
           DateTimePicker(
+            validator: (val) {
+              // 날짜 입력 됐는지 검증.
+              if(val == null || val.isEmpty) {
+                if(isStart) {
+                  return '시작일을 입력해주세요.';
+                }
+                return '마감일을 입력해주세요.';
+              }
+            },
+            onSaved: isStart ? widget.onStartSaved : widget.onEndSaved,
+            onChanged: (val) {
+              print('value : $val');
+              DateTime selectedDay = DateTime(
+                // 문자열 int로 치환.
+                int.parse(val.split('-')[0]), // 년
+                int.parse(val.split('-')[1]), // 월
+                int.parse(val.split('-')[2]), // 일
+              );
+              setState(() {
+                // 시작일의 lastDate가 마감일의 lastDate를 넘지 않게 해줌.
+                if (!isStart) {
+                  maximumDay = selectedDay;
+                }
+
+                // 마감일의 firstDate가 시작일의 firstDate보다 작지 않게 해줌.
+                minimumDay = selectedDay;
+              });
+            },
+
             // Design
             decoration: InputDecoration(
               icon: Icon(
@@ -127,54 +188,30 @@ class _TimeState extends State<_Time> {
             firstDate: isStart ? DateTime.now() : minimumDay,
             lastDate: isStart ? maximumDay : DateTime(3000),
 
-            onChanged: (val) {
-          print('value : $val');
-          DateTime selectedDay = DateTime(
-            // 문자열 int로 치환.
-            int.parse(val.split('-')[0]), // 년
-            int.parse(val.split('-')[1]), // 월
-            int.parse(val.split('-')[2]), // 일
-          );
-          setState(() {
-            // 시작일의 lastDate가 마감일의 lastDate를 넘지 않게 해줌.
-            if (!isStart) {
-              maximumDay = selectedDay;
-            }
 
-            // 마감일의 firstDate가 시작일의 firstDate보다 작지 않게 해줌.
-            minimumDay = selectedDay;
-          });
-          },
-          validator: (val) {
-                // 날짜 입력 됐는지 검증.
-                if(val == null || val.isEmpty) {
-                  if(isStart) {
-                    return '시작일을 입력해주세요.';
-                  }
-                  return '마감일을 입력해주세요.';
-                }
-
-              },
       ),
     ]));
   }
 }
 
 class _Content extends StatelessWidget {
-  const _Content({Key? key}) : super(key: key);
+  final FormFieldSetter<String> onContentSaved;
+  const _Content({required this.onContentSaved, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: CustomTextField(
         label: '내용',
-        isTime:false,
+        isTime: false,
+        onTextSaved: onContentSaved,
       ),
     );
   }
 }
 class _ColorPicker extends StatelessWidget {
-  const _ColorPicker({Key? key}) : super(key: key);
+  final List<Color> colors;
+  const _ColorPicker({required this.colors, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -183,15 +220,7 @@ class _ColorPicker extends StatelessWidget {
       child: Wrap(
         spacing: 8.0, // child 사이사이의 간격.
         runSpacing: 8.0, // 위 아래 간격.
-        children: [
-          renderColor(Colors.red),
-          renderColor(Colors.orange),
-          renderColor(Colors.yellow),
-          renderColor(Colors.orange),
-          renderColor(Colors.green),
-          renderColor(Colors.blue),
-          renderColor(Colors.indigo),
-        ],
+        children: colors.map((e) => renderColor(e)).toList(),
       ),
     );
   }

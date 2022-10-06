@@ -43,6 +43,7 @@ dependencies:
   path_provider: ^2.0.0
   path: ^1.8.2
   date_time_picker: ^2.1.0
+  get_it: ^7.2.0
 
 dev_dependencies:
   flutter_test:

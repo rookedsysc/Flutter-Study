@@ -5,8 +5,9 @@ import '../const/colors.dart';
 
 class CustomTextField extends StatelessWidget {
   final String label;
-  const  CustomTextField({required this.isTime, required this.label, Key? key}) : super(key: key);
   final bool isTime; // true - 시간 false - 내용
+  final FormFieldSetter<String> onTextSaved;
+  const  CustomTextField({required this.onTextSaved, required this.isTime, required this.label, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +32,11 @@ class CustomTextField extends StatelessWidget {
         }
         return null;
       },
+      onSaved: onTextSaved,
+
+      // 밑줄 색상
       cursorColor: Colors.grey,
+      style: TextStyle(color: Colors.black),
       // 부모 class의 남은 부분만큼 textField가 커짐.
       expands: !isTime,
       maxLines: isTime ? 1 : null, // 줄바뀜 옵션. (null이면 무한하게 라인 작성가능)
