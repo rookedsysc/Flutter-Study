@@ -1,7 +1,7 @@
 import 'dart:io';
-
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:scheduler_lab/model/category_color.dart';
 import 'package:scheduler_lab/model/schedule.dart';
@@ -33,9 +33,18 @@ class LocalDatabase extends _$LocalDatabase{
   Future<List<CategoryColor>> getCategoryColors() =>
       select(categoryColors).get();
 
-  // watch로 값을 받아주면 Schedule이 바뀔 때 yeild로 데이터를 return 해줌.
-  Stream<List<Schedule>> watchSchedules() =>
-      select(schedules).watch();
+  // watch로 값을 받아주면 schedules table이 바뀔 때마다 yeild로 데이터를 return 해줌.
+  // 메모리 낭비 방지를 막기 위해서 DB에서 데이터를 선택할 때 filter를 걸어줌.
+  Stream<List<Schedule>> watchSchedules(DateTime selectedDay) {
+    /* final query = select(schedules);
+    query.where((tbl) => tbl.date.equals(selectedDay)); // 쿼리를 먼저 필터링 해줌.
+    return query.watch(); // 필터링 된 query에다가 watch() 함수 실행 */
+
+    /* ..의 의미는 함수를 실행할 결과값을 return 해주는게 아니라 함수가 실행할 대상을 return 해주게 됨.
+    즉, 해당 구문에서는 where이 실행이 된 대상 select(schedules)를 Return 받은 것임.
+    where는 return 값 없이 문자열을 필터링 해주는 기능만 하므로 watch()를 통해서 지속적으로 해당 값을 모니터링 해줄 수 없음.*/
+    return (select(schedules)..where((tbl) => tbl.date.equals(selectedDay))).watch();
+  }
 
   // Code Generator로 db를 생성하고 나서 override 해줘야 함.
   // DB의 구조가 바뀔 때마다 변경되는 데이터 베이스 구조 Version임.

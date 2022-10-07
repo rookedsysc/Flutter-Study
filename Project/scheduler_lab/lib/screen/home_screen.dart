@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:scheduler_lab/component/calendar.dart';
@@ -68,12 +69,9 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 }
 
-
-
 class _Schedule extends StatelessWidget {
   final DateTime selectedDay;
   const _Schedule({required this.selectedDay, Key? key}) : super(key: key);
-
 
   @override
   Widget build(BuildContext context) {
@@ -82,32 +80,39 @@ class _Schedule extends StatelessWidget {
       child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: StreamBuilder<List<Schedule>>(
-            stream: GetIt.I<LocalDatabase>().watchSchedules(),
+            stream: GetIt.I<LocalDatabase>().watchSchedules(selectedDay),
             builder: (context, snapshot) {
-              print('------------------- ORIGIN DATE');
-              print(snapshot.data);
+              print('실제로 불러온 전체 데이터 확인 : ${snapshot.data}');
 
-              if(snapshot.hasData) {
-                schedules = snapshot.data!.where((element) => DateFormat('yyyy-MM-dd').format(element.date) == DateFormat('yyyy-MM-dd').format(selectedDay)).toList();
-                print('------------------- FILTERED DATE');
-                print('selectedDay : $selectedDay');
-                print('schdules : $schedules');
+              // 데이터가 아예 없으면 로딩창 뜸.
+              if(!snapshot.hasData) {
+                return Center(child: CircularProgressIndicator(),);
+              }
+
+              // 데이터가 있긴 있는데 비어 있으면.
+              if(snapshot.hasData && snapshot.data!.isEmpty) {
+                return Center(child: Text('스케줄이 없습니다.'),);
               }
 
               return ListView.separated(
-                  // 생성되는 List 사이에 SizedBox를 넣어줌
+                // 생성되는 List 사이에 SizedBox를 넣어줌
                   separatorBuilder: (context, index) {
                     return SizedBox(
                       height: 4.0,
                     );
                   },
-                  itemCount: 15,
+                  itemCount: snapshot.hasData ? snapshot.data!.length : 0,
                   itemBuilder: (context, index) {
-                    return ScheduleCard(
-                        color: Colors.orange,
-                        content: 'content',
-                        startTime: 7,
-                        endTime: 8);
+                    if(snapshot.hasData) {
+                      final schedule = snapshot.data![index];
+                      return ScheduleCard(
+                          color: Colors.orange,
+                          content: schedule.content,
+                          startTime: schedule.starttime,
+                          endTime: schedule.endTime
+                      );
+                    }
+                    return Container();
                   });
             }
           )),
