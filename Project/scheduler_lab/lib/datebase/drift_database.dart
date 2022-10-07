@@ -32,6 +32,11 @@ class LocalDatabase extends _$LocalDatabase{
       into(categoryColors).insert(data);
   Future<List<CategoryColor>> getCategoryColors() =>
       select(categoryColors).get();
+  // 삭제를 하면 삭제하는 값의 ID를 return 받을 수 있음.
+  Future<int> removeSchedule(int id) =>
+      // where 문은 return 값이 없음, 그래서 excutedFunc..excuteFunc하면 excuteFunc(where문)가 실행한 excutedFunc가 return됨.
+      // 해당되는 값을 delete(_table_).go(); 로 삭제해줌.
+      (delete(schedules)..where((tbl) => tbl.id.equals(id))).go();
 
   // watch로 값을 받아주면 schedules table이 바뀔 때마다 yeild로 데이터를 return 해줌.
   // 메모리 낭비 방지를 막기 위해서 DB에서 데이터를 선택할 때 filter를 걸어줌.
@@ -51,7 +56,15 @@ class LocalDatabase extends _$LocalDatabase{
     final query = select(schedules).join([
       innerJoin(categoryColors, categoryColors.id.equalsExp(schedules.colorId))
     ]);
+    // 필터
     query.where(schedules.date.equals(selectedDay));
+    // 정렬
+    query.orderBy(
+      [
+        // asc : ascending(오름차순), dsc : descending(내림차순)
+        OrderingTerm.asc(schedules.starttime),
+      ]
+    );
     return  query.watch().map(
             (rows) => rows.map( // 모든 Schedules 다 불러옴.
               // 각 Schedule별 멤버에 접근해서 SchduleWithColor Class에 맞춰서 데이터 넣어줌.

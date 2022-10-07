@@ -41,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
             SizedBox(
               height: 8,
             ),
-            TodayBanner(selectedDay: selectedDay, scheduleCount: 3),
+            TodayBanner(selectedDay: selectedDay,),
             _Schedule(selectedDay: selectedDay,)
           ],
         ),
@@ -106,11 +106,25 @@ class _Schedule extends StatelessWidget {
                   itemBuilder: (context, index) {
                     // <Schedule>에서 <ScheduleWithColor>로 바뀜.
                     final scheduleWithColor = snapshot.data![index];
-                    return ScheduleCard(
-                        color: Color(int.parse('FF${scheduleWithColor.categoryColor.hexCode}', radix: 16)),
-                        content: scheduleWithColor.schedule.content,
-                        startTime: scheduleWithColor.schedule.starttime,
-                        endTime: scheduleWithColor.schedule.endTime
+
+                    // Dismissible 위젯을 사용하면 스와이프 액션을 통해서 위젯을 화면상에서 삭제(DB에선 삭제 안됨)해줄 수 있음.
+                    return Dismissible(
+                      // ObjectKey 클래스는 클래스 내부에서 사용할 Key를 생성해줌. 해당 키를 가지고 어떤 위젯이 삭제된건지 인식함.
+                      key: ObjectKey(scheduleWithColor.schedule.id),
+                        // direction은 스크롤 방향임. endToStart는 글을 읽는 끝방향에서 글을 읽는 시작 방향으로 삭제한다는 뜻.
+                        direction: DismissDirection.endToStart,
+                        // Dismiss 동작시 실행시킬 함수
+                        onDismissed: (DismissDirection direction){
+                        // 헤당 ID 가지고 있는 category Color 삭제함.
+                        GetIt.I<LocalDatabase>().removeSchedule(scheduleWithColor.categoryColor.id);
+
+                        },
+                      child: ScheduleCard(
+                          color: Color(int.parse('FF${scheduleWithColor.categoryColor.hexCode}', radix: 16)),
+                          content: scheduleWithColor.schedule.content,
+                          startTime: scheduleWithColor.schedule.starttime,
+                          endTime: scheduleWithColor.schedule.endTime
+                      ),
                     );
                 },);
             }
