@@ -1,16 +1,18 @@
 import 'package:date_time_picker/date_time_picker.dart';
+import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/date_time_patterns.dart';
-import 'package:path/path.dart';
+import 'package:path/path.dart' as p;
 import 'package:scheduler_lab/component/custom_text_field.dart';
 import 'package:scheduler_lab/const/colors.dart';
 import 'package:scheduler_lab/datebase/drift_database.dart';
 import 'package:scheduler_lab/model/category_color.dart';
 
 class ScheduleBottomSheet extends StatefulWidget {
-  const ScheduleBottomSheet({Key? key}) : super(key: key);
+  final DateTime selectedDate;
+  const ScheduleBottomSheet({required this.selectedDate, Key? key}) : super(key: key);
 
   @override
   State<ScheduleBottomSheet> createState() => _ScheduleBottomSheetState();
@@ -28,7 +30,6 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
   Widget build(BuildContext context) {
     // viewInset: 시스템 UI가 차지하는 크기
     final bottomInsets = MediaQuery.of(context).viewInsets.bottom;
-    print('bottomInsets : $bottomInsets');
 
     return SafeArea(
       child: Container(
@@ -49,11 +50,10 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _Time(onStartSaved: (String? val) {
-                    startTime = int.parse(val!.split('-')[2]);
+                    startTime = int.parse(DateTime.parse(val!).hour.toString());
                   }, onEndSaved: (String? val) {
-                    endTime = int.parse(val!.split('-')[2]);
-                  }
-                    ,), // _Time >> Row _CompactDatePicker
+                    endTime = int.parse(DateTime.parse(val!).hour.toString());
+                  },), // _Time >> Row _CompactDatePicker
                   SizedBox(
                     height: 8.0,
                   ),
@@ -93,7 +93,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
       ),
     );
   }
-  void onSavePressed() {
+  void onSavePressed() async {
     // formKey는 생성을 했는데 Form 위젯과 결합을 안했을 때
     if(formKey.currentState == null) {
       return null;
@@ -108,6 +108,16 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
       print('endTime: $endTime');
       print('content: $content');
 
+      final key = await GetIt.I<LocalDatabase>().createSchedule(
+        SchedulesCompanion(
+          date: Value(widget.selectedDate),
+          starttime: Value(startTime!),
+          endTime: Value(endTime!),
+          content: Value(content!),
+          colorId: Value(selectedColorId!)
+        ),
+      );
+      Navigator.of(context).pop();
     } else {
       print('에러가 있습니다.');
     }
@@ -125,8 +135,8 @@ class _Time extends StatefulWidget {
 }
 
 class _TimeState extends State<_Time> {
-  DateTime? minimumDay = DateTime.now();
-  DateTime? maximumDay = DateTime(3000);
+  DateTime minimumDay = DateTime.now();
+  DateTime maximumDay = DateTime(3000);
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -153,23 +163,29 @@ class _TimeState extends State<_Time> {
               // 날짜 입력 됐는지 검증.
               if(val == null || val.isEmpty) {
                 if(isStart) {
+
                   return '시작일을 입력해주세요.';
                 }
                 return '마감일을 입력해주세요.';
               }
+              if(isStart) {
+                if(maximumDay.isBefore(DateTime.parse(val))){
+                  return '시작일이 마감일보다 이후 날짜 입니다. 다시 입력해주세요.';
+                }
+              } else { // 마감일 입력할 때 들어옴.
+                if(minimumDay.isAfter(DateTime.parse(val))){
+                  return '마감일이 시작일보다 이전 날짜 입니다. 다시 입력해주세요.';
+                }
+              }
             },
             onSaved: isStart ? widget.onStartSaved : widget.onEndSaved,
             onChanged: (val) {
-              print('value : $val');
-              DateTime selectedDay = DateTime(
-                // 문자열 int로 치환.
-                int.parse(val.split('-')[0]), // 년
-                int.parse(val.split('-')[1]), // 월
-                int.parse(val.split('-')[2]), // 일
-              );
+              DateTime selectedDay = DateTime.parse(val);
+              print('selected Day is $selectedDay');
               setState(() {
                 // 시작일의 lastDate가 마감일의 lastDate를 넘지 않게 해줌.
                 if (!isStart) {
+
                   maximumDay = selectedDay;
                 }
 
@@ -177,6 +193,11 @@ class _TimeState extends State<_Time> {
                 minimumDay = selectedDay;
               });
             },
+
+            type: DateTimePickerType.dateTime,
+            initialDate: minimumDay,
+            firstDate: isStart ? DateTime.now() : minimumDay,
+            lastDate: isStart ? maximumDay : DateTime(3000),
 
             // Design
             decoration: InputDecoration(
@@ -188,18 +209,12 @@ class _TimeState extends State<_Time> {
               // 입력시 밑 줄 색상 변경
               focusedBorder: UnderlineInputBorder(
                   borderSide: BorderSide(color: PRIMARY_COLOR)),
-              labelText: isStart ? '시작일' : '마감일'
+              labelText: isStart ? '시작시간' : '마감시간'
             ),
             // 캘린더 선택 위에 글자 입력할 수 있는 Edit Buttom 사라짐.
             initialEntryMode: DatePickerEntryMode.calendarOnly,
-
-            type: DateTimePickerType.date,
-            dateMask: 'yyyy-MM-dd',
-            initialDate: minimumDay,
-            firstDate: isStart ? DateTime.now() : minimumDay,
-            lastDate: isStart ? maximumDay : DateTime(3000),
-
-
+            // 타임 피커에서 수동으로 입력하는 다이얼 사라짐.
+            timePickerEntryModeInput: true,
       ),
     ]));
   }

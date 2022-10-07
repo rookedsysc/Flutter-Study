@@ -30,10 +30,12 @@ class LocalDatabase extends _$LocalDatabase{
       into(schedules).insert(data);
   Future<int> createCategoryColor(CategoryColorsCompanion data) =>
       into(categoryColors).insert(data);
-
   Future<List<CategoryColor>> getCategoryColors() =>
       select(categoryColors).get();
 
+  // watch로 값을 받아주면 Schedule이 바뀔 때 yeild로 데이터를 return 해줌.
+  Stream<List<Schedule>> watchSchedules() =>
+      select(schedules).watch();
 
   // Code Generator로 db를 생성하고 나서 override 해줘야 함.
   // DB의 구조가 바뀔 때마다 변경되는 데이터 베이스 구조 Version임.
