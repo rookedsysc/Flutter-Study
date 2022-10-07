@@ -8,6 +8,7 @@ import 'package:scheduler_lab/component/today_banner.dart';
 import 'package:scheduler_lab/component/schedule_bottom_sheet.dart';
 import 'package:scheduler_lab/const/colors.dart';
 import 'package:scheduler_lab/datebase/drift_database.dart';
+import 'package:scheduler_lab/model/schedule_with_color.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -79,7 +80,7 @@ class _Schedule extends StatelessWidget {
     return Expanded(
       child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: StreamBuilder<List<Schedule>>(
+          child: StreamBuilder<List<ScheduleWithColor>>(
             stream: GetIt.I<LocalDatabase>().watchSchedules(selectedDay),
             builder: (context, snapshot) {
               print('실제로 불러온 전체 데이터 확인 : ${snapshot.data}');
@@ -103,17 +104,15 @@ class _Schedule extends StatelessWidget {
                   },
                   itemCount: snapshot.hasData ? snapshot.data!.length : 0,
                   itemBuilder: (context, index) {
-                    if(snapshot.hasData) {
-                      final schedule = snapshot.data![index];
-                      return ScheduleCard(
-                          color: Colors.orange,
-                          content: schedule.content,
-                          startTime: schedule.starttime,
-                          endTime: schedule.endTime
-                      );
-                    }
-                    return Container();
-                  });
+                    // <Schedule>에서 <ScheduleWithColor>로 바뀜.
+                    final scheduleWithColor = snapshot.data![index];
+                    return ScheduleCard(
+                        color: Color(int.parse('FF${scheduleWithColor.categoryColor.hexCode}', radix: 16)),
+                        content: scheduleWithColor.schedule.content,
+                        startTime: scheduleWithColor.schedule.starttime,
+                        endTime: scheduleWithColor.schedule.endTime
+                    );
+                },);
             }
           )),
     );

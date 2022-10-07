@@ -6,7 +6,12 @@ class ScheduleCard extends StatelessWidget {
   final int endTime;
   final String content;
   final Color color;
-  const ScheduleCard({required this.color, required this.content,required this.startTime, required this.endTime, Key? key}) : super(key: key);
+  const ScheduleCard({
+    required this.color,
+    required this.content,
+    required this.startTime,
+    required this.endTime, Key? key
+  }) : super(key: key);
 
 
   @override
