@@ -28,13 +28,20 @@ class LocalDatabase extends _$LocalDatabase{
   // insert를 하면 자동으로 ID값(Primary Key)을 return 받을 수 있음.
   Future<int> createSchedule(SchedulesCompanion data) =>
       into(schedules).insert(data);
+
   // id값으로 하나의 데이터만 받아옴.
   Future<Schedule> getScheduleById(int id) =>
       (select(schedules)..where((tbl) => tbl.id.equals(id))).getSingle();
+
   Future<int> createCategoryColor(CategoryColorsCompanion data) =>
       into(categoryColors).insert(data);
+
   Future<List<CategoryColor>> getCategoryColors() =>
       select(categoryColors).get();
+
+  Future<int> updateScheduleById(int id, SchedulesCompanion data) =>
+      (update(schedules)..where((tbl) => tbl.id.equals(id))).write(data);
+
   // 삭제를 하면 삭제하는 값의 ID를 return 받을 수 있음.
   Future<int> removeSchedule(int id) =>
       // where 문은 return 값이 없음, 그래서 excutedFunc..excuteFunc하면 excuteFunc(where문)가 실행한 excutedFunc가 return됨.

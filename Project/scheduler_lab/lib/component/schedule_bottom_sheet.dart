@@ -56,7 +56,6 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
           startTime = snapshot.data!.starttime;
           endTime = snapshot.data!.endTime;
           content = snapshot.data!.content;
-          print('content : ${content}');
           selectedColorId = snapshot.data!.colorId;
         }
         return SafeArea(
@@ -135,15 +134,29 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
     if(formKey.currentState!.validate()){
       formKey.currentState!.save();
 
-      final key = await GetIt.I<LocalDatabase>().createSchedule(
-        SchedulesCompanion(
-          date: Value(widget.selectedDate),
-          starttime: Value(startTime!),
-          endTime: Value(endTime!),
-          content: Value(content!),
-          colorId: Value(selectedColorId!)
-        ),
-      );
+      if(widget.id == null) {
+        await GetIt.I<LocalDatabase>().createSchedule(
+          SchedulesCompanion(
+              date: Value(widget.selectedDate),
+              starttime: Value(startTime!),
+              endTime: Value(endTime!),
+              content: Value(content!),
+              colorId: Value(selectedColorId!)
+          ),
+        );
+        // widget id가 있으면 선택된 것이므로 update 실행해줌.
+      } else {
+        await GetIt.I<LocalDatabase>().updateScheduleById(widget.id!,
+          SchedulesCompanion(
+              date: Value(widget.selectedDate),
+              starttime: Value(startTime!),
+              endTime: Value(endTime!),
+              content: Value(content!),
+              colorId: Value(selectedColorId!)
+          ),
+        );
+      }
+
       Navigator.of(context).pop();
     } else {
       print('에러가 있습니다.');
