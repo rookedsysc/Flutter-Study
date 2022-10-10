@@ -115,15 +115,26 @@ class _Schedule extends StatelessWidget {
                         direction: DismissDirection.endToStart,
                         // Dismiss 동작시 실행시킬 함수
                         onDismissed: (DismissDirection direction){
-                        // 헤당 ID 가지고 있는 category Color 삭제함.
-                        GetIt.I<LocalDatabase>().removeSchedule(scheduleWithColor.categoryColor.id);
-
+                        // 헤당 ID 가지고 있는 Schedule 삭제함.
+                        GetIt.I<LocalDatabase>().removeSchedule(scheduleWithColor.schedule.id);
                         },
-                      child: ScheduleCard(
-                          color: Color(int.parse('FF${scheduleWithColor.categoryColor.hexCode}', radix: 16)),
-                          content: scheduleWithColor.schedule.content,
-                          startTime: scheduleWithColor.schedule.starttime,
-                          endTime: scheduleWithColor.schedule.endTime
+                      child: GestureDetector(
+                        onTap: (){
+                          showModalBottomSheet(
+                            // isScrollControlled 옵션을 사용해주면 화면 최대 크기까지 showModalBottomSheet가 늘어남.
+                              isScrollControlled: true,
+                              context: context, builder: (_){
+                            return ScheduleBottomSheet(
+                              id: scheduleWithColor.schedule.id,
+                              selectedDate: selectedDay,);
+                          });
+                        },
+                        child: ScheduleCard(
+                            color: Color(int.parse('FF${scheduleWithColor.categoryColor.hexCode}', radix: 16)),
+                            content: scheduleWithColor.schedule.content,
+                            startTime: scheduleWithColor.schedule.starttime,
+                            endTime: scheduleWithColor.schedule.endTime
+                        ),
                       ),
                     );
                 },);

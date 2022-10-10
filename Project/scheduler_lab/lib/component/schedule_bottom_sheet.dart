@@ -12,7 +12,8 @@ import 'package:scheduler_lab/model/category_color.dart';
 
 class ScheduleBottomSheet extends StatefulWidget {
   final DateTime selectedDate;
-  const ScheduleBottomSheet({required this.selectedDate, Key? key}) : super(key: key);
+  final int? id;
+const ScheduleBottomSheet({this.id, required this.selectedDate, Key? key}) : super(key: key);
 
   @override
   State<ScheduleBottomSheet> createState() => _ScheduleBottomSheetState();
@@ -21,6 +22,7 @@ class ScheduleBottomSheet extends StatefulWidget {
 class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
   // form의 상태를 관리해주는 일종의 controller
   final GlobalKey<FormState> formKey = GlobalKey();
+
   int? startTime;
   int? endTime;
   String? content;
@@ -31,66 +33,96 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
     // viewInset: 시스템 UI가 차지하는 크기
     final bottomInsets = MediaQuery.of(context).viewInsets.bottom;
 
-    return SafeArea(
-      child: Container(
-        // container 높이에도 키보드 사이즈만큼 늘려줘야 함.
-        height: MediaQuery.of(context).size.height / 2 + bottomInsets,
-        // color: Colors.white,
-        child: Padding(
-          // 키보드 만큼의 바텀 패딩을 줌.
-          padding: EdgeInsets.only(bottom: bottomInsets),
-          // 모든 TextFormField들을 동시에 줌
-          child: Padding(
-            padding: const EdgeInsets.only(top: 4.0, right: 8.0, left: 8.0),
-            child: Form(
-              key: formKey,
-              // 어떠한 동작으로 인해서가 아니라 자동으로 validate를 검증함.
-              // autovalidateMode: AutovalidateMode.always,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _Time(onStartSaved: (String? val) {
-                    startTime = int.parse(DateTime.parse(val!).hour.toString());
-                  }, onEndSaved: (String? val) {
-                    endTime = int.parse(DateTime.parse(val!).hour.toString());
-                  },), // _Time >> Row _CompactDatePicker
-                  SizedBox(
-                    height: 8.0,
+    return FutureBuilder<Schedule>(
+      future: widget.id == null ? null : GetIt.I<LocalDatabase>().getScheduleById(widget.id!),
+      builder: (context, snapshot) {
+        // 에러 처리
+        if (snapshot.hasError){
+          return Center(
+            child: Text('스케줄을 불러올 수 없습니다.'),
+          );
+        }
+
+        // FutureBuilder 처음 실행됐고 로딩 중일 때
+        if (snapshot.connectionState != ConnectionState.none && !snapshot.hasData) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        // Future가 실행이 되고 값이 있는데 단 한 번도 startTime이 세팅되지 않았을 때
+        // startTime == null 조건을 제거 하면 setState를 실행할 때마다 실해이 되어서 selectedColorID 값이 바뀌질 않음.
+        if (snapshot.hasData && startTime == null) {
+          startTime = snapshot.data!.starttime;
+          endTime = snapshot.data!.endTime;
+          content = snapshot.data!.content;
+          print('content : ${content}');
+          selectedColorId = snapshot.data!.colorId;
+        }
+        return SafeArea(
+          child: Container(
+            // container 높이에도 키보드 사이즈만큼 늘려줘야 함.
+            height: MediaQuery.of(context).size.height / 2 + bottomInsets,
+            // color: Colors.white,
+            child: Padding(
+              // 키보드 만큼의 바텀 패딩을 줌.
+              padding: EdgeInsets.only(bottom: bottomInsets),
+              // 모든 TextFormField들을 동시에 줌
+              child: Padding(
+                padding: const EdgeInsets.only(top: 4.0, right: 8.0, left: 8.0),
+                child: Form(
+                  key: formKey,
+                  // 어떠한 동작으로 인해서가 아니라 자동으로 validate를 검증함.
+                  // autovalidateMode: AutovalidateMode.always,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _Time(onStartSaved: (String? val) {
+                        startTime = int.parse(DateTime.parse(val!).hour.toString());
+                      }, onEndSaved: (String? val) {
+                        endTime = int.parse(DateTime.parse(val!).hour.toString());
+                      },), // _Time >> Row _CompactDatePicker
+                      SizedBox(
+                        height: 8.0,
+                      ),
+                      _Content(
+                        content: content ?? null,
+                        onContentSaved: (String? val) {
+                        content = val;
+                      },),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      FutureBuilder<List<CategoryColor>>(
+                        // main에 있는 LocalDatabase의 값을 code에 바로 주입시킴.
+                        future: GetIt.I<LocalDatabase>().getCategoryColors(),
+                        builder: (context, snapshot) {
+                          // 초기 ID값 설정.
+                          if(snapshot.hasData && selectedColorId == null && snapshot.data!.isNotEmpty) {
+                            selectedColorId = snapshot.data![0].id;
+                          }
+                          // parse('FFFFFF',radix = 16) : 16진수로 변환.
+                          return _ColorPicker(
+                            colors: snapshot.hasData ? snapshot.data! : [],
+                            selectedColorId: selectedColorId!,
+                            colorIdSetter: (int id) {
+                              setState(() {
+                                selectedColorId = id;
+                              });
+                            },
+                          );
+                        }
+                      ),
+                      SizedBox(height: 4.0,),
+                      _SaveButton(onPressed: onSavePressed,)
+                    ],
                   ),
-                  _Content(onContentSaved: (String? val) {
-                    content = val;
-                  },),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  FutureBuilder<List<CategoryColor>>(
-                    // main에 있는 LocalDatabase의 값을 code에 바로 주입시킴.
-                    future: GetIt.I<LocalDatabase>().getCategoryColors(),
-                    builder: (context, snapshot) {
-                      // 초기 ID값 설정.
-                      if(snapshot.hasData && selectedColorId == null && snapshot.data!.isNotEmpty) {
-                        selectedColorId = snapshot.data![0].id;
-                      }
-                      // parse('FFFFFF',radix = 16) : 16진수로 변환.
-                      return _ColorPicker(
-                        colors: snapshot.hasData ? snapshot.data! : [],
-                        selectedColorId: selectedColorId!,
-                        colorIdSetter: (int id) {
-                          setState(() {
-                            selectedColorId = id;
-                          });
-                        },
-                      );
-                    }
-                  ),
-                  SizedBox(height: 4.0,),
-                  _SaveButton(onPressed: onSavePressed,)
-                ],
+                ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      }
     );
   }
   void onSavePressed() async {
@@ -102,11 +134,6 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
     // 모든 textFormField에서 validator() 실행됨.
     if(formKey.currentState!.validate()){
       formKey.currentState!.save();
-
-      print('----------------------');
-      print('startTime: $startTime');
-      print('endTime: $endTime');
-      print('content: $content');
 
       final key = await GetIt.I<LocalDatabase>().createSchedule(
         SchedulesCompanion(
@@ -222,12 +249,14 @@ class _TimeState extends State<_Time> {
 
 class _Content extends StatelessWidget {
   final FormFieldSetter<String> onContentSaved;
-  const _Content({required this.onContentSaved, Key? key}) : super(key: key);
+  final String? content;
+  const _Content({this.content, required this.onContentSaved, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: CustomTextField(
+        content: content ?? null,
         label: '내용',
         isTime: false,
         onTextSaved: onContentSaved,

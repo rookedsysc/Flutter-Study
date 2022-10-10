@@ -7,7 +7,8 @@ class CustomTextField extends StatelessWidget {
   final String label;
   final bool isTime; // true - 시간 false - 내용
   final FormFieldSetter<String> onTextSaved;
-  const  CustomTextField({required this.onTextSaved, required this.isTime, required this.label, Key? key}) : super(key: key);
+  final String? content;
+  const CustomTextField({this.content, required this.onTextSaved, required this.isTime, required this.label, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +35,7 @@ class CustomTextField extends StatelessWidget {
       },
       onSaved: onTextSaved,
 
+      initialValue: content ?? null,
       // 밑줄 색상
       cursorColor: Colors.grey,
       style: TextStyle(color: Colors.black),

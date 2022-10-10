@@ -28,6 +28,9 @@ class LocalDatabase extends _$LocalDatabase{
   // insert를 하면 자동으로 ID값(Primary Key)을 return 받을 수 있음.
   Future<int> createSchedule(SchedulesCompanion data) =>
       into(schedules).insert(data);
+  // id값으로 하나의 데이터만 받아옴.
+  Future<Schedule> getScheduleById(int id) =>
+      (select(schedules)..where((tbl) => tbl.id.equals(id))).getSingle();
   Future<int> createCategoryColor(CategoryColorsCompanion data) =>
       into(categoryColors).insert(data);
   Future<List<CategoryColor>> getCategoryColors() =>
