@@ -28,7 +28,7 @@ class SingleChildScrollViewScreen extends StatelessWidget {
     return SingleChildScrollView(
       child: Column(
         children:
-            rainbowColors.map((e) => RenderColorContainer(color: e)).toList(),
+            rainbowColors.map((e) => RenderColorContainer(index: rainbowColors.indexOf(e), color: e)).toList(),
       ),
     );
   }
@@ -46,7 +46,7 @@ class SingleChildScrollViewScreen extends StatelessWidget {
       child: Column(
         children: rainbowColors
             .map(
-              (e) => RenderColorContainer(color: e),
+              (e) => RenderColorContainer(index:rainbowColors.indexOf(e),color: e),
             )
             .toList(),
       ),
@@ -60,7 +60,7 @@ class SingleChildScrollViewScreen extends StatelessWidget {
       clipBehavior: Clip.none,
       child: Column(
         children: [
-          RenderColorContainer(color: Colors.black),
+          RenderColorContainer(index:0, color: Colors.black),
         ],
       ),
     );
@@ -73,6 +73,7 @@ class SingleChildScrollViewScreen extends StatelessWidget {
         children: numbers
             .map(
               (e) => RenderColorContainer(
+                index: e,
                 color: rainbowColors[e % rainbowColors.length],
               ),
             )
