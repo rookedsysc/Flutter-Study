@@ -72,11 +72,9 @@ class _ReorderableListViewScreenState extends State<ReorderableListViewScreen> {
               // yellow를 맨 앞으로 옮기고싶다.
               // yellow : 2 oldIndex -> 0 newIndex
               // [yellow, red, orange]
-              if (oldIndex < newIndex) {
-                newIndex -= 1;
-              }
-              final item = renderNumbers.removeAt(oldIndex);
+              final item = renderNumbers[oldIndex];
               renderNumbers.insert(newIndex, item);
+              renderNumbers.removeAt(oldIndex);
             });
           },
         ));
