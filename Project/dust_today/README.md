@@ -1,16 +1,17 @@
-# dust_today
+#### Dust Today
+미세먼지 정부 API를 가져와서 표시해주는 어플리케이션 
 
-A new Flutter project.
+<details>
+<summary>Skill & Stack</summary>
+<div markdown="1">
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+##### Stack & Skill <br>
+- Custom Scroll View 위젯 실전 사용!<br>
+- Drawer 위젯 사용 <br>
+- Dio로 HTTP 요청하기<br>
+- Hive로 NoSQL 데이터 관리<br>
+- 오프라인 지원 <br>
+- 정부 오픈 API 알아보기 <br>
+<br>
+</div>
+</details>

@@ -36,6 +36,9 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
+  hive_flutter: ^1.1.0
+  hive: ^2.0.6
+  dio: ^4.0.6
 
 dev_dependencies:
   flutter_test:
@@ -47,6 +50,8 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
+  build_runner: ^2.3.0
+  hive_generator: ^1.1.3
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -59,6 +64,9 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
+  assets: 
+    - asset/img/
+
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
@@ -66,6 +74,21 @@ flutter:
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
+
+  fonts:
+    - family: sunflower 
+      fonts:
+        - asset: asset/fonts/Sunflower-Bold.ttf
+          weight: 700
+    - family: sunflower 
+      fonts:
+        - asset: asset/fonts/Sunflower-Medium.ttf
+          weight: 500
+    - family: sunflower 
+      fonts:
+        - asset: asset/fonts/Sunflower-Light.ttf
+          weight: 700
+
 
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/assets-and-images/#from-packages
