@@ -11,11 +11,14 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: primaryColor,
-        body: CustomScrollView(
-          slivers: [
-            MainAppBar(),
-          ],
-        ));
+      // Scaffold 안에 넣어주기만 하면 자동으로 넣어줌
+      drawer: Drawer(),
+      backgroundColor: primaryColor,
+      body: CustomScrollView(
+        slivers: [
+          MainAppBar(),
+        ],
+      ),
+    );
   }
 }
