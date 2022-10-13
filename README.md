@@ -101,6 +101,74 @@ Studying Flutter (09/17 ~<br>
 
 [Fast Link](https://github.com/rookedsysc/Flutter-Study/tree/main/Project/video_player_mypj/lib)
 
+#### 스케줄러
+스케줄러를 통한 일정관리
+<details>
+<summary>Skill & Stack</summary>
+<div markdown="1">
+
+##### Stack & Skill <br>
+- SQLite를 이용한 데이터 관리 <br>
+- 간단한 SQL 문법 <br>
+- Drift 패키지 (SQLite ORM) <br>
+- Table Calendar 패키지 (캘린더) <br>
+- Getlt 패키지 (Dependency Injection) <br>
+- Spinkit 패키지 (로딩 위젯) <br>
+- Intl 패키지 (다국어화) <br>
+- TextField (글자 인풋받기) <br>
+- padLeft (글자 표현식)<br>
+- BoxDecoration으로 원 만들기 <br>
+- IntrinsicHeight (row 내에서 가장 높은 개체의 높이로 높이 제한하기)<br>
+- FloatingActionButton <br>
+- showModalBottomSheet (밑에서 부터 알림창 올라오는 widget (cupertino Dialog와 비슷함))<br>
+- viewInsets(키보드가 가리는 만큼의 사이즈 구하기)<br>
+<br>
+[main](https://github.com/rookedsysc/Flutter-Study/blob/main/flutterProject/web_view/lib/main.dart)
+
+##### Have to fix
+CompactDatePicker initial Value 저장안됨,
+DatePicker로 선택한 날짜로 Date 저장 안됨.
+</div>
+</details>
+
+#### 오늘도 출근
+Google Map을 이용해서 회사 근처에 도착하면 출근 기능 구현.
+
+<details>
+<summary>Skill & Stack</summary>
+<div markdown="1">
+
+##### Stack & Skill <br>
+- Google Maps 지도 사용하기<br>
+- 지도에 마커 표시하기<br>
+- 지도에 동그라미 표시하기<br>
+- 현재 위치 표시하고 위도, 경도 구하기<br>
+- 위도, 경도간 거리 구하기 <br>
+- Material Dialog (알람 발생)<br>
+<br>
+</div>
+</details>
+
+#### Live Video Chatt
+화상 통화 기능 구현.
+
+<details>
+<summary>Skill & Stack</summary>
+<div markdown="1">
+
+##### Stack & Skill <br>
+- Agora API<br>
+- RTC  (Real Time Communication<br>
+- Shadow<br>
+- Stack<br>
+- permission_handler: ^10.0.2 <br>
+- BoxDecoration<br>
+<br>
+</div>
+</details>
+
+
+
 ## Blog Posting
 [Blog Posting](http://rookedsysc.github.io/flutter/DartGrammar/)
 [Flutter Docs](http://lokigem.github.io/docs/)
