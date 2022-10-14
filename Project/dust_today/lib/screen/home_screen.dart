@@ -1,4 +1,5 @@
 import 'package:dust_today/component/main_app_bar.dart';
+import 'package:dust_today/component/main_drawer.dart';
 import 'package:dust_today/const/color.dart';
 import 'package:dust_today/const/custom_font.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +13,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       // Scaffold 안에 넣어주기만 하면 자동으로 넣어줌
-      drawer: Drawer(),
+      drawer: MainDrawer(),
       backgroundColor: primaryColor,
       body: CustomScrollView(
         slivers: [
