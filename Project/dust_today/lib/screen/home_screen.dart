@@ -1,5 +1,8 @@
+import 'package:dust_today/component/card_title.dart';
 import 'package:dust_today/component/category_card.dart';
+import 'package:dust_today/component/hourly_card.dart';
 import 'package:dust_today/component/main_app_bar.dart';
+import 'package:dust_today/component/main_card.dart';
 import 'package:dust_today/component/main_drawer.dart';
 import 'package:dust_today/component/main_stat.dart';
 import 'package:dust_today/const/color.dart';
@@ -25,7 +28,9 @@ class HomeScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                CategoryCard()
+                CategoryCard(),
+                const SizedBox(height: 16.0,),
+                HourlyCard(),
               ],
             ),
           )

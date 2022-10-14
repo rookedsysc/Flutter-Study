@@ -1,3 +1,5 @@
+import 'package:dust_today/component/card_title.dart';
+import 'package:dust_today/component/main_card.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/material.dart';
@@ -13,40 +15,16 @@ class CategoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       height: 160, // height 정해주지 않으면 ListView에서 Error 남.
-      child: Card(
-        margin: EdgeInsets.symmetric(horizontal: 8.0),
-        shape: RoundedRectangleBorder(
-            // Card의 테두리를 둥글게 해줌
-            borderRadius: BorderRadius.all(Radius.circular(16.0))),
-        color: lightColor,
+      child: MainCard(
         // LayoutBuilder가 감싸고 있는 곳의 크기를 Constraints에 넣어줌
         child: LayoutBuilder(builder: (context, Constraints) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               // 카드 제목
-              Container(
-                  decoration: BoxDecoration(
-                    color: darkColor,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(16),
-                      topRight: Radius.circular(16),
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: Text(
-                      '종류별 통계',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  )),
-              // 카드
+              CardTitle(title: '종류별 통계'),
+              // ListView는 Epxnaded 안에 들어가야 함.
               Expanded(
-                // ListView는 Epxnaded 안에 들어가야 함.
                 child: ListView(
                   scrollDirection: Axis.horizontal,
                   physics: PageScrollPhysics(),
