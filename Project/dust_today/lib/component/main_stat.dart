@@ -9,8 +9,10 @@ class MainStat extends StatelessWidget {
   final String level;
   // 오염 수치
   final String stat;
+  final double width;
   const MainStat(
-      {required this.category,
+      {required this.width,
+      required this.category,
       required this.level,
       required this.imgPath,
       required this.stat,
@@ -19,31 +21,35 @@ class MainStat extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final _ts = TextStyle(color: Colors.black);
-    return Column(
-      children: [
-        Text(
-          category,
-          style: _ts,
-        ), 
-        SizedBox(
-          height: 8.0,
-        ),
-        Image.asset(
-          imgPath,
-          width: 50.0,
-        ),
-        SizedBox(
-          height: 8.0,
-        ),
-        Text(
-          level,
-          style: _ts,
-        ), 
-        Text(
-          stat,
-          style: _ts,
-        )
-      ],
+    return SizedBox(
+      width: width,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            category,
+            style: _ts,
+          ), 
+          SizedBox(
+            height: 8.0,
+          ),
+          Image.asset(
+            imgPath,
+            width: 50.0,
+          ),
+          SizedBox(
+            height: 8.0,
+          ),
+          Text(
+            level,
+            style: _ts,
+          ), 
+          Text(
+            stat,
+            style: _ts,
+          )
+        ],
+      ),
     );
   }
 }
