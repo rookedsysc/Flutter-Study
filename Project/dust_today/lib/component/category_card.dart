@@ -27,7 +27,6 @@ class CategoryCard extends StatelessWidget {
               Expanded(
                 child: ListView(
                   scrollDirection: Axis.horizontal,
-                  physics: PageScrollPhysics(),
                   children: List.generate(
                     20,
                     (index) => MainStat(
