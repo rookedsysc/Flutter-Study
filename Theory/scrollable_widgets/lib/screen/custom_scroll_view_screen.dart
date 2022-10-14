@@ -14,14 +14,31 @@ class CustomScrollViewScreen extends StatelessWidget {
           slivers: [
             renderSliverAppBar(),
             renderHeader(),
+            renderBox(),
+            renderHeader(),
             renderBuilderSliverList(),
             renderHeader(),
             renderSliverGrid(),
-          ],
+                      ],
         ),
       ),
     );
   }
+
+  SliverToBoxAdapter renderBox() {
+    return SliverToBoxAdapter(
+      child: Container(
+        color: Colors.white,
+        height: 50,
+        child: Text(
+          '이건 되지롱 !!!!!',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  }
+
 
   SliverList renderBuilderSliverList() {
     return SliverList(
