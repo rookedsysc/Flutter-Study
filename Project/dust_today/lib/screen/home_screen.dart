@@ -11,6 +11,7 @@ import 'package:dust_today/const/custom_font.dart';
 import 'package:dust_today/const/status_level.dart';
 import 'package:dust_today/model/stat_model.dart';
 import 'package:dust_today/repository/stat_repository.dart';
+import 'package:dust_today/utils/data_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/src/widgets/container.dart';
@@ -62,10 +63,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
             // 현재 값의 status Level 구하기
             StatModel recentStat = stats[0];
-            final status = statusLevel
-                // minFineDust가 현재 서울의 농도보다 작은 것들만 필터링
-                .where((element) => element.minFineDust < recentStat.seoul)
-                .last; // 그 중에서 마지막(가장 높은 값)
+            final status = DataUtils.getStatusFromItemCodeAndValue(
+                value: recentStat.seoul, itemCode: ItemCode.PM10);
 
             return CustomScrollView(
               slivers: [

@@ -1,5 +1,6 @@
 import 'package:dust_today/model/stat_model.dart';
 import 'package:dust_today/model/status_model.dart';
+import 'package:dust_today/utils/data_utils.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +37,7 @@ class MainAppBar extends StatelessWidget {
                 ),
                 Text(
                   // 날짜
-                  getTimeFromDateTime(dateTime: stat.dataTime),
+                  DataUtils.getTimeFromDateTime(dateTime: stat.dataTime),
                   style: ts.copyWith(fontSize: 20),
                   ),
                 SizedBox(
@@ -66,9 +67,5 @@ class MainAppBar extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  getTimeFromDateTime({required DateTime dateTime}) {
-    return DateFormat('yyyy-MM-dd hh:mm').format(dateTime).toString();
   }
 }
