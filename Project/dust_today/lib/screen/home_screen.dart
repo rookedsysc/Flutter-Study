@@ -8,6 +8,7 @@ import 'package:dust_today/component/main_drawer.dart';
 import 'package:dust_today/component/main_stat.dart';
 import 'package:dust_today/const/color.dart';
 import 'package:dust_today/const/custom_font.dart';
+import 'package:dust_today/const/regions.dart';
 import 'package:dust_today/const/status_level.dart';
 import 'package:dust_today/model/stat_model.dart';
 import 'package:dust_today/repository/stat_repository.dart';
@@ -27,8 +28,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
-
+  String region = regions[0];
 
   Future<List<StatModel>> fetchData() async {
     final statModels = await StatRepository.fetchData();
@@ -40,7 +40,19 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       // Scaffold 안에 넣어주기만 하면 자동으로 넣어줌
-      drawer: MainDrawer(),
+      // 왼쪽에서 bottomSheet나 snackBar처럼 화면을 덮으면서 나오는 화면
+      drawer: MainDrawer(
+        selectedRegion: region,
+        onRegionTap: ((e) {
+          setState(() {
+            // main_drawer에서 넘겨준 e(region)이 region에 담김.
+            // region은 selectedRegion에 들어가서 선택된 도시를 바꿔줌.
+            region = e;
+          });
+          Navigator.of(context).pop();
+        }),
+        ),
+
       backgroundColor: primaryColor,
       body: FutureBuilder<List<StatModel>>(
           future: fetchData(),
@@ -69,6 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
             return CustomScrollView(
               slivers: [
                 MainAppBar(
+                  region: region,
                   stat: recentStat,
                   status: status,
                 ),

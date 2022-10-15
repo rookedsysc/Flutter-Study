@@ -12,7 +12,12 @@ import '../const/custom_font.dart';
 class MainAppBar extends StatelessWidget {
   final StatusModel status; // 값에 따라 분류하는 모델
   final StatModel stat; // 실제로 API에서 받아오는 값
-  const MainAppBar({required this.stat, required this.status, super.key});
+  final String region;
+  const MainAppBar(
+      {required this.region,
+      required this.stat,
+      required this.status,
+      super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +34,7 @@ class MainAppBar extends StatelessWidget {
               children: [
                 Text(
                   // 도시
-                  '서울',
+                  region,
                   style: ts.copyWith(fontSize: 40.0, fontWeight: FontWeight.w700),
                 ),
                 SizedBox(
