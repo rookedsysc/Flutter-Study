@@ -33,14 +33,26 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<Map<ItemCode, List<StatModel>>> fetchData() async {
     Map<ItemCode, List<StatModel>> stats = {};
 
+    List<Future> futures = [];
+
     for(ItemCode itemCode in ItemCode.values) {
-      final statModels = await StatRepository.fetchData(
+      futures.add(
+        StatRepository.fetchData(
         itemCode: itemCode,
+        ),
       );
+    }
+    // futures에 들어있는 모든 Future이 실행될 때까지 기다림
+    // 해당 Future 실행결과 값, 즉, List<StatModel>이 들어감
+    final results = await Future.wait(futures);
+
+    for(int i = 0; i < futures.length; i++) {
+      final key = ItemCode.values[i]; 
+      final value = results[i];
 
       stats.addAll({
-        itemCode: statModels,
-      }); 
+        key: value,
+      });
     }
 
     return stats;
