@@ -1,17 +1,22 @@
+import 'package:dust_today/model/stat_model.dart';
+import 'package:dust_today/model/status_model.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../const/color.dart';
 import '../const/custom_font.dart';
 
 class MainAppBar extends StatelessWidget {
-  const MainAppBar({super.key});
+  final StatusModel status; // 값에 따라 분류하는 모델
+  final StatModel stat; // 실제로 API에서 받아오는 값
+  const MainAppBar({required this.stat, required this.status, super.key});
 
   @override
   Widget build(BuildContext context) {
     return SliverAppBar(
-      backgroundColor: primaryColor,
+      backgroundColor: status.primaryColor,
       expandedHeight: 500,
       flexibleSpace: FlexibleSpaceBar(
         background: SafeArea(
@@ -22,7 +27,7 @@ class MainAppBar extends StatelessWidget {
             child: Column(
               children: [
                 Text(
-                  // 날짜
+                  // 도시
                   '서울',
                   style: ts.copyWith(fontSize: 40.0, fontWeight: FontWeight.w700),
                 ),
@@ -31,28 +36,28 @@ class MainAppBar extends StatelessWidget {
                 ),
                 Text(
                   // 날짜
-                  DateTime.now().toString(),
+                  getTimeFromDateTime(dateTime: stat.dataTime),
                   style: ts.copyWith(fontSize: 20),
-                ),
+                  ),
                 SizedBox(
                   height: 20,
                 ),
                 Image.asset(
-                  'asset/img/mediocre.png',
+                  status.imagePath,
                   width: MediaQuery.of(context).size.width / 2,
                 ),
                 SizedBox(
                   height: 20,
                 ),
                 Text(
-                  '보통',
+                  status.label,
                   style: ts.copyWith(fontSize: 40, fontWeight: FontWeight.w700),
                 ),
                 SizedBox(
                   height: 8,
                 ),
                 Text(
-                  '나쁘지 않네요!',
+                  status.comment,
                   style: ts.copyWith(fontSize: 20),
                 ),
               ],
@@ -61,5 +66,9 @@ class MainAppBar extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  getTimeFromDateTime({required DateTime dateTime}) {
+    return DateFormat('yyyy-MM-dd hh:mm').format(dateTime).toString();
   }
 }

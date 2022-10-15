@@ -1,0 +1,81 @@
+/usr/share/scrcpy/scrcpy-server: 1 file pushed. 1.6 MB/s (39473 bytes in 0.024s)
+[server] INFO: Device: samsung SM-A202K (Android 11)
+INFO: Renderer: opengl
+INFO: OpenGL version: 4.1 (Compatibility Profile) Mesa 22.0.5
+INFO: Trilinear filtering enabled
+INFO: Initial texture: 720x1560
+[2022-10-14T13:11:56.674Z] error RSA PRIVATE KEY not found from openssl output:
+---stdout---
+-----BEGIN PRIVATE KEY-----
+MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC4Ph5FxjNvOsrM
+PZk1dyV/p34NwAeGv4X9Im0fbCMWm1y47FwKiQ0NkTUlBDsZHQmY4fkulU48nYW9
+lIkoRjimSrIkEaHI7nSw9qh/PUHrWjviqyO7Y39nv+lhwO4Sm3moDnuvl+fQJxrV
+Nb4RkBq72S5fTYDBwgBe7s+qHF2m15KFDPUcnOYfjSWYRqCsLwb1BL5fYF+oY2EI
+PFRzj5z6NDO0LC0Pl7taG+Mc5aUKJfkntM74mCc98yhlNKDUxYo46scLb+aDyBAR
+2Rh8cU4qi0f0oZREDjr5zw1dN3PpPNNCNMGhNkaS6Vkt+5lvXgg7nAqcPe88kfyw
+7wmkbE2tAgMBAAECggEATFmdpO+OSAVWng3WzEO8O+rWf285DzuWFIDsNK3U2pz2
+b0GvoMQLrzgiDF10+iLA4+SdJRNFcTQcBKSltBVpi2v/55eQ8lny7JTC3buuchAa
+KgQe0hxY408xsUtIvVhFsYGS+wDZ1TYnVfyn79JGadsF7wOInIK/MZgIYafQnX8b
+Fdi0x8oN1j4ewgS6d6lFp7VIrWxiXIoMmlOUrJX91G6qUq5A8+WZIIASSgmmYHNO
+m2reZyPHSwqSzUEROk8kxu7UrlSTotnVZSs+EL/uMLJvIiyd4DoxOiKJq9Jz6SV+
+g4/qydtxi0czyJTkiWNqS0k67lOE5qmEriJT/ZgC9wKBgQDdb3wMEXdkXgv+t+If
+dnAMNuTWJITlmudAmI6jVVYOQBM6f40XSpy8zWntk46ptqBba1Xl1Z6X23JbacWR
+SepzpxKEb4PSU3fR/qaC4xE1lFqsQ2yWqRgI/9WVXN/LB6jG7tP9fI0/JkWCSQva
+Q1RKE8yPZwr5KrfdtohxbAwrAwKBgQDVAGpufVKAWnGym8GY9JhOQ2Mp7Z5wlbeT
+eV8dkauFOx72mcXOb4gtzoB+ITbkJ+VgNsYx1fAdoITdZ3VtoXJggywFFUWfc4gV
+2oWHDMjQ/m/qb+224LDj0QUlFedP3UpR7YZAK3uMfIoiPVB8dxqHb1EmZ6rIxBZL
+V0H1bnBtjwKBgENGZrKn79UPead2qH2UlzAu0VF6IOI9MLsAXn2jJJUJxI3GSNBl
+u77kzaT/ap2HParorl04jIlog5LgTMT6Zv+iJ88SrkMNVt729hHX+NeFbhLeHTSc
+xQ+e4n4RjHB7sDxYPRHLcIJaF04g8TfrssUaxNBgpwXSg7AZj9Sd1giPAoGBAL9W
++ET43zveA3Tm5ip4zri/YD0x77pDQ/1+cislyGaOjWoJCOBA4JwFfPfQ7nZWQH8F
+tVTfUivLHo+leJ9bAFwieVC3oytxpTW8b2a53UugxPhcQ7accUq1YWHHI1ti9nhS
+Xt8WMI4q8gt/+OVWOMahAMz3IzvmqgBUCjRnWSeRAoGACtgGfZVh7KV8fX5EeTGo
+yZWbAHc0A/byYmB5CSLRy7vXjr9ZKvx6nLJ+t6mCUmHYrtoTVUzjYTKoXwZifVUy
+I3S6/UGY1AoqqlTGwLLMnSNpyZdJ0XKJK8yuB7irl8Prqja4OryvgsAJcOgCuuw3
+cCwt3lDOKwn6IPhfDGPcpYY=
+-----END PRIVATE KEY-----
+
+---stderr---
+
+code: 0
+[2022-10-14T13:18:12.241Z] info  code-server 4.7.1 77bbed48315a7cc275dc05a53d197197928f4b88
+[2022-10-14T13:18:12.242Z] info  Using user-data-dir ~/.local/share/code-server
+[2022-10-14T13:18:12.261Z] info  Using config file ~/.config/code-server/config.yaml
+[2022-10-14T13:18:12.262Z] info  HTTP server listening on http://127.0.0.1:8080/ 
+[2022-10-14T13:18:12.262Z] info    - Authentication is disabled 
+[2022-10-14T13:18:12.262Z] info    - Not serving HTTPS 
+[22:18:14] Extension host agent started.
+[22:18:16] [127.0.0.1][a421333f][ManagementConnection] New connection established.
+[22:18:16] Using the in-memory credential store as the operating system's credential store could not be accessed. Please see https://aka.ms/vscode-server-keyring on how to set this up. Details: Cannot find module '../build/Release/keytar.node'
+Require stack:
+- /usr/lib/code-server/lib/vscode/node_modules/keytar/lib/keytar.js
+- /usr/lib/code-server/lib/vscode/out/bootstrap-amd.js
+- /usr/lib/code-server/out/node/util.js
+- /usr/lib/code-server/out/node/cli.js
+- /usr/lib/code-server/out/node/entry.js
+[22:18:17] [127.0.0.1][6f9fedbf][ExtensionHostConnection] New connection established.
+[22:18:17] [127.0.0.1][6f9fedbf][ExtensionHostConnection] <58560> Launched Extension Host Process.
+[22:21:17] [127.0.0.1][a421333f][ManagementConnection] The client has disconnected gracefully, so the connection will be disposed.
+[22:21:17] [127.0.0.1][6f9fedbf][ExtensionHostConnection] <58560> Extension Host Process exited with code: 0, signal: null.
+[22:29:50] [127.0.0.1][66080fe5][ManagementConnection] New connection established.
+[22:29:51] [127.0.0.1][b5a86cfd][ExtensionHostConnection] New connection established.
+[22:29:51] [127.0.0.1][b5a86cfd][ExtensionHostConnection] <60057> Launched Extension Host Process.
+[23:04:31] [127.0.0.1][66080fe5][ManagementConnection] The client has disconnected gracefully, so the connection will be disposed.
+[23:04:31] [127.0.0.1][b5a86cfd][ExtensionHostConnection] <60057> Extension Host Process exited with code: 0, signal: null.
+[23:04:31] [127.0.0.1][e7350e49][ManagementConnection] New connection established.
+[23:04:32] [127.0.0.1][9eacc014][ExtensionHostConnection] New connection established.
+[23:04:32] [127.0.0.1][9eacc014][ExtensionHostConnection] <61167> Launched Extension Host Process.
+[23:04:42] [127.0.0.1][e7350e49][ManagementConnection] The client has disconnected gracefully, so the connection will be disposed.
+[23:04:42] [127.0.0.1][9eacc014][ExtensionHostConnection] <61167> Extension Host Process exited with code: 0, signal: null.
+[23:11:08] [127.0.0.1][2829fc05][ManagementConnection] New connection established.
+[23:11:09] [127.0.0.1][2b11c47c][ExtensionHostConnection] New connection established.
+[23:11:09] [127.0.0.1][2b11c47c][ExtensionHostConnection] <61305> Launched Extension Host Process.
+[23:15:48] [127.0.0.1][2829fc05][ManagementConnection] The client has disconnected, will wait for reconnection 3h before disposing...
+Error: Unexpected SIGPIPE
+    at process.<anonymous> (/usr/lib/code-server/lib/vscode/out/bootstrap.js:1:407)
+    at process.emit (node:events:525:35)
+[23:15:48] Error: Unexpected SIGPIPE
+    at process.<anonymous> (/usr/lib/code-server/lib/vscode/out/vs/server/node/server.main.js:148:7922)
+    at process.emit (node:events:525:35)
+WARN: Killing the server...
+scrcpy 1.21 <https://github.com/Genymobile/scrcpy>

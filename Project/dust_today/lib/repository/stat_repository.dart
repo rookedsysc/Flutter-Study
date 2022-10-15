@@ -19,7 +19,7 @@ class StatRepository {
         });
 
     // 시간별 데이터가 List 형태로 들어가게 되고 fromJson에서 dart의 Map 형태로 출력됨
-    return response.data['response']['body']['items'].map<StatModel>(
+    return response.data['response']['body']['items'].map<StatModel>( 
       (item) => StatModel.fromJson(json: item),
     ).toList();
   }
