@@ -58,11 +58,11 @@ class StatModel {
         itemCode = parseItemCode(json['itemCode']);
 
   static ItemCode parseItemCode(String raw) {
-    if (raw == 'MP2.5') {
+    if (raw == 'PM2.5') {
       return ItemCode.PM25;
     }
     return ItemCode.values.firstWhere((element) =>
-        // ItemCode Enum의 Valu가 raw(json의 원시 데이터)와 같다면 return 해줌.
+        // ItemCode Enum의 Value가 raw(json의 원시 데이터)와 같다면 return 해줌.
         element.name == raw);
   }
 }
