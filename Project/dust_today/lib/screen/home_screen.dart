@@ -8,6 +8,8 @@ import 'package:dust_today/component/main_drawer.dart';
 import 'package:dust_today/component/main_stat.dart';
 import 'package:dust_today/const/color.dart';
 import 'package:dust_today/const/custom_font.dart';
+import 'package:dust_today/model/stat_model.dart';
+import 'package:dust_today/repository/stat_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/src/widgets/container.dart';
@@ -20,8 +22,6 @@ class HomeScreen extends StatefulWidget {
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
-
-  
 }
 
 class _HomeScreenState extends State<HomeScreen> {
@@ -29,22 +29,14 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+
     fetchData();
   }
 
   fetchData() async {
-    final response = await Dio().get(
-        'http://apis.data.go.kr/B552584/ArpltnStatsSvc/getCtprvnMesureLIst',
-        queryParameters: {
-          'serviceKey': serviceKey,
-          'returnType': 'json',
-          'numOfRows': 30,
-          'pageNo': 1,
-          'itemCode': 'PM10',
-          'dataGubun': 'HOUR',
-          'searchCondition': 'WEEK',
-        });
-    print('데이터가 없습니다');
+    final StatModel = await StatRepository.fetchData();
+
+    print(StatModel);
   }
 
   @override
