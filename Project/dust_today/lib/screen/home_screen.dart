@@ -10,6 +10,7 @@ import 'package:dust_today/const/color.dart';
 import 'package:dust_today/const/custom_font.dart';
 import 'package:dust_today/const/regions.dart';
 import 'package:dust_today/const/status_level.dart';
+import 'package:dust_today/model/stat_and_status_model.dart';
 import 'package:dust_today/model/stat_model.dart';
 import 'package:dust_today/repository/stat_repository.dart';
 import 'package:dust_today/utils/data_utils.dart';
@@ -20,7 +21,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:dust_today/const/data.dart';
 
 class HomeScreen extends StatefulWidget {
-  
+
   const HomeScreen({super.key});
 
   @override
@@ -35,10 +36,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
     List<Future> futures = [];
 
-    for(ItemCode itemCode in ItemCode.values) {
+    for (ItemCode itemCode in ItemCode.values) {
       futures.add(
-        StatRepository.fetchData(
-        itemCode: itemCode,
+        StatRepository.fetchData( // json 데이터
+          itemCode: itemCode,
         ),
       );
     }
@@ -46,8 +47,8 @@ class _HomeScreenState extends State<HomeScreen> {
     // 해당 Future 실행결과 값, 즉, List<StatModel>이 들어감
     final results = await Future.wait(futures);
 
-    for(int i = 0; i < futures.length; i++) {
-      final key = ItemCode.values[i]; 
+    for (int i = 0; i < futures.length; i++) {
+      final key = ItemCode.values[i];
       final value = results[i];
 
       stats.addAll({
@@ -73,9 +74,8 @@ class _HomeScreenState extends State<HomeScreen> {
           });
           Navigator.of(context).pop();
         }),
-        ),
+      ),
 
-      backgroundColor: primaryColor,
       body: FutureBuilder<Map<ItemCode, List<StatModel>>>(
           future: fetchData(),
           builder: (context, snapshot) {
@@ -98,28 +98,45 @@ class _HomeScreenState extends State<HomeScreen> {
             // 대표적으로 보여줄 데이터를 pm10으로 특정해줌.
             StatModel pm10RecentStat = stats[ItemCode.PM10]![0];
             final status = DataUtils.getStatusFromItemCodeAndValue(
-                value: pm10RecentStat.seoul, itemCode: ItemCode.PM10);
+                value: pm10RecentStat.seoul,
+                itemCode: ItemCode.PM10
+            );
 
-            return CustomScrollView(
-              slivers: [
-                MainAppBar(
-                  region: region,
-                  stat: pm10RecentStat,
-                  status: status,
-                ),
-              SliverToBoxAdapter(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    CategoryCard(),
-                    const SizedBox(height: 16.0,),
-                    HourlyCard(),
-                  ],
-                ),
-              )
-            ],
-          );
-        }
+            // itemCode별로
+            final ssModel = stats.keys.map((key) { // key means itemCode
+              final value = stats[key]!; // json Data
+              final stat = value[0]; // 가장 최근 데이터
+
+              return StatAndStatusModel(itemCode: key,
+                  stat: stat,
+                  status: DataUtils.getStatusFromItemCodeAndValue(
+                      value: stat.getLevelFromRegion(region), itemCode: key));
+            }).toList();
+
+            return Container(
+              color: status.primaryColor, // scaffold에서 지정 안하고 여기서 배경색 지정함.
+              child: CustomScrollView(
+                slivers: [
+                  MainAppBar(
+                    region: region,
+                    stat: pm10RecentStat,
+                    status: status,
+                  ),
+                  SliverToBoxAdapter(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        CategoryCard(models: ssModel, region: region, darkColor: status.darkColor, lightColor: status.lightColor,
+                        ),
+                        const SizedBox(height: 16.0,),
+                        HourlyCard(darkColor: status.darkColor, lighColor: status.lightColor,),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            );
+          }
       ),
     );
   }

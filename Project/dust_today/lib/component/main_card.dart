@@ -4,7 +4,8 @@ import '../const/color.dart';
 
 class MainCard extends StatelessWidget {
   final Widget child;
-  MainCard({required this.child, super.key});
+  final Color backgroundColor;
+  MainCard({required this.backgroundColor, required this.child, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +14,7 @@ class MainCard extends StatelessWidget {
         shape: RoundedRectangleBorder(
             // Card의 테두리를 둥글게 해줌
             borderRadius: BorderRadius.all(Radius.circular(16.0))),
-        color: lightColor,
+        color: backgroundColor,
         child: child,
     );
   }
