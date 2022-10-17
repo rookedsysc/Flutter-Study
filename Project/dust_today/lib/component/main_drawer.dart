@@ -1,4 +1,3 @@
-import 'package:dust_today/const/color.dart';
 import 'package:flutter/material.dart';
 
 import '../const/regions.dart';
@@ -8,15 +7,19 @@ typedef OnRegionTap = void Function(String region);
 class MainDrawer extends StatelessWidget {
   final OnRegionTap onRegionTap;
   final String selectedRegion;
+  final Color darkColor;
+  final Color lightColor;
   const MainDrawer ({
     required this.selectedRegion,
     required this.onRegionTap,
+    required this.lightColor,
+    required this.darkColor,
     super.key});
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      backgroundColor: darkColor,
+      backgroundColor: this.darkColor,
       child: ListView(
         children: [
           DrawerHeader(
@@ -31,7 +34,7 @@ class MainDrawer extends StatelessWidget {
                 // e에는 region이 들어감
                 (e) => ListTile(
                   tileColor: Colors.white, // 타일 색상
-                  selectedTileColor: lightColor, // 선택된 타일 색상
+                  selectedTileColor: this.lightColor, // 선택된 타일 색상
                   selectedColor: Colors.black, // 선택 했을 때 색상
                   selected: e == selectedRegion,
                   onTap: (){

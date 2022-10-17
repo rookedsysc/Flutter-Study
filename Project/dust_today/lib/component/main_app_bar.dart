@@ -5,6 +5,7 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:intl/src/date_format_internal.dart';
 
 import '../const/color.dart';
 import '../const/custom_font.dart';
@@ -13,15 +14,23 @@ class MainAppBar extends StatelessWidget {
   final StatusModel status; // 값에 따라 분류하는 모델
   final StatModel stat; // 실제로 API에서 받아오는 값
   final String region;
+  final DateTime dateTime;
+  final bool isExpanded;
   const MainAppBar(
       {required this.region,
       required this.stat,
       required this.status,
+      required this.dateTime,
+      required this.isExpanded,
       super.key});
 
   @override
   Widget build(BuildContext context) {
     return SliverAppBar(
+      pinned: true,
+      centerTitle: true,
+      // 펼쳐져 있으면 타이틀 안넣고 안펼쳐져 있으면 '도시 시간' 넣어줌
+      title: isExpanded ? null : Text('${region} ${DataUtils.getTimeFromDateTime(dateTime: dateTime)}'),
       backgroundColor: status.primaryColor,
       expandedHeight: 500,
       flexibleSpace: FlexibleSpaceBar(
