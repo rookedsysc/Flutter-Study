@@ -102,6 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 itemCode: ItemCode.PM10
             );
 
+
             // itemCode별로
             final ssModel = stats.keys.map((key) { // key means itemCode
               final value = stats[key]!; // json Data
@@ -129,7 +130,22 @@ class _HomeScreenState extends State<HomeScreen> {
                         CategoryCard(models: ssModel, region: region, darkColor: status.darkColor, lightColor: status.lightColor,
                         ),
                         const SizedBox(height: 16.0,),
-                        HourlyCard(darkColor: status.darkColor, lighColor: status.lightColor,),
+                        ...stats.keys.map((itemCode)  {
+                          final stat = stats[itemCode]!;
+
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 16.0),
+                            child: HourlyCard(
+                              darkColor: status.darkColor,
+                              lighColor: status.lightColor,
+                              region: region,
+                              stats: stat,
+                              category: DataUtils.getItemCodeKrString(
+                                  itemCode: itemCode),
+                            ),
+                          );
+                        }).toList(),
+                        SizedBox(height: 8.0,)
                       ],
                     ),
                   )
