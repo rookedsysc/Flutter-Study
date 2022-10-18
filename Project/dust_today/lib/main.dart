@@ -19,7 +19,8 @@ void main() async {
 
   // item Code별로 Box 생성
   for(ItemCode itemCode in ItemCode.values) {
-    await Hive.openBox(itemCode.name);
+    // 좀 더 세부적으로 StatModel의 값들만 넣어줄 것이라고 정의
+    await Hive.openBox<StatModel>(itemCode.name);
   }
 
   runApp(
@@ -27,7 +28,7 @@ void main() async {
       theme: ThemeData(
         fontFamily: 'sunflower',
       ),
-      home: TestScreen(),
+      home: HomeScreen(),
     ),
   );
 }

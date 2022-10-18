@@ -19,6 +19,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:dust_today/const/data.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
 
@@ -49,8 +50,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
 
+  // 모든 itemCode별로
   Future<Map<ItemCode, List<StatModel>>> fetchData() async {
-    Map<ItemCode, List<StatModel>> stats = {};
 
     List<Future> futures = [];
 
@@ -68,13 +69,26 @@ class _HomeScreenState extends State<HomeScreen> {
     for (int i = 0; i < futures.length; i++) {
       final key = ItemCode.values[i];
       final value = results[i];
-
-      stats.addAll({
-        key: value,
-      });
+      
+      // main에서 생성한 box 열기 
+      final box = Hive.box<StatModel>(key.name);
+      for(StatModel stat in value) {
+        // key 값에 dataTime을 넣어줌으로써 데이터가 절대로 중복되지 않음
+        box.put(stat.dataTime.toString(), stat);
+      }
     }
 
-    return stats;
+    return ItemCode.values.fold<Map<ItemCode, List<StatModel>>>({}, // 첫 파라미터로 아무것도 지정해주지 않음
+            (previousValue, itemCode) {
+      final box = Hive.box<StatModel>(itemCode.name);
+
+      previousValue.addAll({
+        itemCode: box.values.toList(),
+      });
+
+      return previousValue;
+    }
+    );
   }
 
   // isExpanded 값을 여기서 결정
