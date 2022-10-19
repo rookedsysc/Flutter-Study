@@ -53,53 +53,60 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // 모든 itemCode별로
   Future<void> fetchData() async {
-    final now = DateTime.now();
-    final fetchTime = DateTime(
-      now.year,
-      now.month,
-      now.day,
-      now.hour,
-    );
-
-    final box = Hive.box(ItemCode.PM10.name);
-    final recent = box.values.last as StatModel;
-
-    // 최신 데이터의 날짜와 현재 시간의 날짜가 같으면 아래에서 실행하는 구문 실행하지 않음
-    if(recent.dataTime.isAtSameMomentAs(fetchTime)) {
-      print('이미 최신 데이터가 있습니다.');
-      return;
-    }
-
-    List<Future> futures = [];
-
-    for (ItemCode itemCode in ItemCode.values) {
-      futures.add(
-        StatRepository.fetchData( // json 데이터
-          itemCode: itemCode,
-        ),
+    try {
+      final now = DateTime.now();
+      final fetchTime = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        now.hour,
       );
-    }
-    // futures에 들어있는 모든 Future이 실행될 때까지 기다림
-    // 해당 Future 실행결과 값, 즉, List<StatModel>이 들어감
-    final results = await Future.wait(futures);
 
-    for (int i = 0; i < futures.length; i++) {
-      final key = ItemCode.values[i];
-      final value = results[i];
-      
-      // main에서 생성한 box 열기 
-      final box = Hive.box<StatModel>(key.name);
-      for(StatModel stat in value) {
-        // key 값에 dataTime을 넣어줌으로써 데이터가 절대로 중복되지 않음
-        box.put(stat.dataTime.toString(), stat);
+      final box = Hive.box<StatModel>(ItemCode.PM10.name);
 
-        final allKeys = box.keys.toList();
+      // 최신 데이터의 날짜와 현재 시간의 날짜가 같으면 아래에서 실행하는 구문 실행하지 않음
+      // isNotEmpty 검사를 안해주면 첫 데이터 값이 아예 없을 때 버그가 발생함
+      if (box.values.isNotEmpty &&
+          (box.values.last as StatModel).dataTime.isAtSameMomentAs(fetchTime)) {
+        print('이미 최신 데이터가 있습니다.');
+        return;
+      }
 
-        if(allKeys.length > 24) {
-          final deleteKeys = allKeys.sublist(0, allKeys.length - 24); // 마지막 24개 남기고 다 지움
-          box.deleteAll(deleteKeys);
+      List<Future> futures = [];
+
+      for (ItemCode itemCode in ItemCode.values) {
+        futures.add(
+          StatRepository.fetchData( // json 데이터
+            itemCode: itemCode,
+          ),
+        );
+      }
+      // futures에 들어있는 모든 Future이 실행될 때까지 기다림
+      // 해당 Future 실행결과 값, 즉, List<StatModel>이 들어감
+      final results = await Future.wait(futures);
+
+      for (int i = 0; i < futures.length; i++) {
+        final key = ItemCode.values[i];
+        final value = results[i];
+
+        // main에서 생성한 box 열기
+        final box = Hive.box<StatModel>(key.name);
+        for(StatModel stat in value) {
+          // key 값에 dataTime을 넣어줌으로써 데이터가 절대로 중복되지 않음
+          box.put(stat.dataTime.toString(), stat);
+
+          final allKeys = box.keys.toList();
+
+          if(allKeys.length > 24) {
+            final deleteKeys = allKeys.sublist(0, allKeys.length - 24); // 마지막 24개 남기고 다 지움
+            box.deleteAll(deleteKeys);
+          }
         }
       }
+    } on DioError catch (e) { // 지금 요청이 안됐을 때 발생하는 에러
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('인터넷 연결이 원활하지 않습니다.'))
+      );
     }
 
   }
@@ -122,6 +129,11 @@ class _HomeScreenState extends State<HomeScreen> {
     return ValueListenableBuilder(
         valueListenable: Hive.box<StatModel>(ItemCode.PM10.name).listenable(), // 현재 status 값이 필요하기 때문에 PM10 값을 가져옴
         builder: (context, box, widget) {
+          if(box.values.isEmpty) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
           // box == PM10 (미세먼지)
           // box.values.toList().last // 미세먼지 데이터의 첫 번째 값(서울)
           // swift의 다운캐스팅과 유사함 .last 값이 StatModel이라는 것을 명시해줌
@@ -153,47 +165,52 @@ class _HomeScreenState extends State<HomeScreen> {
 
           body:Container(
             color: status.primaryColor, // scaffold에서 지정 안하고 여기서 배경색 지정함.
-            child: CustomScrollView(
-              controller: scrollController,
-              slivers: [
-                MainAppBar(
-                  region: region,
-                  stat: recentStat,
-                  status: status,
-                  dateTime: recentStat.dataTime,
-                  isExpanded: isExpanded,
-                ),
-                SliverToBoxAdapter(
-                  child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          CategoryCard(
-                            region: region,
-                            darkColor: status.darkColor,
-                            lightColor: status.lightColor,
-                          ),
-                          const SizedBox(
-                            height: 16.0,
-                          ),
-                          ...ItemCode.values.map((itemCode) {
-                            return Padding(
-                              padding: const EdgeInsets.only(bottom: 16.0),
-                              child: HourlyCard(
-                                darkColor: status.darkColor,
-                                lighColor: status.lightColor,
-                                region: region,
-                                itemCode: itemCode,
-                              ),
-                            );
-                          }).toList(),
-                          SizedBox(
-                            height: 8.0,
-                          )
-                        ],
-                      ),
-                    )
-                  ],
-                ),
+            child: RefreshIndicator(
+              onRefresh: () async {
+                await fetchData();
+              },
+              child: CustomScrollView(
+                controller: scrollController,
+                slivers: [
+                  MainAppBar(
+                    region: region,
+                    stat: recentStat,
+                    status: status,
+                    dateTime: recentStat.dataTime,
+                    isExpanded: isExpanded,
+                  ),
+                  SliverToBoxAdapter(
+                    child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            CategoryCard(
+                              region: region,
+                              darkColor: status.darkColor,
+                              lightColor: status.lightColor,
+                            ),
+                            const SizedBox(
+                              height: 16.0,
+                            ),
+                            ...ItemCode.values.map((itemCode) {
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 16.0),
+                                child: HourlyCard(
+                                  darkColor: status.darkColor,
+                                  lighColor: status.lightColor,
+                                  region: region,
+                                  itemCode: itemCode,
+                                ),
+                              );
+                            }).toList(),
+                            SizedBox(
+                              height: 8.0,
+                            )
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+            ),
               ));
         });
   }
