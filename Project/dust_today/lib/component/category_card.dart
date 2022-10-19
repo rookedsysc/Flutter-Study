@@ -1,24 +1,24 @@
 import 'package:dust_today/component/card_title.dart';
 import 'package:dust_today/component/main_card.dart';
 import 'package:dust_today/model/stat_and_status_model.dart';
+import 'package:dust_today/model/stat_model.dart';
 import 'package:dust_today/utils/data_utils.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import '../const/color.dart';
 import 'main_stat.dart';
 
 class CategoryCard extends StatelessWidget {
   const CategoryCard({
-    required this.models,
     required this.region,
     required this.lightColor,
     required this.darkColor,
     super.key});
   final String region;
-  final List<StatAndStatusModel> models;
   final Color lightColor;
   final Color darkColor;
 
@@ -43,18 +43,28 @@ class CategoryCard extends StatelessWidget {
                 child: ListView(
                   scrollDirection: Axis.horizontal,
                   physics: PageScrollPhysics(),
-                  children: models.map((model) => 
-                  MainStat(
-                          width: Constraints.maxWidth / 3,
-                          // itemCode > 한글화
-                          category: DataUtils.getItemCodeKrString(itemCode: model.itemCode), 
-                          level: model.status.label,
-                          imgPath: model.status.imagePath,
-                          stat:
-                              // itemCode > 단위 
-                              '${model.stat.getLevelFromRegion(region)} ${DataUtils.getUnitFromItemCode(itemCode: model.itemCode)}',
-                        ),
-                      )
+                  children: ItemCode.values.map((ItemCode itemCode) =>
+                  ValueListenableBuilder(
+                      valueListenable: Hive.box<StatModel>(itemCode.name).listenable(),
+                      builder: (context, box, widget) {
+                        final stat = (box.values.last as StatModel);
+                            final status =
+                                DataUtils.getStatusFromItemCodeAndValue(
+                                    value: stat.getLevelFromRegion(region),
+                                    itemCode: itemCode);
+
+                            return MainStat(
+                              width: Constraints.maxWidth / 3,
+                              // itemCode > 한글화
+                              category: DataUtils.getItemCodeKrString(
+                                  itemCode: stat.itemCode),
+                              level: status.label,
+                              imgPath: status.imagePath,
+                              stat:
+                                  // itemCode > 단위
+                                  '${stat.getLevelFromRegion(region)} ${DataUtils.getUnitFromItemCode(itemCode: stat.itemCode)}',
+                            );
+                          }))
                       .toList(),
                   // children: List.generate(
                   //   20,

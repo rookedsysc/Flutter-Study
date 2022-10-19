@@ -38,6 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
   initState() {
     super.initState();
 
+    fetchData();
     scrollController.addListener(scrollListener);
   }
 
@@ -51,7 +52,23 @@ class _HomeScreenState extends State<HomeScreen> {
 
 
   // 모든 itemCode별로
-  Future<Map<ItemCode, List<StatModel>>> fetchData() async {
+  Future<void> fetchData() async {
+    final now = DateTime.now();
+    final fetchTime = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      now.hour,
+    );
+
+    final box = Hive.box(ItemCode.PM10.name);
+    final recent = box.values.last as StatModel;
+
+    // 최신 데이터의 날짜와 현재 시간의 날짜가 같으면 아래에서 실행하는 구문 실행하지 않음
+    if(recent.dataTime.isAtSameMomentAs(fetchTime)) {
+      print('이미 최신 데이터가 있습니다.');
+      return;
+    }
 
     List<Future> futures = [];
 
@@ -75,20 +92,16 @@ class _HomeScreenState extends State<HomeScreen> {
       for(StatModel stat in value) {
         // key 값에 dataTime을 넣어줌으로써 데이터가 절대로 중복되지 않음
         box.put(stat.dataTime.toString(), stat);
+
+        final allKeys = box.keys.toList();
+
+        if(allKeys.length > 24) {
+          final deleteKeys = allKeys.sublist(0, allKeys.length - 24); // 마지막 24개 남기고 다 지움
+          box.deleteAll(deleteKeys);
+        }
       }
     }
 
-    return ItemCode.values.fold<Map<ItemCode, List<StatModel>>>({}, // 첫 파라미터로 아무것도 지정해주지 않음
-            (previousValue, itemCode) {
-      final box = Hive.box<StatModel>(itemCode.name);
-
-      previousValue.addAll({
-        itemCode: box.values.toList(),
-      });
-
-      return previousValue;
-    }
-    );
   }
 
   // isExpanded 값을 여기서 결정
@@ -106,110 +119,82 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Map<ItemCode, List<StatModel>>>(
-        future: fetchData(),
-        builder: (context, snapshot) {
-          // 에러가 있을 때
-          if (snapshot.hasError) {
-            return Scaffold(
-              body: Center(
-                child: Text('에러가 있습니다!'),
-              ),
-            );
-          }
+    return ValueListenableBuilder(
+        valueListenable: Hive.box<StatModel>(ItemCode.PM10.name).listenable(), // 현재 status 값이 필요하기 때문에 PM10 값을 가져옴
+        builder: (context, box, widget) {
+          // box == PM10 (미세먼지)
+          // box.values.toList().last // 미세먼지 데이터의 첫 번째 값(서울)
+          // swift의 다운캐스팅과 유사함 .last 값이 StatModel이라는 것을 명시해줌
+          final recentStat = box.values.toList().last as StatModel;
 
-          // 로딩 상태
-          if (!snapshot.hasData) {
-            // 에러가 있을 때 Scaffold가 없을 수도 있으므로
-            return Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(),
-              ),
-            );
-          }
-
-          Map<ItemCode, List<StatModel>> stats = snapshot.data!;
           // 현재 값의 status Level 구하기
           // 대표적으로 보여줄 데이터를 pm10으로 특정해줌.
-          StatModel pm10RecentStat = stats[ItemCode.PM10]![0];
           final status = DataUtils.getStatusFromItemCodeAndValue(
-              value: pm10RecentStat.seoul,
+              value: recentStat.getLevelFromRegion(region),
               itemCode: ItemCode.PM10
           );
 
+      return Scaffold(
+        // Scaffold 안에 넣어주기만 하면 자동으로 넣어줌
+        // 왼쪽에서 bottomSheet나 snackBar처럼 화면을 덮으면서 나오는 화면
+          drawer: MainDrawer(
+            darkColor: status.darkColor,
+            lightColor: status.lightColor,
+            selectedRegion: region,
+            onRegionTap: ((e) {
+              setState(() {
+                // main_drawer에서 넘겨준 e(region)이 region에 담김.
+                // region은 selectedRegion에 들어가서 선택된 도시를 바꿔줌.
+                region = e;
+              });
+              Navigator.of(context).pop();
+            }),
+          ),
 
-          // itemCode별로
-          final ssModel = stats.keys.map((key) { // key means itemCode
-            final value = stats[key]!; // json Data
-            final stat = value[0]; // 가장 최근 데이터
-
-            return StatAndStatusModel(itemCode: key,
-                stat: stat,
-                status: DataUtils.getStatusFromItemCodeAndValue(
-                    value: stat.getLevelFromRegion(region), itemCode: key));
-          }).toList();
-
-          return Scaffold(
-            // Scaffold 안에 넣어주기만 하면 자동으로 넣어줌
-            // 왼쪽에서 bottomSheet나 snackBar처럼 화면을 덮으면서 나오는 화면
-              drawer: MainDrawer(
-                darkColor: status.darkColor,
-                lightColor: status.lightColor,
-                selectedRegion: region,
-                onRegionTap: ((e) {
-                  setState(() {
-                    // main_drawer에서 넘겨준 e(region)이 region에 담김.
-                    // region은 selectedRegion에 들어가서 선택된 도시를 바꿔줌.
-                    region = e;
-                  });
-                  Navigator.of(context).pop();
-                }),
-              ),
-
-              body:Container(
-                color: status.primaryColor, // scaffold에서 지정 안하고 여기서 배경색 지정함.
-                child: CustomScrollView(
-                  controller: scrollController,
-                  slivers: [
-                    MainAppBar(
-                      region: region,
-                      stat: pm10RecentStat,
-                      status: status,
-                      dateTime: pm10RecentStat.dataTime,
-                      isExpanded: isExpanded,
-                    ),
-                    SliverToBoxAdapter(
-                      child: Column(
+          body:Container(
+            color: status.primaryColor, // scaffold에서 지정 안하고 여기서 배경색 지정함.
+            child: CustomScrollView(
+              controller: scrollController,
+              slivers: [
+                MainAppBar(
+                  region: region,
+                  stat: recentStat,
+                  status: status,
+                  dateTime: recentStat.dataTime,
+                  isExpanded: isExpanded,
+                ),
+                SliverToBoxAdapter(
+                  child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          CategoryCard(models: ssModel, region: region, darkColor: status.darkColor, lightColor: status.lightColor,
+                          CategoryCard(
+                            region: region,
+                            darkColor: status.darkColor,
+                            lightColor: status.lightColor,
                           ),
-                          const SizedBox(height: 16.0,),
-                          ...stats.keys.map((itemCode)  {
-                            final stat = stats[itemCode]!;
-
+                          const SizedBox(
+                            height: 16.0,
+                          ),
+                          ...ItemCode.values.map((itemCode) {
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 16.0),
                               child: HourlyCard(
                                 darkColor: status.darkColor,
                                 lighColor: status.lightColor,
                                 region: region,
-                                stats: stat,
-                                category: DataUtils.getItemCodeKrString(
-                                    itemCode: itemCode),
+                                itemCode: itemCode,
                               ),
                             );
                           }).toList(),
-                          SizedBox(height: 8.0,)
+                          SizedBox(
+                            height: 8.0,
+                          )
                         ],
                       ),
                     )
                   ],
                 ),
-              )
-          );
-
-        }
-    );
+              ));
+        });
   }
 }
