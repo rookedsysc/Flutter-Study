@@ -96,6 +96,11 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                         // main에 있는 LocalDatabase의 값을 code에 바로 주입시킴.
                         future: GetIt.I<LocalDatabase>().getCategoryColors(),
                         builder: (context, snapshot) {
+
+                          if(snapshot.connectionState != ConnectionState.done) {
+                            return Center(child: CircularProgressIndicator(),);
+                          }
+
                           // 초기 ID값 설정.
                           if(snapshot.hasData && selectedColorId == null && snapshot.data!.isNotEmpty) {
                             selectedColorId = snapshot.data![0].id;
