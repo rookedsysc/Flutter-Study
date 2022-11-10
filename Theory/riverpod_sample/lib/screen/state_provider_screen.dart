@@ -26,11 +26,17 @@ class StateRiverpodScreen extends ConsumerWidget {
                   ref.read(numberProvider.notifier).update((state) => state + 1);
                 },
                 child: Text('Up')),
-                ElevatedButton(onPressed:() {
+            ElevatedButton(
+                onPressed: () {
+                  ref.read(numberProvider.notifier).state = ref.read(numberProvider.notifier).state - 1;
+                },
+                child: Text('Down')),
+            ElevatedButton(
+                onPressed: () {
                   Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => _NextScreen())
-                  );
-                }, child: Text('Push'))
+                      MaterialPageRoute(builder: (context) => _NextScreen()));
+                },
+                child: Text('Push'))
           ],
         ),
       ),
