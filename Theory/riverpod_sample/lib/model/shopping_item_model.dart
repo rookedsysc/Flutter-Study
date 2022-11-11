@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class ShoppingItemModel {
   final String name; // 이름
   final int quantity; // 갯수
@@ -8,4 +10,17 @@ class ShoppingItemModel {
       required this.quantity,
       required this.hasBought,
       required this.isSpicy});
+
+  ShoppingItemModel copyWith({
+    String? name,
+    int? quantity,
+    bool? hasBought,
+    bool? isSpicy,
+  }) {
+    return ShoppingItemModel(
+        name: name ?? this.name,
+        quantity: quantity ?? this.quantity,
+        hasBought: hasBought ?? this.hasBought,
+        isSpicy: isSpicy ?? this.isSpicy);
+  }
 }
