@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_sample/model/shopping_item_model.dart';
 
-// Generic에는 어떤 StateNotifier를 상속한 클래스를 쓸건지 Type으로 넣어주고 두 번째 Generic은 그 클래스가 관리하는 상태의 type을 넣어줌 
+// Generic에는 어떤 StateNotifier를 상속한 클래스를 쓸건지넣어주고 해당 Class가 관리하는 상태의 type을 두 번째 Generic으로 넣어줌
 final shoppingListNotifier = StateNotifierProvider<ShoppingListNotifier, List<ShoppingItemModel>>((ref) => ShoppingListNotifier());
 
 // StateNotifier는 StateNotifier에 제공이 될 class가 상속받는 것

@@ -18,6 +18,7 @@ class StateNotifierProviderScreen extends ConsumerWidget{
           children: state.map((e) => CheckboxListTile(
             title: Text(e.name),
             value: e.hasBought, onChanged: (value){
+              // .notifier를 붙이면 class가 그대로 옴, 그래서 내부에 선언된 함수에 바로 접근이 가능함
               ref.read(shoppingListNotifier.notifier).toggleHasBought(name: e.name);
             }),
         ).toList(),
