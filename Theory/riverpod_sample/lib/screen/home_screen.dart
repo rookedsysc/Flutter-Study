@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_sample/layout/default_layout.dart';
+import 'package:riverpod_sample/screen/auto_dispose_modifier_screen.dart';
+import 'package:riverpod_sample/screen/family_modifier_screen.dart';
 import 'package:riverpod_sample/screen/future_provider_screen.dart';
 import 'package:riverpod_sample/screen/state_notifier_provider_screen.dart';
 import 'package:riverpod_sample/screen/state_provider_screen.dart';
@@ -43,7 +45,23 @@ class HomeScreen extends StatelessWidget {
                       builder: (BuildContext context) =>
                           StreamProviderScreen()));
                 },
-                child: Text("Stream Provider Screen"))
+                child: Text("Stream Provider Screen")),
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                          FamilyModifierScreen()));
+                },
+                child: Text("Family Modifier Screen")),
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                          AutoDisposeModifierScreen()));
+                },
+                child: Text("Auto Dispose Modifier Screen"))
+
+            
           ],
         ));
   }
