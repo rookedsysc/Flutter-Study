@@ -34,7 +34,6 @@ class _ListProviederScreenState extends ConsumerState<ListenProviederScreen>
       if(previous != next) {
         controller.animateTo(next,);
       }
-
     });
     
     return DefaultLayout(
@@ -62,3 +61,18 @@ class _ListProviederScreenState extends ConsumerState<ListenProviederScreen>
     );
   }
 }
+
+class Test extends ConsumerStatefulWidget {
+  const Test({Key? key}) : super(key: key);
+
+  @override
+  ConsumerState<Test> createState() => _TestState();
+}
+
+class _TestState extends ConsumerState<Test> {
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}
+

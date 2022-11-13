@@ -15,6 +15,7 @@ class DefaultLayout extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
+        actions: actions,
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
