@@ -2,11 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class RouteMap extends StatelessWidget {
+class RouteMap extends StatefulWidget {
   CameraPosition initialCameraPosition;
   Set<Polyline> polylines;
   RouteMap({required this.polylines, required this.initialCameraPosition, Key? key}) : super(key: key);
 
+  @override
+  State<RouteMap> createState() => _RouteMapState();
+}
+
+class _RouteMapState extends State<RouteMap> {
   GoogleMapController? mapController;
 
   onMapCreated(GoogleMapController controller) {
@@ -20,8 +25,9 @@ class RouteMap extends StatelessWidget {
       myLocationEnabled: true,
       myLocationButtonEnabled: true,
       onMapCreated: onMapCreated,
-      initialCameraPosition: initialCameraPosition,
-      polylines: polylines,
+      initialCameraPosition: widget.initialCameraPosition,
+      polylines: widget.polylines,
     );
   }
 }
+
