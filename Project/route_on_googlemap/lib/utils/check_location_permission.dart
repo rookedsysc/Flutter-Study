@@ -25,6 +25,6 @@ Future<String> checkLocationPermission() async {
     return '위치 권한을 세팅에서 허가해주세요.';
   }
 
-  return checkedPermission.name;
+  return "위치 권한이 허가 되었습니다.";
 }
 
