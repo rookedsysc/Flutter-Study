@@ -5,11 +5,9 @@ import 'package:riverpod_sample/riverpod/state_notifier_provider.dart';
 final filteredShoppingListProvider = Provider<List<ShoppingItemModel>>((ref) {
   final filterState = ref.watch(filterProvider);
   final List<ShoppingItemModel> shoppingListState = ref.watch(shoppingListNotifier);
-
   if(filterState == FilterState.all) {
     return shoppingListState;
   }
-
   return shoppingListState.where((element) => filterState == FilterState.spicy ? element.isSpicy : !element.isSpicy).toList();
 });
 
