@@ -1,0 +1,9 @@
+{
+  "Apple" : "apple",
+  "needs" : "I need {}",
+  "example": {
+    "hello": "Hello",
+    "world": "World!",
+    "helloWorld": "@:example.hello @:example.world"
+  }
+}

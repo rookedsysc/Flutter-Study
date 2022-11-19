@@ -1,0 +1,9 @@
+{
+  "Apple" : "사과",
+  "needs" : "나는 {}이 필요하다",
+  "example": {
+      "hello": "안녕",
+      "world": " 세상아!",
+      "helloWorld": "@:example.hello @:example.world"
+    }
+}
