@@ -15,7 +15,7 @@ class HomeScreen extends StatelessWidget {
       body: Column(
         children: [
           IconButton(onPressed: (){
-            return context.go('/secondscreen');
+            return context.go('/homescreen/details');
           }, icon: Icon(Icons.home))
         ],
       ),
