@@ -32,7 +32,7 @@ class CategoryCard extends StatelessWidget {
                     20,
                     (index) => MainStat(
                         // Column(Card)의 1/3 만큼 사이즈 넣어줌
-                        width: Constraints.maxWidth / 3 , 
+                        width: Constraints.maxWidth / 3,
                         category: index.toString(),
                         level: '최고',
                         imgPath: 'asset/img/best.png',
