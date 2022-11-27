@@ -1,47 +1,51 @@
 import 'package:flutter/material.dart';
 
-class LoginPage extends StatefulWidget {
+class SignUpPage extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _LoginPageState();
+  State<StatefulWidget> createState() => _SignUpPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _SignUpPageState extends State<SignUpPage> {
   final _usernameController = TextEditingController();
+  final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        minimum: const EdgeInsets.symmetric(horizontal: 40),
-        child: Stack(
-          children: [
-            // Login Form
-            _loginForm(),
+          minimum: const EdgeInsets.symmetric(horizontal: 40),
+          child: Stack(children: [
+            // 회원가입 양식
+            _signUpForm(),
 
-            // Sign Up Button
+            // 로그인 페이지로 돌아가기
             Container(
               alignment: Alignment.bottomCenter,
               child: TextButton(
                   onPressed: () {},
-                  child: const Text('Don\'t have an account? Sign up.')),
-            ),
-          ],
-        ),
-      ),
+                  child: const Text('Already have an account? Login.')),
+            )
+          ])),
     );
   }
 
-  // 5
-  Widget _loginForm() {
+  Widget _signUpForm() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         // Username TextField
         TextField(
           controller: _usernameController,
-          decoration: const InputDecoration(
-              icon: Icon(Icons.mail), labelText: 'Username'),
+          decoration:
+          const InputDecoration(icon: Icon(Icons.person), labelText: 'Username'),
+        ),
+
+        // Email TextField
+        TextField(
+          controller: _emailController,
+          decoration:
+          const InputDecoration(icon: Icon(Icons.mail), labelText: 'Email'),
         ),
 
         // Password TextField
@@ -53,22 +57,22 @@ class _LoginPageState extends State<LoginPage> {
           keyboardType: TextInputType.visiblePassword,
         ),
 
-        // Login Button
+        // Sign Up Button
         TextButton(
-          onPressed: _login,
-          child: const Text('Login'),
-          // fore: Theme.of(context).accentColor,
-        ),
+            onPressed: _signUp,
+            child: const Text('Sign Up'),
+            )
       ],
     );
   }
 
-  // 7
-  void _login() {
+  void _signUp() {
     final username = _usernameController.text.trim();
+    final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
 
     print('username: $username');
+    print('email: $email');
     print('password: $password');
   }
 }
