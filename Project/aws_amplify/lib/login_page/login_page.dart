@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
+  // 회원가입 페이지로 이동하는 콜백
+  final VoidCallback shouldShowSignUp;
+  const LoginPage({required this.shouldShowSignUp, super.key});
+
   @override
   State<StatefulWidget> createState() => _LoginPageState();
 }
@@ -23,7 +27,7 @@ class _LoginPageState extends State<LoginPage> {
             Container(
               alignment: Alignment.bottomCenter,
               child: TextButton(
-                  onPressed: () {},
+                  onPressed: widget.shouldShowSignUp,
                   child: const Text('Don\'t have an account? Sign up.')),
             ),
           ],

@@ -21,6 +21,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     // Circular Progress Indicator를 표시하지 않게 값 초기화
+    // 첫 페이지 로드 시 로그인 페이지를 표시
     _authService.showLogin();
   }
 
@@ -45,9 +46,12 @@ class _MyAppState extends State<MyApp> {
           return Navigator(
             pages: [
               if(snapshot.data!.authFlowStatus == AuthFlowStatus.login)
-                MaterialPage(child: LoginPage()),
-              if(snapshot.data!.authFlowStatus == AuthFlowStatus.signUp)
-                MaterialPage(child: SignUpPage()),
+                MaterialPage(child: LoginPage(
+                      shouldShowSignUp: () => _authService.showSignUp(),
+                    ),
+                  ),
+                if (snapshot.data!.authFlowStatus == AuthFlowStatus.signUp)
+                MaterialPage(child: SignUpPage(shouldShowLogin: () => _authService.showLogin(),)),
             ],
             onPopPage: (route, result) => route.didPop(result),
           );
