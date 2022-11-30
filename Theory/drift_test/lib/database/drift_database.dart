@@ -2,17 +2,19 @@ import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
+import 'package:drift_test/database/diary_dao.dart';
 import 'package:drift_test/model/diary.dart';
 import 'package:path_provider/path_provider.dart';
 
 part 'drift_database.g.dart';
 
-@DriftDatabase(
-    tables: [
-      // 괄호 없이 type 선언하듯이 넣어줘야 함
-      Diary, // 위에서 구성한 테이블
-    ]
-)
+@DriftDatabase(tables: [
+  // 괄호 없이 type 선언하듯이 넣어줘야 함
+  Diary, // 위에서 구성한 테이블
+], daos: [
+  // 괄호 없이 type 선언하듯이 넣어줘야 함
+  DiaryDao, // 위에서 구성한 DAO
+])
 
 // _$LocalDatabase 파일은 drift_database.g.dart 파일에 생성될 거임
 class LocalDatabase extends _$LocalDatabase {

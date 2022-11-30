@@ -212,6 +212,7 @@ class $DiaryTable extends Diary with TableInfo<$DiaryTable, DiaryData> {
 abstract class _$LocalDatabase extends GeneratedDatabase {
   _$LocalDatabase(QueryExecutor e) : super(e);
   late final $DiaryTable diary = $DiaryTable(this);
+  late final DiaryDao diaryDao = DiaryDao(this as LocalDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
