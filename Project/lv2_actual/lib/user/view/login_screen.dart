@@ -5,15 +5,29 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:lv2_actual/common/component/custom_text_form_field.dart';
 import 'package:lv2_actual/common/const/colors.dart';
+import 'package:lv2_actual/common/const/data.dart';
 import 'package:lv2_actual/common/layout/default_layout.dart';
+import 'package:lv2_actual/common/view/root_tab.dart';
 
-class LoginScreen extends StatelessWidget {
+
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  String username = '';
+  String password = '';
+
+  @override
   Widget build(BuildContext context) {
+
+
     final dio = Dio();
 
     const ip = '192.168.0.15:4900';
@@ -41,12 +55,16 @@ class LoginScreen extends StatelessWidget {
                   ),
                   CustomTextFormField(
                     hintText: '이메일을 입력해주세요.',
-                    onChanged: (String value) {},
+                    onChanged: (String value) {
+                      username = value;
+                    },
                   ),
                   const SizedBox(height: 8),
                   CustomTextFormField(
                     hintText: '비밀번호를 입력해주세요.',
-                    onChanged: (String value) {},
+                    onChanged: (String value) {
+                      password = value;
+                    },
                     obscureText: true,
                   ),
                   const SizedBox(height: 8),
@@ -54,7 +72,7 @@ class LoginScreen extends StatelessWidget {
                   // 로그인 버튼
                   ElevatedButton(
                       onPressed: () async {
-                        const rawString = 'test@codefactory.io:testtest';
+                        String rawString = '$username:$password';
 
                         // 어떻게 인코딩 할건지 정의
                         Codec<String, String> stringToBase64 = utf8.fuse(base64);
@@ -67,6 +85,19 @@ class LoginScreen extends StatelessWidget {
                             headers: {
                               'authorization': 'Basic $token',
                             },
+                          ),
+                        );
+
+                        final refreshToken = resp.data['refreshToken'];
+                        final accessToken = resp.data['accessToken'];
+
+                        // flutter secure storage에 Token 저장
+                        await storage.write(key: REFRESH_TOKEN_KEY, value: refreshToken);
+                        await storage.write(key: ACCESS_TOKEN_KEY, value: accessToken);
+
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const RootTab(),
                           ),
                         );
                         debugPrint(resp.data.toString());
