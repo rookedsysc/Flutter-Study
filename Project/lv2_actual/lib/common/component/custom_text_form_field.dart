@@ -47,11 +47,9 @@ class CustomTextFormField extends StatelessWidget {
         filled: true,
         // 모든 Input 상태의 기본 스타일 세팅
         border: baseBorder,
+        // 포커스 아닌 상태에서 border 사라짐
+        enabledBorder: baseBorder,
         focusedBorder: baseBorder.copyWith(borderSide: baseBorder.borderSide.copyWith(color: PRIMARY_COLOR)),
-
-
-
-        
       ),
     );
   }

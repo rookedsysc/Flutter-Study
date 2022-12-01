@@ -1,3 +1,7 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -10,36 +14,80 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dio = Dio();
+
+    const ip = '192.168.0.15:4900';
+    // final ip = Platform.isIOS == true ? '127.0.0.1:4900' : '10.0.2.2:4900';
+
+
     return DefaultLayout(child: SafeArea(
       top: true,
       bottom: false,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const _Title(),
-            const _SubTitle(),
-            Image.asset('asset/img/misc/logo.png', height: 200.0,width: MediaQuery.of(context).size.width / 3 * 2,),
-            CustomTextFormField(
-              hintText: '이메일을 입력해주세요.',
-              onChanged: (String value) {},
-            ),
-            CustomTextFormField(
-              hintText: '비밀번호를 입력해주세요.',
-              onChanged: (String value) {},
-              obscureText: true,
-            ),
-            ElevatedButton(onPressed: (){}, 
-            style: ElevatedButton.styleFrom(
-              backgroundColor: PRIMARY_COLOR,
-            ),
-            child: const Text('로그인')),
-            TextButton(onPressed: (){}, 
-            style: TextButton.styleFrom(
-              foregroundColor: PRIMARY_COLOR,
-            ),
-            child: const Text('회원가입')),
-          ],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: SingleChildScrollView(
+          // 스크롤 했을 때 키보드 내려감
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          child: SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const _Title(),
+                  const _SubTitle(),
+                  Image.asset(
+                    'asset/img/misc/logo.png',
+                    height: MediaQuery.of(context).size.height * 0.46,
+                    width: MediaQuery.of(context).size.width / 3 * 2,
+                  ),
+                  CustomTextFormField(
+                    hintText: '이메일을 입력해주세요.',
+                    onChanged: (String value) {},
+                  ),
+                  const SizedBox(height: 8),
+                  CustomTextFormField(
+                    hintText: '비밀번호를 입력해주세요.',
+                    onChanged: (String value) {},
+                    obscureText: true,
+                  ),
+                  const SizedBox(height: 8),
+
+                  // 로그인 버튼
+                  ElevatedButton(
+                      onPressed: () async {
+                        const rawString = 'test@codefactory.io:testtest';
+
+                        // 어떻게 인코딩 할건지 정의
+                        Codec<String, String> stringToBase64 = utf8.fuse(base64);
+                        // 정의를 이용해서 rawString을 인코딩
+                        String token = stringToBase64.encode(rawString);
+
+                        final resp = await dio.post(
+                          'http://$ip/auth/login',
+                          options: Options(
+                            headers: {
+                              'authorization': 'Basic $token',
+                            },
+                          ),
+                        );
+                        debugPrint(resp.data.toString());
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: PRIMARY_COLOR,
+                      ),
+                      child: const Text('로그인')),
+
+                  // 회원가입 버튼
+                  TextButton(onPressed: () {
+                  },
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.black,
+                  ),
+                  child: const Text('회원가입')),
+                ],
+              ),
+          ),
         ),
+      ),
     ),
     );
   }
