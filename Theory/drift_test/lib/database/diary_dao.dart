@@ -10,7 +10,9 @@ class DiaryDao extends DatabaseAccessor<LocalDatabase> with _$DiaryDaoMixin {
   // Accessor 생성자
   DiaryDao(LocalDatabase db) : super(db);
 
-  // 전체 다이어리 불러오기
-  Future<List<DiaryData>> getAllDiary() => select(diary).get();
+  // 전체 다이어리 관측
+  Stream<List<DiaryData>> watchAllDiaries() => select(diary).watch();
 
+  // 다이어리 추가
+  Future<int> createDiary(DiaryCompanion data) => into(diary).insert(data);
 }

@@ -5,6 +5,7 @@ import 'package:drift/native.dart';
 import 'package:drift_test/database/diary_dao.dart';
 import 'package:drift_test/model/diary.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as p;
 
 part 'drift_database.g.dart';
 
@@ -31,7 +32,7 @@ LazyDatabase _openConnection() {
     final dbFolder = await getApplicationDocumentsDirectory();
     // 무조건 dart io import
     // join은 경로를 붙여주는 거임 (위에서 구한 경로 + 내가 정한 파일 이름)
-    final file = File(p.join(dbFolder.path, "db 이름"));
+    final file = File(p.join(dbFolder.path, "db.sqlist"));
     return NativeDatabase(file);
   });
 }

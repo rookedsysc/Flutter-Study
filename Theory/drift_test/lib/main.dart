@@ -1,3 +1,6 @@
+import 'package:drift/drift.dart' hide Column;
+import 'package:drift_test/database/diary_dao.dart';
+import 'package:drift_test/database/drift_database.dart';
 import 'package:flutter/material.dart';
 
 final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -17,9 +20,27 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  late LocalDatabase db;
+  late DiaryDao diaryDao;
+
+  String title = '';
+  String content = '';
+
+
+  @override
+  void initState() {
+    db = LocalDatabase();
+    diaryDao = DiaryDao(db);
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,12 +55,8 @@ class HomeScreen extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0)),
                 //Dialog Main Title
-                title: Column(
-                  children: <Widget>[
-                    Text("Dialog"),
-                  ],
-                ),
-                //
+                title: Text("Dialog"),
+
                 content: Form(
                   key: formKey,
                   child: Column(
@@ -52,11 +69,31 @@ class HomeScreen extends StatelessWidget {
                         decoration: const InputDecoration(
                           hintText: '제목을 입력하세요',
                         ),
+                        validator: (String? value) {
+                          if (value == null || value.isEmpty) {
+                            return '제목을 입력하세요';
+                          }
+                          return null;
+                        },
+                        onSaved: (String? value) {
+                          title = value!;
+                          print('title : $title');
+                        },
                       ),
                       TextFormField(
                         decoration: const InputDecoration(
                           hintText: '내용을 입력하세요',
                         ),
+                        validator: (String? value) {
+                          if (value == null || value.isEmpty) {
+                            return '내용을 입력하세요';
+                          }
+                          return null;
+                        },
+                        onSaved: (String? value) {
+                          content = value!;
+                          print('content : $content');
+                        },
                       ),
                     ],
                   ),
@@ -64,8 +101,24 @@ class HomeScreen extends StatelessWidget {
                 actions: <Widget>[
                   TextButton(
                     child: const Text("저장"),
-                    onPressed: () {
-                      Navigator.pop(context);
+                    onPressed: () async {
+                      if(formKey.currentState == null) {
+                        throw Exception("formKey.currentState is null");
+                      }
+
+                      // 오류가 없다면 실행하는 부분
+                      if(formKey.currentState!.validate()) {
+                        formKey.currentState!.save();
+                        // 저장 버튼 누르면 다이어리 저장
+                        diaryDao.createDiary(DiaryCompanion(
+                          title: Value(title),
+                          content: Value(content),
+                          date: Value(DateTime.now()),
+                        ));
+                        print('저장 완료');
+                        setState(() {});
+                        Navigator.of(context).pop();
+                      }
                     },
                   ),
                 ],
@@ -74,8 +127,28 @@ class HomeScreen extends StatelessWidget {
           );
         },
       ),
-      body: Center(
-        child: const Text("Hello World"),
+      body: StreamBuilder<List<DiaryData>>(
+        stream: diaryDao.watchAllDiaries(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+
+            final diaries = snapshot.data;
+
+            return ListView.builder(
+              itemCount: diaries!.length,
+              itemBuilder: (context, index) {
+                final diary = diaries[index];
+                return ListTile(
+                  title: Text(diary.title),
+                  subtitle: Text(diary.content),
+
+                );
+              },
+            );
+          } else {
+            return const Center(child: Text("No data"));
+          }
+        }
       ),
     );
   }
