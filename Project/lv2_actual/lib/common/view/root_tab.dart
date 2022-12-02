@@ -9,15 +9,65 @@ class RootTab extends StatefulWidget {
   State<RootTab> createState() => _RootTabState();
 }
 
-class _RootTabState extends State<RootTab> {
+// SingleTickerProviderStateMixin은 Animation을 사용할 때 필요한 Mixin이다.
+// 해당 클래스를 상속한 다음 애니메이션 컨트롤러 생성자에게 vsync: this를 넘겨줘야 한다
+class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
+  // late : 나중에 해당 값을 쓸건데 값을 사용할 때는 값이 있을 것이다.
+  late TabController controller;
   int index = 0;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // vsync: 렌더링 엔진에서 필요한 것
+    // controller를 선언하는 현재 state
+    controller = TabController(length: 4, vsync: this);
+    controller.addListener(tabListner);
+  }
+
+  void tabListner() {
+    setState(() {
+      // 컨트롤러의 인덱스를 현재 인덱스에 넣어주겠다.
+      index = controller.index;
+    });
+  }
+
+  @override
+  void dispose() {
+    controller.removeListener(tabListner);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
       title: '코팩 딜리버리',
-      child: Center(
-        child: Text('Root Tab'),
+      child: TabBarView(
+        physics: NeverScrollableScrollPhysics(),
+        controller: controller,
+        children: [
+          Center(
+            child: Container(
+              child: Text('홈'),
+            ),
+          ),
+          Center(
+            child: Container(
+              child: Text('음식'),
+            ),
+          ),
+          Center(
+            child: Container(
+              child: Text('주문'),
+            ),
+          ),
+          Center(
+            child: Container(
+              child: Text('프로필'),
+            ),
+          ),
+        ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: PRIMARY_COLOR,
@@ -29,9 +79,8 @@ class _RootTabState extends State<RootTab> {
         // 선택된 탭의 인덱스가 들어가게 됨
         onTap: (int index) {
           debugPrint(index.toString());
-          setState(() {
-            this.index = index;
-          });
+          // TabBarView의 해당하는 인덱스로 움직여라
+          controller.animateTo(index);
         },
         currentIndex: index,
 
