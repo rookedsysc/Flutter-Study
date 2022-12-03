@@ -28,7 +28,7 @@ void main() async {
       theme: ThemeData(
         fontFamily: 'sunflower',
       ),
-      home: HomeScreen(),
+      home: const HomeScreen(),
     ),
   );
 }

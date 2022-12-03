@@ -105,10 +105,9 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     } on DioError catch (e) { // 지금 요청이 안됐을 때 발생하는 에러
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('인터넷 연결이 원활하지 않습니다.'))
+          const SnackBar(content: Text('인터넷 연결이 원활하지 않습니다.'))
       );
     }
-
   }
 
   // isExpanded 값을 여기서 결정
@@ -202,7 +201,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               );
                             }).toList(),
-                            SizedBox(
+                            const SizedBox(
                               height: 8.0,
                             )
                           ],
