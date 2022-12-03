@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:lv2_actual/common/const/colors.dart';
 import 'package:lv2_actual/common/const/data.dart';
@@ -36,21 +37,39 @@ class _SplashScreenState extends State<SplashScreen> {
     final refreshToken = await storage.read(key: REFRESH_TOKEN_KEY);
     final accessToken = await storage.read(key: ACCESS_TOKEN_KEY);
 
-    // Token이 존재한다면 로그인 페이지로 들어가게 됨
-    if (refreshToken == null || accessToken == null) {
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-            builder: (_) => LoginScreen(),
-          ),
-          (route) => false);
-    } else { /* Token이 존재하지 않는다면 Root Tab으로 들어가게 됨 */
+    final dio = Dio();
+
+    try {
+      // access Token 재발급 ( refresh Token이 유효한지 검증 )
+      final resp = await dio.post("http://$ip/auth/token",
+          options: Options(
+          headers: {
+            'authorization': 'Bearer $refreshToken',
+          },
+        ),
+      );
+
+      // 발급 받은 토큰 저장
+      await storage.write(key: ACCESS_TOKEN_KEY, value: resp.data['accessToken']);
+
+      // 200이 아닌 경우 로그인 화면으로 이동
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
             builder: (_) => RootTab(),
           ),
-          (route) => false);
+              (route) => false);
+
+
+    } catch (e) {
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (_) => LoginScreen(),
+          ),
+              (route) => false);
     }
   }
+
+
 
   @override
   Widget build(BuildContext context) {
