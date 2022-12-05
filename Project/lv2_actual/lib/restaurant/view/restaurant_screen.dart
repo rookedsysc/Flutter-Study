@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:lv2_actual/common/const/data.dart';
 import 'package:lv2_actual/restaurant/component/restaurant_card.dart';
 import 'package:lv2_actual/restaurant/model/restaurant_model.dart';
-import 'package:lv2_actual/restaurant/view/rstaurant_detail_screen.dart';
+import 'package:lv2_actual/restaurant/view/restaurant_detail_screen.dart';
 
 class RestaurantScreen extends StatelessWidget {
   const RestaurantScreen({super.key});
@@ -32,6 +32,7 @@ class RestaurantScreen extends StatelessWidget {
         child: FutureBuilder(
           future: paginateRestaurant(),
           builder: (context, snapshot) {
+
             if (!snapshot.hasData) {
               return const Center(child: CircularProgressIndicator());
             }
@@ -45,11 +46,11 @@ class RestaurantScreen extends StatelessWidget {
                 return GestureDetector(
                   onTap: () {
                     Navigator.of(context).push(MaterialPageRoute(
-                      builder: (_) => RestaurantDetailScreen(),
+                      builder: (_) => RestaurantDetailScreen(id: pItem.id,),
                     ));
                   },
-                    child: RestaurantCard.fromRestaurantModel(
-                        restaurantModel: pItem));
+                    child: RestaurantCard.fromModel(
+                        model: pItem));
                 // return RestaurantCard(
                 //   image: Image.network(
                 //     pItem.thumbUrl,

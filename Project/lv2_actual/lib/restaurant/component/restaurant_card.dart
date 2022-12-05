@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lv2_actual/common/const/colors.dart';
+import 'package:lv2_actual/common/const/data.dart';
+import 'package:lv2_actual/restaurant/model/restaurant_detail_model.dart';
 import 'package:lv2_actual/restaurant/model/restaurant_model.dart';
 
 class RestaurantCard extends StatelessWidget {
@@ -33,24 +35,24 @@ class RestaurantCard extends StatelessWidget {
     this.detail,
     Key? key, required this.ratings}) : super(key: key);
 
-  factory RestaurantCard.fromRestaurantModel ({
-    required RestaurantModel restaurantModel,
-    bool isDetailCard = false,
+  factory RestaurantCard.fromModel({
+    required RestaurantModel model,
+    bool isDetail = false,
     String? detail,
   }) {
     return RestaurantCard(
       image: Image.network(
-        restaurantModel.thumbUrl,
+        model.thumbUrl,
         fit: BoxFit.cover,
       ),
-      name: restaurantModel.name,
-      tags: restaurantModel.tags,
-      ratingsCount: restaurantModel.ratingsCount,
-      deliveryTime: restaurantModel.deliveryTime,
-      deliveryFree: restaurantModel.deliveryFee,
-      ratings: restaurantModel.ratings,
-      isDetail: isDetailCard,
-      detail: detail,
+      name: model.name,
+      tags: model.tags,
+      ratingsCount: model.ratingsCount,
+      deliveryTime: model.deliveryTime,
+      deliveryFree: model.deliveryFee,
+      ratings: model.ratings,
+      isDetail: isDetail,
+      detail: model is RestaurantDetailModel ? model.detail : null,
     );
   }
 
@@ -116,7 +118,6 @@ class RestaurantCard extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 8.0),
-
 
               // 상세 내용
               if(detail != null && isDetail)
