@@ -78,7 +78,7 @@ class RestaurantProductModel {
     return RestaurantProductModel(
       id: json['id'],
       name: json['name'],
-      imgUrl: json['imgUrl'],
+      imgUrl: 'http://$ip/${json['imgUrl']}',
       detail: json['detail'],
       price: json['price'],
     );
