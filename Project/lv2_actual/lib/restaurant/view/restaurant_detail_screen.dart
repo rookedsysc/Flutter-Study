@@ -6,6 +6,7 @@ import 'package:lv2_actual/product/component/product_card.dart';
 import 'package:lv2_actual/restaurant/component/restaurant_card.dart';
 import 'package:lv2_actual/restaurant/model/restaurant_detail_model.dart';
 import 'package:lv2_actual/restaurant/model/restaurant_model.dart';
+import 'package:lv2_actual/restaurant/repository/restaurant_repository.dart';
 
 class RestaurantDetailScreen extends StatelessWidget {
   final String id;
@@ -13,41 +14,46 @@ class RestaurantDetailScreen extends StatelessWidget {
   const RestaurantDetailScreen({required this.id, Key? key}) : super(key: key);
 
   // RestaurantDetail 받아오는 함수
-  Future<Map<String, dynamic>> getRestaurantDetail() async {
+  Future<RestaurantDetailModel> getRestaurantDetail() async {
     final dio = Dio();
-    final accessToken = await storage.read(key: ACCESS_TOKEN_KEY);
 
-    final resp = await dio.get(
-      'http://$ip/restaurant/$id',
-      options: Options(headers: {
-        'authorization': 'Bearer $accessToken',
-      }),
-    );
+    final repositroy = RestaurantRepository(dio, baseUrl: 'http://$ip/restaurant');
+    // Retrofit으로 대체 
+    // final accessToken = await storage.read(key: ACCESS_TOKEN_KEY);
 
-    return resp.data;
+    // final resp = await dio.get(
+    //   'http://$ip/restaurant/$id',
+    //   options: Options(headers: {
+    //     'authorization': 'Bearer $accessToken',
+    //   }),
+    // );
+
+    // return resp.data;
+    return repositroy.getRestaurantDetail(id: id);
   }
 
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
       title: '불타는 떡볶이',
-        child: FutureBuilder<Map<String, dynamic>>(
+        child: FutureBuilder<RestaurantDetailModel>(
           future: getRestaurantDetail(),
-          builder: (_, AsyncSnapshot<Map<String, dynamic>> snapshot) {
+          builder: (_, AsyncSnapshot<RestaurantDetailModel> snapshot) {
 
             if(!snapshot.hasData) {
               return const Center(child: CircularProgressIndicator());
             }
 
-            final item = RestaurantDetailModel.fromJson(json: snapshot.data!);
+            // retorfit으로 대체
+            // final item = RestaurantDetailModel.fromJson(snapshot.data!);
 
             return CustomScrollView(
               slivers: [
                 // 레스토랑 정보
-                renderTop(model: item),
+                renderTop(model: snapshot.data!),
                 renderLabel(),
                 // 레스토랑 메뉴
-                renderProducts(products: item.products)
+                renderProducts(products: snapshot.data!.products)
               ],
             );
           }

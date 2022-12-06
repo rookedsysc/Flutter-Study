@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:lv2_actual/common/const/data.dart';
+import 'package:lv2_actual/common/utils/data_utils.dart';
 
 part 'restaurant_model.g.dart';
 
@@ -13,7 +14,7 @@ class RestaurantModel {
   // static으로 callback 함수를 넣어주면 해당하는 key가 인자로 들어감
   // callback 함수의 return 값이 fromJson or toJson의 return 값이 됨
   @JsonKey(
-    fromJson: pathToUrl,
+    fromJson: DataUtils.pathToUrl,
   )
   final String thumbUrl;
   final List<String> tags;
@@ -39,11 +40,6 @@ class RestaurantModel {
   factory RestaurantModel.fromJson(Map<String, dynamic> json) => _$RestaurantModelFromJson(json);
   // 현재 인스턴스를 Json으로 변환할 때 사용
   Map<String, dynamic> toJson() => _$RestaurantModelToJson(this);
-
-  // 반드시 static으로 선언해야 함
-  static pathToUrl(String thumbUrl) {
-    return 'http://$ip/$thumbUrl';
-  }
 
   // factory RestaurantModel.fromJson({
   //   required Map<String, dynamic> json,
