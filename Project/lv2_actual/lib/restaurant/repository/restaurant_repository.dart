@@ -2,13 +2,14 @@ import 'package:dio/dio.dart' hide Headers;
 import 'package:lv2_actual/restaurant/model/restaurant_detail_model.dart';
 import 'package:retrofit/retrofit.dart';
 
+// code generation을 해줄거기 때문에 part 사용
 part 'restaurant_repository.g.dart';
 
 // 인스턴스화가 되지 않게 abstract로 선언
 @RestApi()
 abstract class RestaurantRepository {
   // factory constuctor는 (=)을 사용해서 함수 Body를 지정해줄 수 있음
-  //함수 Body를 RestaurantRepository로 지정함
+  // 함수 Body를 RestaurantRepository로 지정함
   factory RestaurantRepository(Dio dio, {String baseUrl/*http://$ip/restaurant*/}) 
   = _RestaurantRepository;
 
@@ -22,7 +23,10 @@ abstract class RestaurantRepository {
   // http://$ip/restaurant/{id}
   @GET('/{id}')
   @Headers({
-    'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3RAY29kZWZhY3RvcnkuYWkiLCJzdWIiOiJmNTViMzJkMi00ZDY4LTRjMWUtYTNjYS1kYTlkN2QwZDkyZTUiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNjcwMzM3ODgxLCJleHAiOjE2NzAzMzgxODF9.PsP4LBiHvNDg_unywmT8J2F3yBy6fXTjjt_YCgXAfuc',
+    // accessToken이라는 이름의 Header를 true로 지정해서 dio 호출을 보냄
+    // 그러면 해당하는 header의 값을 interceptor에서 options.headers['accessToken']으로 읽을 수 있음
+    // 이를 통해서 interceptor에서 accessToken을 읽어서 interceptor에서 header에 accessToken을 넣어줄 수 있음
+    'accessToken' : 'true' 
   })
   Future<RestaurantDetailModel> getRestaurantDetail({
     // URL path segment에 해당하는 부분을 Name parameter로 지정 

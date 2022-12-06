@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:lv2_actual/common/const/data.dart';
+import 'package:lv2_actual/common/dio/dio.dart';
 import 'package:lv2_actual/common/layout/default_layout.dart';
 import 'package:lv2_actual/product/component/product_card.dart';
 import 'package:lv2_actual/restaurant/component/restaurant_card.dart';
@@ -16,6 +17,10 @@ class RestaurantDetailScreen extends StatelessWidget {
   // RestaurantDetail 받아오는 함수
   Future<RestaurantDetailModel> getRestaurantDetail() async {
     final dio = Dio();
+
+    dio.interceptors.add(
+      CustomInterceptor(storage: storage)
+    );
 
     final repositroy = RestaurantRepository(dio, baseUrl: 'http://$ip/restaurant');
     // Retrofit으로 대체 
