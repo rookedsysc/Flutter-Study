@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart' hide Headers;
+import 'package:lv2_actual/common/model/cursor_pagination_model.dart';
 import 'package:lv2_actual/restaurant/model/restaurant_detail_model.dart';
+import 'package:lv2_actual/restaurant/model/restaurant_model.dart';
 import 'package:retrofit/retrofit.dart';
 
 // code generation을 해줄거기 때문에 part 사용
@@ -15,10 +17,12 @@ abstract class RestaurantRepository {
 
   // 요청 방식과 baseUrl 뒤에 붙을 path를 지정해줌
   // 이 기준을 보고서 retrofit이 이 파일 안에다가 각각의 함수가 어떻게 실행되어야 하는지 정의를 하게 됨
-  // @GET('/')
-  // paginate() {
+  @GET('/')
+  @Headers({
+    'accessToken' : 'true' 
+  })
+  Future<CursorPagination<RestaurantModel>> paginate();
 
-  // }
 
   // http://$ip/restaurant/{id}
   @GET('/{id}')
