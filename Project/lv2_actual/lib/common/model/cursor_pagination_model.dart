@@ -9,7 +9,7 @@ part 'cursor_pagination_model.g.dart';
 )
 // 외부에서 generic을 지정해주기 위해 <T>를 사용
 class CursorPagination<T> {
-  final CursorPagination meta;
+  final CursorPaginationMeta meta;
   final List<T> data;
 
   CursorPagination({
@@ -18,7 +18,7 @@ class CursorPagination<T> {
   });
 
   factory CursorPagination.fromJson(Map<String, dynamic> json, T Function(Object? json) fromJsonT) => _$CursorPaginationFromJson(json, fromJsonT);
-  // 여기서 의미하는 THIS는 instance를 의미
+  // 여기서 의미하는 this는 instance를 의미
   Map<String, dynamic> toJson(Object? Function(T value) toJsonT) => _$CursorPaginationToJson(this, toJsonT);
 }
 

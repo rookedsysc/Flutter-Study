@@ -11,8 +11,7 @@ CursorPagination<T> _$CursorPaginationFromJson<T>(
   T Function(Object? json) fromJsonT,
 ) =>
     CursorPagination<T>(
-      meta: CursorPagination<dynamic>.fromJson(
-          json['meta'] as Map<String, dynamic>, (value) => value),
+      meta: CursorPaginationMeta.fromJson(json['meta'] as Map<String, dynamic>),
       data: (json['data'] as List<dynamic>).map(fromJsonT).toList(),
     );
 

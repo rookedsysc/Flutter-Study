@@ -3,25 +3,25 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/material.dart';
 import 'package:lv2_actual/common/const/data.dart';
+import 'package:lv2_actual/common/dio/dio.dart';
+import 'package:lv2_actual/common/model/cursor_pagination_model.dart';
 import 'package:lv2_actual/restaurant/component/restaurant_card.dart';
 import 'package:lv2_actual/restaurant/model/restaurant_model.dart';
+import 'package:lv2_actual/restaurant/repository/restaurant_repository.dart';
 import 'package:lv2_actual/restaurant/view/restaurant_detail_screen.dart';
 
 class RestaurantScreen extends StatelessWidget {
   const RestaurantScreen({super.key});
 
   // json 데이터에서 data 키 안의 Resstaurant 배열을 가져오는 함수
-  Future<List> paginateRestaurant() async {
+  Future<List<RestaurantModel>> paginateRestaurant() async {
     final dio = Dio();
+    dio.interceptors.add(CustomInterceptor(storage: storage));
 
-    final accessToken = await storage.read(key: ACCESS_TOKEN_KEY);
+    final CursorPagination<RestaurantModel> resp = await RestaurantRepository(dio, baseUrl: 'http://$ip/restaurant').paginate();
 
-    final resp = await dio.get('http://$ip/restaurant',
-        options: Options(headers: {
-          'authorization': 'Bearer $accessToken',
-        }));
 
-    return resp.data['data'];
+    return resp.data;
   }
 
   @override
@@ -40,8 +40,8 @@ class RestaurantScreen extends StatelessWidget {
             return ListView.separated(
               itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
-                // parsed
-                final pItem = RestaurantModel.fromJson(snapshot.data![index]);
+
+                final pItem = snapshot.data![index];
 
                 return GestureDetector(
                   onTap: () {
@@ -53,15 +53,15 @@ class RestaurantScreen extends StatelessWidget {
                         model: pItem));
                 // return RestaurantCard(
                 //   image: Image.network(
-                //     pItem.thumbUrl,
+                //     snapshot.data!.thumbUrl,
                 //     fit: BoxFit.cover,
                 //   ),
-                //   name: pItem.name,
-                //   tags: pItem.tags,
-                //   ratingsCount: pItem.ratingsCount,
-                //   deliveryTime: pItem.deliveryTime,
-                //   deliveryFree: pItem.deliveryFee,
-                //   ratings: pItem.ratings,
+                //   name: snapshot.data!.name,
+                //   tags: snapshot.data!.tags,
+                //   ratingsCount: snapshot.data!.ratingsCount,
+                //   deliveryTime: snapshot.data!.deliveryTime,
+                //   deliveryFree: snapshot.data!.deliveryFee,
+                //   ratings: snapshot.data!.ratings,
                 // );
               },
               separatorBuilder: (context, index) {
