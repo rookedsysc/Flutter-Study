@@ -9,7 +9,7 @@ import 'package:lv2_actual/common/model/cursor_pagination_model.dart';
 import 'package:lv2_actual/restaurant/component/restaurant_card.dart';
 import 'package:lv2_actual/restaurant/model/restaurant_model.dart';
 import 'package:lv2_actual/restaurant/repository/restaurant_repository.dart';
-import 'package:lv2_actual/restaurant/riverpod/restaurant_riverpod.dart';
+import 'package:lv2_actual/restaurant/riverpod/restaurant_provider.dart';
 import 'package:lv2_actual/restaurant/view/restaurant_detail_screen.dart';
 
 class RestaurantScreen extends ConsumerWidget {
@@ -25,15 +25,22 @@ class RestaurantScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // autoDispose를 사용하지 않았기 때문에 해당하는 Provider가 한 번 호출이 계속 생성이 된 상태로 있는다.
-    final data = ref.watch(restaurantStateNotifierProvider);
+    final data = ref.watch(restaurantProvider);
 
-    if (data.isNotEmpty) {
+    if (data is CursorPaginationLoading) {
+      return const Center(child: CircularProgressIndicator());
+    } else {
+
+      // 현재 데이터의 타입은 CursorPaginationBase임
+      // 여기에서는 Data를 정상적으로 받아왔을 경우이므로 Data를 정상적으로 받아온 경우 Typedms CursorPagination임
+      // 따라서 data를 CursorPagination으로 형변환을 해줌 
+      final cp = data as CursorPagination;
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: ListView.separated(
-          itemCount: data.length,
+          itemCount: cp.data.length,
           itemBuilder: (context, index) {
-            final pItem = data[index];
+            final pItem = cp.data[index];
 
             return GestureDetector(
                 onTap: () {
@@ -62,8 +69,6 @@ class RestaurantScreen extends ConsumerWidget {
           },
         ),
       );
-    } else {
-      return const Center(child: CircularProgressIndicator());
     }
   }
 }

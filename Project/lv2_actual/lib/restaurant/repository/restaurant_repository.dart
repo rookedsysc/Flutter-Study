@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart' hide Headers;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lv2_actual/common/const/data.dart';
 import 'package:lv2_actual/common/dio/dio.dart';
 import 'package:lv2_actual/common/model/cursor_pagination_model.dart';
+import 'package:lv2_actual/common/model/pagination_params.dart';
 import 'package:lv2_actual/restaurant/model/restaurant_detail_model.dart';
 import 'package:lv2_actual/restaurant/model/restaurant_model.dart';
 import 'package:retrofit/retrofit.dart';
@@ -30,7 +32,11 @@ abstract class RestaurantRepository {
   @Headers({
     'accessToken' : 'true' 
   })
-  Future<CursorPagination<RestaurantModel>> paginate();
+  // after와 count의 값이 없어도 API 요청에는 문제가 없음 
+  Future<CursorPagination<RestaurantModel>> paginate({
+    // 해당하는 클래스를 HTTP query parameter로 지정
+    @Queries() PaginationParams? paginationParams = const PaginationParams(), // 기본 값은 반드시 cons로 지정
+  });
 
 
   // http://$ip/restaurant/{id}
