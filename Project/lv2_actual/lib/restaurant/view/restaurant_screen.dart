@@ -26,8 +26,8 @@ class RestaurantScreen extends ConsumerWidget {
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: FutureBuilder(
-          future: paginateRestaurant(ref: ref),
+        child: FutureBuilder<CursorPagination<RestaurantModel>>(
+          future: ref.watch(restaurantRepositoryProvider).paginate(),
           builder: (context, snapshot) {
 
             if (!snapshot.hasData) {
@@ -35,10 +35,10 @@ class RestaurantScreen extends ConsumerWidget {
             }
 
             return ListView.separated(
-              itemCount: snapshot.data!.length,
+              itemCount: snapshot.data!.data.length,
               itemBuilder: (context, index) {
 
-                final pItem = snapshot.data![index];
+                final pItem = snapshot.data!.data[index];
 
                 return GestureDetector(
                   onTap: () {
@@ -50,15 +50,15 @@ class RestaurantScreen extends ConsumerWidget {
                         model: pItem));
                 // return RestaurantCard(
                 //   image: Image.network(
-                //     snapshot.data!.thumbUrl,
+                //     snapshot.data!.data.thumbUrl,
                 //     fit: BoxFit.cover,
                 //   ),
-                //   name: snapshot.data!.name,
-                //   tags: snapshot.data!.tags,
-                //   ratingsCount: snapshot.data!.ratingsCount,
-                //   deliveryTime: snapshot.data!.deliveryTime,
-                //   deliveryFree: snapshot.data!.deliveryFee,
-                //   ratings: snapshot.data!.ratings,
+                //   name: snapshot.data!.data.name,
+                //   tags: snapshot.data!.data.tags,
+                //   ratingsCount: snapshot.data!.data.ratingsCount,
+                //   deliveryTime: snapshot.data!.data.deliveryTime,
+                //   deliveryFree: snapshot.data!.data.deliveryFee,
+                //   ratings: snapshot.data!.data.ratings,
                 // );
               },
               separatorBuilder: (context, index) {

@@ -29,7 +29,7 @@ class RestaurantDetailScreen extends ConsumerWidget {
     return DefaultLayout(
       title: '불타는 떡볶이',
         child: FutureBuilder<RestaurantDetailModel>(
-          future: getRestaurantDetail(ref: ref),
+          future: ref.watch(restaurantRepositoryProvider).getRestaurantDetail(id: id),
           builder: (_, AsyncSnapshot<RestaurantDetailModel> snapshot) {
 
             if(!snapshot.hasData) {
