@@ -11,6 +11,7 @@ import 'package:lv2_actual/restaurant/model/restaurant_model.dart';
 import 'package:lv2_actual/restaurant/repository/restaurant_repository.dart';
 import 'package:lv2_actual/restaurant/riverpod/restaurant_provider.dart';
 import 'package:lv2_actual/restaurant/view/restaurant_screen.dart';
+import 'package:skeletons/skeletons.dart';
 
 class RestaurantDetailScreen extends ConsumerStatefulWidget {
   final String id;
@@ -51,6 +52,9 @@ class _RestaurantDetailScreenState extends ConsumerState<RestaurantDetailScreen>
           slivers: [
             // 레스토랑 정보
             renderTop(model: state),
+            // 로딩 시에 스켈레톤
+            if(state is! RestaurantDetailModel) renderLoading(),
+            // 로딩 끝나면 라벨
             if(state is RestaurantDetailModel)renderLabel(),
             // 레스토랑 메뉴
             if(state is RestaurantDetailModel)renderProducts(products: state.products)
@@ -62,6 +66,27 @@ class _RestaurantDetailScreenState extends ConsumerState<RestaurantDetailScreen>
     return const DefaultLayout(
       child: Center(
         child: CircularProgressIndicator(),
+      ),
+    );
+  }
+
+  SliverPadding renderLoading() {
+    return SliverPadding(
+      padding: EdgeInsets.symmetric(horizontal: 16.0),
+      sliver: SliverList(
+        delegate: SliverChildListDelegate(List.generate(
+          3,
+          (index) => Padding(
+            padding: const EdgeInsets.only(bottom: 32.0),
+            child: SkeletonParagraph(
+              style: SkeletonParagraphStyle(
+                // SkeletonParagraph 기본 패딩 제거
+                padding: EdgeInsets.zero,
+                lines: 5,
+              ),
+            ),
+          ),
+        )),
       ),
     );
   }
