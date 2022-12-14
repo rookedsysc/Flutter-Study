@@ -94,7 +94,7 @@ class _RestaurantScreenState extends ConsumerState<RestaurantScreen> {
                     ),
                   ));
                 },
-                child: RestaurantCard.fromModel(model: pItem));
+                child: RestaurantCard.fromModel(model: pItem, heroKey: pItem.id,));
           },
           separatorBuilder: (context, index) {
             return const SizedBox(height: 16.0);

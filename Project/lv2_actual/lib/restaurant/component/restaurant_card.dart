@@ -23,22 +23,28 @@ class RestaurantCard extends StatelessWidget {
   final bool isDetail;
   // 상세 내용
   final String? detail;
+  // hero widget 태그
+  final String? heroKey;
 
-  const RestaurantCard({
-    required this.image,
-    required this.name,
-    required this.tags,
-    required this.ratingsCount,
-    required this.deliveryTime,
-    required this.deliveryFree,
-    this.isDetail = false,
-    this.detail,
-    Key? key, required this.ratings}) : super(key: key);
+  const RestaurantCard(
+      {required this.image,
+      required this.name,
+      required this.tags,
+      required this.ratingsCount,
+      required this.deliveryTime,
+      required this.deliveryFree,
+      this.isDetail = false,
+      this.detail,
+      this.heroKey,
+      Key? key,
+      required this.ratings})
+      : super(key: key);
 
   factory RestaurantCard.fromModel({
     required RestaurantModel model,
     bool isDetail = false,
     String? detail,
+    String? heroKey,
   }) {
     return RestaurantCard(
       image: Image.network(
@@ -53,6 +59,7 @@ class RestaurantCard extends StatelessWidget {
       ratings: model.ratings,
       isDetail: isDetail,
       detail: model is RestaurantDetailModel ? model.detail : null,
+      heroKey: heroKey,
     );
   }
 
@@ -60,21 +67,29 @@ class RestaurantCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        if(isDetail)
-          image,
         // Detail View가 아닐 경우에 사진의 테두리를 깍아 줌
-        if(!isDetail)
         // 테두리를 깍을 수 있음
-        ClipRRect(
-          borderRadius: BorderRadius.circular(12.0),
-          child: image,
-        ),
+        if (heroKey != null)
+          Hero(
+            // tag 값이 같은 위젯끼리 화면 이 변경되어도 그대로 있는 것 같은 효과를 주게 됨
+            tag: ObjectKey(heroKey),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(isDetail ? 0 : 12.0),
+              child: image,
+            ),
+          ),
+        if (heroKey == null)
+          ClipRRect(
+            borderRadius: BorderRadius.circular(isDetail ? 0 : 12.0),
+            child: image,
+          ),
         const SizedBox(height: 16.0),
 
         // 사진 밑 문자열 Column
         Padding(
           // DetailView일 경우에만 좌우 패딩을 줌
-          padding: EdgeInsets.symmetric(horizontal: isDetail == true ? 16.0 : 0.0),
+          padding:
+              EdgeInsets.symmetric(horizontal: isDetail == true ? 16.0 : 0.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -120,7 +135,7 @@ class RestaurantCard extends StatelessWidget {
               const SizedBox(height: 8.0),
 
               // 상세 내용
-              if(detail != null && isDetail)
+              if (detail != null && isDetail)
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: Text(
@@ -131,7 +146,6 @@ class RestaurantCard extends StatelessWidget {
                     ),
                   ),
                 ),
-
             ],
           ),
         ),
@@ -153,9 +167,8 @@ class RestaurantCard extends StatelessWidget {
 class _IconText extends StatelessWidget {
   final IconData icon;
   final String label;
-  const _IconText({required this.icon, required this.label, Key? key}) : super(key: key);
-
-
+  const _IconText({required this.icon, required this.label, Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
