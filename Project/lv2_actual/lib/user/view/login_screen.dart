@@ -29,12 +29,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
 
-
     final dio = Dio();
-
-    const ip = '192.168.0.15:4900';
-    // final ip = Platform.isIOS == true ? '127.0.0.1:4900' : '10.0.2.2:4900';
-
 
     return DefaultLayout(child: SafeArea(
       top: true,
@@ -75,6 +70,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ElevatedButton(
                       onPressed: () async {
                         String rawString = '$username:$password';
+                        debugPrint('[!] press login button\n id \/ pw : $rawString');
 
                         // 어떻게 인코딩 할건지 정의
                         Codec<String, String> stringToBase64 = utf8.fuse(base64);
@@ -94,6 +90,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         final accessToken = resp.data['accessToken'];
 
                         final storage = ref.read(secureStorageProvider);
+
 
                         // flutter secure storage에 Token 저장
                         await storage.write(key: REFRESH_TOKEN_KEY, value: refreshToken);

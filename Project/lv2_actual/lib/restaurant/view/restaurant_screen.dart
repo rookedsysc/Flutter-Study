@@ -12,6 +12,8 @@ import 'package:lv2_actual/restaurant/repository/restaurant_repository.dart';
 import 'package:lv2_actual/restaurant/riverpod/restaurant_provider.dart';
 import 'package:lv2_actual/restaurant/view/restaurant_detail_screen.dart';
 
+
+
 class RestaurantScreen extends ConsumerStatefulWidget{
   const RestaurantScreen({super.key});
 
@@ -93,18 +95,6 @@ class _RestaurantScreenState extends ConsumerState<RestaurantScreen> {
                   ));
                 },
                 child: RestaurantCard.fromModel(model: pItem));
-            // return RestaurantCard(
-            //   image: Image.network(
-            //     snapshot.data!.data.thumbUrl,
-            //     fit: BoxFit.cover,
-            //   ),
-            //   name: snapshot.data!.data.name,
-            //   tags: snapshot.data!.data.tags,
-            //   ratingsCount: snapshot.data!.data.ratingsCount,
-            //   deliveryTime: snapshot.data!.data.deliveryTime,
-            //   deliveryFree: snapshot.data!.data.deliveryFee,
-            //   ratings: snapshot.data!.data.ratings,
-            // );
           },
           separatorBuilder: (context, index) {
             return const SizedBox(height: 16.0);
