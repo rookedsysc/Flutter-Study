@@ -10,7 +10,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:lv2_actual/common/component/custom_text_form_field.dart';
 import 'package:lv2_actual/common/const/colors.dart';
 import 'package:lv2_actual/common/const/data.dart';
-import 'package:lv2_actual/common/riverpod/secure_storage.dart';
+import 'package:lv2_actual/common/provider/secure_storage.dart';
 import 'package:lv2_actual/common/layout/default_layout.dart';
 import 'package:lv2_actual/common/view/root_tab.dart';
 

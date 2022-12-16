@@ -9,7 +9,7 @@ import 'package:lv2_actual/common/model/cursor_pagination_model.dart';
 import 'package:lv2_actual/restaurant/component/restaurant_card.dart';
 import 'package:lv2_actual/restaurant/model/restaurant_model.dart';
 import 'package:lv2_actual/restaurant/repository/restaurant_repository.dart';
-import 'package:lv2_actual/restaurant/riverpod/restaurant_provider.dart';
+import 'package:lv2_actual/restaurant/provider/restaurant_provider.dart';
 import 'package:lv2_actual/restaurant/view/restaurant_detail_screen.dart';
 
 

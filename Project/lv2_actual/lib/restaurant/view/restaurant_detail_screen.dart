@@ -5,11 +5,12 @@ import 'package:lv2_actual/common/const/data.dart';
 import 'package:lv2_actual/common/dio/dio.dart';
 import 'package:lv2_actual/common/layout/default_layout.dart';
 import 'package:lv2_actual/product/component/product_card.dart';
+import 'package:lv2_actual/rating/component/rating_card.dart';
 import 'package:lv2_actual/restaurant/component/restaurant_card.dart';
 import 'package:lv2_actual/restaurant/model/restaurant_detail_model.dart';
 import 'package:lv2_actual/restaurant/model/restaurant_model.dart';
 import 'package:lv2_actual/restaurant/repository/restaurant_repository.dart';
-import 'package:lv2_actual/restaurant/riverpod/restaurant_provider.dart';
+import 'package:lv2_actual/restaurant/provider/restaurant_provider.dart';
 import 'package:lv2_actual/restaurant/view/restaurant_screen.dart';
 import 'package:skeletons/skeletons.dart';
 
@@ -50,6 +51,12 @@ class _RestaurantDetailScreenState extends ConsumerState<RestaurantDetailScreen>
         title: state.name,
         child: CustomScrollView(
           slivers: [
+            SliverPadding(
+              padding: EdgeInsets.only(left: 16.0, right: 16.0, bottom: 8.0),
+              sliver: SliverToBoxAdapter(
+                child: RatingCard(avatarImage: AssetImage('asset/img/logo/codefactory_logo.png'), images: [], rating: 4, email: "jc@codefactory.ai", content: '맛있습니다!'),
+              ),
+            ),
             // 레스토랑 정보
             renderTop(model: state),
             // 로딩 시에 스켈레톤
