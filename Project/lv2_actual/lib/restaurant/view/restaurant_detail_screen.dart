@@ -4,11 +4,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lv2_actual/common/const/data.dart';
 import 'package:lv2_actual/common/dio/dio.dart';
 import 'package:lv2_actual/common/layout/default_layout.dart';
+import 'package:lv2_actual/common/model/cursor_pagination_model.dart';
+import 'package:lv2_actual/common/utils/pagination_utils.dart';
 import 'package:lv2_actual/product/component/product_card.dart';
 import 'package:lv2_actual/rating/component/rating_card.dart';
+import 'package:lv2_actual/rating/model/rating_model.dart';
 import 'package:lv2_actual/restaurant/component/restaurant_card.dart';
 import 'package:lv2_actual/restaurant/model/restaurant_detail_model.dart';
 import 'package:lv2_actual/restaurant/model/restaurant_model.dart';
+import 'package:lv2_actual/restaurant/provider/retaurant_rating_provider.dart';
 import 'package:lv2_actual/restaurant/repository/restaurant_repository.dart';
 import 'package:lv2_actual/restaurant/provider/restaurant_provider.dart';
 import 'package:lv2_actual/restaurant/view/restaurant_screen.dart';
@@ -24,6 +28,7 @@ class RestaurantDetailScreen extends ConsumerStatefulWidget {
 }
 
 class _RestaurantDetailScreenState extends ConsumerState<RestaurantDetailScreen> {
+  final ScrollController controller = ScrollController();
 
   // RestaurantDetail 받아오는 함수
   Future<RestaurantDetailModel> getRestaurantDetail({required WidgetRef ref}) async {
@@ -39,24 +44,26 @@ class _RestaurantDetailScreenState extends ConsumerState<RestaurantDetailScreen>
     super.initState();
 
     ref.read(restaurantProvider.notifier).getDetail(id: widget.id);
+    controller.addListener(listener);
+  }
+
+  void listener() {
+    PaginationUtils.paginate(controller: controller, provider: ref.read(restaurantRatingProvider(widget.id).notifier));
   }
 
   @override
   Widget build(BuildContext context) {
     // 레스토랑 프로바이더에 이미 있는 데이터를 가져오기 때문에 로딩이 걸리지 않음
     final state = ref.watch(restaurantDetailProvider(widget.id));
+    final ratingState = ref.watch(restaurantRatingProvider(widget.id));
 
     if(state != null) {
       return DefaultLayout(
         title: state.name,
         child: CustomScrollView(
+          controller: controller,
           slivers: [
-            SliverPadding(
-              padding: EdgeInsets.only(left: 16.0, right: 16.0, bottom: 8.0),
-              sliver: SliverToBoxAdapter(
-                child: RatingCard(avatarImage: AssetImage('asset/img/logo/codefactory_logo.png'), images: [], rating: 4, email: "jc@codefactory.ai", content: '맛있습니다!'),
-              ),
-            ),
+            
             // 레스토랑 정보
             renderTop(model: state),
             // 로딩 시에 스켈레톤
@@ -64,7 +71,9 @@ class _RestaurantDetailScreenState extends ConsumerState<RestaurantDetailScreen>
             // 로딩 끝나면 라벨
             if(state is RestaurantDetailModel)renderLabel(),
             // 레스토랑 메뉴
-            if(state is RestaurantDetailModel)renderProducts(products: state.products)
+            if(state is RestaurantDetailModel)renderProducts(products: state.products),
+            // Rating 요청
+            if(ratingState is CursorPagination<RatingModel>) renderRatings(models: ratingState.data),
           ],
         ),
       );
@@ -73,6 +82,26 @@ class _RestaurantDetailScreenState extends ConsumerState<RestaurantDetailScreen>
     return const DefaultLayout(
       child: Center(
         child: CircularProgressIndicator(),
+      ),
+    );
+  }
+
+  SliverPadding renderRatings({
+    required List<RatingModel> models,
+  }) {
+    return SliverPadding(
+      padding: EdgeInsets.only(left: 16.0, right: 16.0, bottom: 8.0),
+      sliver: SliverList(
+        delegate: SliverChildBuilderDelegate(
+          (context, index) {
+            final model = models[index];
+
+            return RatingCard.fromModel(
+              model: model,
+            );
+          },
+          childCount: models.length,
+        ),
       ),
     );
   }

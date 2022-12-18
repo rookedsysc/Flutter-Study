@@ -36,7 +36,7 @@ class _RestaurantRatingRepository implements RestaurantRatingRepository {
     )
             .compose(
               _dio.options,
-              '/restaurants/ratings',
+              '/',
               queryParameters: queryParameters,
               data: _data,
             )

@@ -8,10 +8,10 @@ part of 'rating_model.dart';
 
 RatingModel _$RatingModelFromJson(Map<String, dynamic> json) => RatingModel(
       id: json['id'] as String,
-      user: json['user'] as String,
+      user: UserModel.fromJson(json['user'] as Map<String, dynamic>),
       rating: json['rating'] as int,
       content: json['content'] as String,
-      imgUrl: DataUtils.listsPathsToUrls(json['imgUrl'] as List<String>),
+      imgUrls: DataUtils.listsPathsToUrls(json['imgUrls'] as List),
     );
 
 Map<String, dynamic> _$RatingModelToJson(RatingModel instance) =>
@@ -20,5 +20,5 @@ Map<String, dynamic> _$RatingModelToJson(RatingModel instance) =>
       'user': instance.user,
       'rating': instance.rating,
       'content': instance.content,
-      'imgUrl': instance.imgUrl,
+      'imgUrls': instance.imgUrls,
     };

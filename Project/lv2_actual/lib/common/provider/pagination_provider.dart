@@ -8,12 +8,16 @@ import 'package:lv2_actual/common/repository/base_pagination_repository.dart';
 // 제너릭에서는 implements를 사용할 수 없기 때문에 extends를 사용
 class PaginationProvider<
 // 페이지 네이션에서 가져오는 값들의 실제 데이터 타입
-T extends IModelWithId,
-U extends IBasePaginationRepository<T>> extends StateNotifier<CursorPaginationBase> {
-  // Future<CursorPagination<T>> paginate 
-  // 각 repository마다 다른 타입의 데이터를 가져올 수 있기 때문에 
+        T extends IModelWithId,
+        U extends IBasePaginationRepository<T>>
+    extends StateNotifier<CursorPaginationBase> {
+  // Future<CursorPagination<T>> paginate
+  // 각 repository마다 다른 타입의 데이터를 가져올 수 있기 때문에
   final U repository;
-  PaginationProvider({required this.repository}): super(CursorPaginationLoading());
+  PaginationProvider({required this.repository})
+      : super(CursorPaginationLoading()) {
+        paginate();
+      }
 
   Future<void> paginate({
     int fetchCount = 20, // count
@@ -40,7 +44,7 @@ U extends IBasePaginationRepository<T>> extends StateNotifier<CursorPaginationBa
       //    fetchMore가 아닐 때 - 새로고침을 했을 때
       if (state is CursorPagination && !forceRefetch) {
         final pState = state
-            as CursorPagination; // CursorPagination > CursorPaginationBase
+            as CursorPagination<T>; // CursorPagination > CursorPaginationBase
 
         // 1)번 상황
         // meta가 중요한 상황이라 따로 T 타입을 넣어주지 않음
@@ -78,8 +82,8 @@ U extends IBasePaginationRepository<T>> extends StateNotifier<CursorPaginationBa
         if (state is CursorPagination && !forceRefetch) {
           final pState = state as CursorPagination<T>;
           // 데이터는 있는데 새로고침을 하고 있음
-          state =
-              CursorPaginationRefetching<T>(meta: pState.meta, data: pState.data);
+          state = CursorPaginationRefetching<T>(
+              meta: pState.meta, data: pState.data);
         } else {
           state = CursorPaginationLoading();
         }
@@ -87,7 +91,8 @@ U extends IBasePaginationRepository<T>> extends StateNotifier<CursorPaginationBa
 
       // 마지막 데이터의 id를 paginationParams에 넣고/최초 실행일 경우 기본 paginate를 넣고 paginate 실행
       // repository는 받아오는 데이터에 따라서 달라짐
-      final resp = await repository.paginate(paginationParams: paginationParams);
+      final resp =
+          await repository.paginate(paginationParams: paginationParams);
 
       if (state is CursorPaginationFetchingMore) {
         final pState = state as CursorPaginationFetchingMore<T>;
@@ -101,9 +106,12 @@ U extends IBasePaginationRepository<T>> extends StateNotifier<CursorPaginationBa
         // 처음 데이터를 가져오는 상황이므로 응답값을 그대로 적용
         state = resp;
       }
-    } catch (e) {
+    } catch (e, stack) {
+      print(e);
+      print("[!] Error Stack : $stack");
       // 에러 발생한 상황
-      state = CursorPaginationError(message: "[!] [Error Alert] $e\n\r데이터를 가져오지 못했습니다.");
+      state = CursorPaginationError(
+          message: "[!] [Error Alert] $e\n\r데이터를 가져오지 못했습니다.");
     }
   }
 

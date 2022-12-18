@@ -14,7 +14,7 @@ part 'restaurant_rating_repository.g.dart';
 
 final restaurantRatingRepositoryProvider = Provider.family<RestaurantRatingRepository, String>((ref, id) {
   final dio = ref.watch(dioProvider);
-  return RestaurantRatingRepository(dio, baseUrl: 'http://$ip/restaurants/$id/rating');
+  return RestaurantRatingRepository(dio, baseUrl: 'http://$ip/restaurant/$id/rating');
 });
 
 @RestApi()
@@ -24,7 +24,7 @@ abstract class RestaurantRatingRepository
       _RestaurantRatingRepository;
 
   @override
-  @GET('/restaurants/ratings')
+  @GET('/')
   @Headers({
     'accessToken' : 'true' 
   })

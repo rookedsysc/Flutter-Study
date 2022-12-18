@@ -6,7 +6,7 @@ class DataUtils {
     return 'http://$ip/$thumbUrl';
   }
   
-  static listsPathsToUrls(List<String> thumbUrl) {
+  static List<String> listsPathsToUrls(List thumbUrl) {
     return thumbUrl.map((e) => 'http://$ip/$e').toList();
   }
 }

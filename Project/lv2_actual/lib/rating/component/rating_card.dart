@@ -5,6 +5,7 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:lv2_actual/common/const/colors.dart';
 import 'package:collection/collection.dart';
+import 'package:lv2_actual/rating/model/rating_model.dart';
 
 class RatingCard extends StatelessWidget {
   // 프로필 사진
@@ -30,6 +31,18 @@ class RatingCard extends StatelessWidget {
       // 리뷰 내용
       required this.content,
       super.key});
+
+  factory RatingCard.fromModel({
+    required RatingModel model,
+  }) {
+    return RatingCard(
+      avatarImage: NetworkImage(model.user.imageUrl),
+      images: model.imgUrls.map((e) => Image.network(e)).toList(),
+      rating: model.rating,
+      email: model.user.username,
+      content: model.content,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
