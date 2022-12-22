@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_route_example/layout/default_layout.dart';
+import 'package:go_route_example/provider/auth_provider.dart';
 import 'package:go_route_example/screen/3_screen.dart';
 import 'package:go_router/go_router.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen ({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return DefaultLayout(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -38,7 +40,12 @@ class HomeScreen extends StatelessWidget {
             },
             child: Text('Go To Error'),
           ),
-
+          ElevatedButton(
+            onPressed: () {
+              ref.read(userProvider.notifier).logout();
+            },
+            child: Text('로그아웃'),
+          ),
         ],
       ),
     );
