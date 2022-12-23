@@ -12,7 +12,6 @@ import 'package:lv2_actual/common/const/colors.dart';
 import 'package:lv2_actual/common/const/data.dart';
 import 'package:lv2_actual/common/provider/secure_storage.dart';
 import 'package:lv2_actual/common/layout/default_layout.dart';
-import 'package:lv2_actual/common/utils/data_utils.dart';
 import 'package:lv2_actual/common/view/root_tab.dart';
 
 
@@ -73,7 +72,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         String rawString = '$username:$password';
                         debugPrint('[!] press login button\n id \/ pw : $rawString');
 
-                        String token = DataUtils.plainToBase64(rawString);
+                        // 어떻게 인코딩 할건지 정의
+                        Codec<String, String> stringToBase64 = utf8.fuse(base64);
+                        // 정의를 이용해서 rawString을 인코딩
+                        String token = stringToBase64.encode(rawString);
 
                         final resp = await dio.post(
                           'http://$ip/auth/login',
