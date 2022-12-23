@@ -19,6 +19,8 @@ class UserMeStateNotifier extends StateNotifier<UserModelBase?> {
     
     // 최소한 RefreshToken과 AccessToken이 있어야만 getMe 요청을 보낼 수 있음
     if(refreshToken == null || accessToken == null) {
+      // 토큰이 없으면 state 상태를 null로 바꿔줘야 함
+      state = null; 
       return; 
     }
 
