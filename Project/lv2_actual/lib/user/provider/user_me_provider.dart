@@ -9,8 +9,8 @@ import 'package:lv2_actual/user/repository/user_me_repository.dart';
 
 final userMeProvider = StateNotifierProvider<UserMeStateNotifier, UserModelBase?>((ref) {
   // 로그인 시도 및 토큰 생성
-  final authRepository = ref.watch(authRepositoryProvider);
-  final userMeRepository = ref.watch(userMeRepositoryProvider);
+  final authRepository = ref.watch(authRepositoryProvider); //! dio
+  final userMeRepository = ref.watch(userMeRepositoryProvider); //! dio
   final storage = ref.watch(secureStorageProvider);
 
 

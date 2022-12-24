@@ -24,7 +24,12 @@ class MyApp extends ConsumerWidget {
       ),
       debugShowCheckedModeBanner: false,
 
-      routerConfig: route,
+
+      // routerConfig: route, // GoRouter 5 이후 버전
+      // GoRouter 4.2.2 버전👇
+      routerDelegate: route.routerDelegate,
+      routeInformationParser: route.routeInformationParser,
+      routeInformationProvider: route.routeInformationProvider,
     );
   }
 }

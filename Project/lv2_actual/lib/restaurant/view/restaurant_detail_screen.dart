@@ -19,6 +19,7 @@ import 'package:lv2_actual/restaurant/view/restaurant_screen.dart';
 import 'package:skeletons/skeletons.dart';
 
 class RestaurantDetailScreen extends ConsumerStatefulWidget {
+  static String get routeName => 'restaruantDetail';
   final String id;
 
   const RestaurantDetailScreen({required this.id, Key? key}) : super(key: key);

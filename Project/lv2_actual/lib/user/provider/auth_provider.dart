@@ -35,7 +35,8 @@ class AuthProvider extends ChangeNotifier {
             // :rid에 인자값을 받아줄 수 있음
             GoRoute(
               path: 'restaurant/:rid',
-              builder: (context, state) => RestaurantDetailScreen(
+              name: RestaurantDetailScreen.routeName,
+              builder: (_, state) => RestaurantDetailScreen(
                 id: state.params['rid']!,
               ),
             ),
@@ -55,7 +56,12 @@ class AuthProvider extends ChangeNotifier {
         ),
       ];
 
-  String? redirectLogic(BuildContext context,GoRouterState state) {
+  //: dio 관련된 호출이 없기 때문에 여기서 logout 생성
+  void logout() {
+    ref.read(userMeProvider.notifier).logout();
+  }
+
+  String? redirectLogic(GoRouterState state) {
     final UserModelBase? user = ref.read(userMeProvider);
     final logginIn = state.location == '/login';
 

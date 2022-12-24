@@ -4,16 +4,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:lv2_actual/common/const/data.dart';
 import 'package:lv2_actual/common/provider/secure_storage.dart';
+import 'package:lv2_actual/user/provider/auth_provider.dart';
 
 final dioProvider = Provider((ref) {
   final dio = Dio();
-  dio.interceptors.add(CustomInterceptor(storage: ref.watch(secureStorageProvider)));
+  dio.interceptors.add(
+      CustomInterceptor(ref: ref, storage: ref.watch(secureStorageProvider)));
   return dio;
 });
 
 class CustomInterceptor extends Interceptor {
   final FlutterSecureStorage storage;
+  final Ref ref;
   CustomInterceptor({
+    required this.ref,
     required this.storage,
   });
 
@@ -100,7 +104,20 @@ class CustomInterceptor extends Interceptor {
         // handler.resolve(response)는 에러가 나든 어쩌든 그 결과값을 Response로 받아서 다음으로 넘겨줌
         // 즉, accessToken을 재발급 받아서 다시 요청을 보내고 그 성공한 결과값을 받아서 dio 생성지점으로 넘겨줌
         return handler.resolve(response);
+
+        //: Error 발생하면 여기로 옴 
+        //+ refreshToken이 유효하지 않은 경우
       } on DioError catch (e) {
+        //! circular depency error가 발생할 수 있음
+        //: authProvider required dio => dio required authProvider => authProvider required dio ...
+        //: 위와 같이 무한 루프 발생함
+        // ref.read(userMeProvider.notifier).logout(); 
+        //: userMeProvider는 dio를 watch 하고 있는 dependency가 있지만,
+        //* authProvider는 logout을 할 때만 read를 통해서 dio를 호출해주기 때문에 무한 루프에 걸리지 않음 
+        ref.read(authProvider.notifier).logout();
+
+        
+
         // refresh 요청을 하려다가 에러가 났음. 즉, refreshToken 자체가 문제가 있음.
         // 그래서 refreshToken을 지워줌
         await storage.delete(key: REFRESH_TOKEN_KEY);
