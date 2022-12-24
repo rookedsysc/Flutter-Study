@@ -5,6 +5,7 @@ import 'package:lv2_actual/product/view/product_screen.dart';
 import 'package:lv2_actual/restaurant/view/restaurant_screen.dart';
 
 class RootTab extends StatefulWidget {
+  static String get routeName => 'home';
   const RootTab({Key? key}) : super(key: key);
 
   @override

@@ -11,6 +11,7 @@ import 'package:lv2_actual/user/view/login_screen.dart';
 // 앱을 처음 진입하면 잠깐동안 보여지는 스플래시 화면
 // 어떤 페이지로 보내줘야 할지 판단을 하는 기본적인 화면이 됨
 class SplashScreen extends ConsumerStatefulWidget {
+  static String get routeName => 'splash';
   const SplashScreen({Key? key}) : super(key: key);
 
   @override
