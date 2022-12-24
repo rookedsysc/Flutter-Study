@@ -17,15 +17,13 @@ import 'package:lv2_actual/restaurant/view/restaurant_detail_screen.dart';
 class RestaurantScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return PaginationListView(provider: restaurantProvider, itemBuilder: <RestaurantModel>(context, index, model) => GestureDetector(
-                onTap: () {
-                  Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) => RestaurantDetailScreen(
-                id: model.id,
-              ),
-            ),
-          );
+    return PaginationListView(
+      provider: restaurantProvider,
+      itemBuilder: <RestaurantModel>(context, index, model) => GestureDetector(
+        onTap: () {
+          // context.go('/restaurant/${model.id}'); 와 동일함
+          context.goNamed(RestaurantDetailScreen.routeName,
+              params: {'rid': model.id});
         },
         child: RestaurantCard.fromModel(
           model: model,
