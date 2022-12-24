@@ -8,12 +8,12 @@ part of 'login_response.dart';
 
 LoginResponse _$LoginResponseFromJson(Map<String, dynamic> json) =>
     LoginResponse(
-      refershToken: json['refershToken'] as String,
+      refreshToken: json['refreshToken'] as String,
       accessToken: json['accessToken'] as String,
     );
 
 Map<String, dynamic> _$LoginResponseToJson(LoginResponse instance) =>
     <String, dynamic>{
-      'refershToken': instance.refershToken,
+      'refreshToken': instance.refreshToken,
       'accessToken': instance.accessToken,
     };

@@ -13,6 +13,8 @@ import 'package:lv2_actual/common/const/data.dart';
 import 'package:lv2_actual/common/provider/secure_storage.dart';
 import 'package:lv2_actual/common/layout/default_layout.dart';
 import 'package:lv2_actual/common/view/root_tab.dart';
+import 'package:lv2_actual/user/model/user_model.dart';
+import 'package:lv2_actual/user/provider/user_me_provider.dart';
 
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -29,8 +31,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-
-    final dio = Dio();
+    final state = ref.watch(userMeProvider);
 
     return DefaultLayout(child: SafeArea(
       top: true,
@@ -69,56 +70,61 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                   // 로그인 버튼
                   ElevatedButton(
-                      onPressed: () async {
-                        String rawString = '$username:$password';
-                        debugPrint('[!] press login button\n id \/ pw : $rawString');
+                    // 로딩중이면 버튼 비활성화
+                    onPressed: state is UserModelLoading ? null : () async {
+                      ref.read(userMeProvider.notifier).login(username: username, password: password);
+                      // String rawString = '$username:$password';
+                      // debugPrint(
+                      //     '[!] press login button\n id \/ pw : $rawString');
 
-                        // 어떻게 인코딩 할건지 정의
-                        Codec<String, String> stringToBase64 = utf8.fuse(base64);
-                        // 정의를 이용해서 rawString을 인코딩
-                        String token = stringToBase64.encode(rawString);
+                      // // 어떻게 인코딩 할건지 정의
+                      // Codec<String, String> stringToBase64 = utf8.fuse(base64);
+                      // // 정의를 이용해서 rawString을 인코딩
+                      // String token = stringToBase64.encode(rawString);
 
-                        final resp = await dio.post(
-                          'http://$ip/auth/login',
-                          options: Options(
-                            headers: {
-                              'authorization': 'Basic $token',
-                            },
-                          ),
-                        );
+                      // final resp = await dio.post(
+                      //   'http://$ip/auth/login',
+                      //   options: Options(
+                      //     headers: {
+                      //       'authorization': 'Basic $token',
+                      //     },
+                      //   ),
+                      // );
 
-                        final refreshToken = resp.data['refreshToken'];
-                        final accessToken = resp.data['accessToken'];
+                      // final refreshToken = resp.data['refreshToken'];
+                      // final accessToken = resp.data['accessToken'];
 
-                        final storage = ref.read(secureStorageProvider);
+                      // final storage = ref.read(secureStorageProvider);
 
+                      // // flutter secure storage에 Token 저장
+                      // await storage.write(
+                      //     key: REFRESH_TOKEN_KEY, value: refreshToken);
+                      // await storage.write(
+                      //     key: ACCESS_TOKEN_KEY, value: accessToken);
 
-                        // flutter secure storage에 Token 저장
-                        await storage.write(key: REFRESH_TOKEN_KEY, value: refreshToken);
-                        await storage.write(key: ACCESS_TOKEN_KEY, value: accessToken);
-
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => const RootTab(),
-                          ),
-                        );
-                        debugPrint(resp.data.toString());
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: PRIMARY_COLOR,
-                      ),
-                      child: const Text('로그인')),
+                      // Navigator.of(context).push(
+                      //   MaterialPageRoute(
+                      //     builder: (_) => const RootTab(),
+                      //   ),
+                      // );
+                      // debugPrint(resp.data.toString());
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: PRIMARY_COLOR,
+                    ),
+                    child: const Text('로그인'),
+                  ),
 
                   // 회원가입 버튼
-                  TextButton(onPressed: () {
-                  },
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.black,
-                  ),
-                  child: const Text('회원가입')),
+                  TextButton(
+                      onPressed: () {},
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.black,
+                      ),
+                      child: const Text('회원가입')),
                 ],
               ),
-          ),
+            ),
         ),
       ),
     ),

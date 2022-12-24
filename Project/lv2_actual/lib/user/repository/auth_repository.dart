@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lv2_actual/common/const/data.dart';
 import 'package:lv2_actual/common/dio/dio.dart';
@@ -35,6 +36,8 @@ class AuthRepository {
         },
       ),
     );
+
+    debugPrint("[*] auth repository : ${resp.toString()}");
 
     return LoginResponse.fromJson(resp.data);
   }

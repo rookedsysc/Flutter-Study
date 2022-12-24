@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:lv2_actual/common/const/data.dart';
@@ -43,7 +44,7 @@ class UserMeStateNotifier extends StateNotifier<UserModelBase?> {
     state = resp; // 상태에 UserModel 저장
   }
 
-  Future<UserModelBase /*로그인을 요청 했는데 어떤 상태를 받을지 모르기 때문에*/ > login(
+  Future<UserModelBase /*로그인을 요청 했는데 어떤 상태를 받을지 모르기 때문에*/> login(
       {required String username, required String password}) async {
     try {
       state = UserModelLoading();
@@ -52,8 +53,10 @@ class UserMeStateNotifier extends StateNotifier<UserModelBase?> {
       final resp =
           await authRepository.login(username: username, password: password);
 
+      debugPrint("[*] user_me_provider : ${resp.toString()}");
+
       // accessToken과 refreshToken을 저장
-      await storage.write(key: REFRESH_TOKEN_KEY, value: resp.refershToken);
+      await storage.write(key: REFRESH_TOKEN_KEY, value: resp.refreshToken);
       await storage.write(key: ACCESS_TOKEN_KEY, value: resp.accessToken);
 
       // 로그인 성공시 그 토큰에 해당하는 사용자의 정보를 가져와서 기억을 해둠

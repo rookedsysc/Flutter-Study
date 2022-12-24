@@ -5,11 +5,11 @@ part 'login_response.g.dart';
 
 @JsonSerializable()
 class LoginResponse {
-  final String refershToken;
+  final String refreshToken;
   final String accessToken;
 
   LoginResponse({
-    required this.refershToken,
+    required this.refreshToken,
     required this.accessToken,
   });
 
