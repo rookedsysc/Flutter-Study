@@ -106,14 +106,14 @@ class CustomInterceptor extends Interceptor {
         return handler.resolve(response);
 
         //: Error 발생하면 여기로 옴 
-        //+ refreshToken이 유효하지 않은 경우
+        //+ ex) refreshToken이 유효하지 않은 경우
       } on DioError catch (e) {
         //! circular depency error가 발생할 수 있음
         //: authProvider required dio => dio required authProvider => authProvider required dio ...
         //: 위와 같이 무한 루프 발생함
         // ref.read(userMeProvider.notifier).logout(); 
         //: userMeProvider는 dio를 watch 하고 있는 dependency가 있지만,
-        //* authProvider는 logout을 할 때만 read를 통해서 dio를 호출해주기 때문에 무한 루프에 걸리지 않음 
+        //: authProvider는 logout을 할 때만 read를 통해서 dio를 호출해주기 때문에 무한 루프에 걸리지 않음 
         ref.read(authProvider.notifier).logout();
 
         
