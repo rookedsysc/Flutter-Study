@@ -37,6 +37,4 @@ abstract class UserMeRepository {
   Future<List<BasketItemModel>> patchBasket({
     @Body() required PatchBasketBody body,
   });
-
-
 }
