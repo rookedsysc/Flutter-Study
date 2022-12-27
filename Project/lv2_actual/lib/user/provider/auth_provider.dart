@@ -23,6 +23,7 @@ class AuthProvider extends ChangeNotifier {
       if (previous != next) {
         notifyListeners();
       }
+
     });
   }
 
