@@ -3,10 +3,15 @@ import 'package:lv2_actual/product/model/product_model.dart';
 import 'package:lv2_actual/user/model/basket_item_model.dart';
 import 'package:collection/collection.dart';
 
+
+final basketProvider = StateNotifierProvider<BasketNotifier, List<BasketItemModel>>((ref) {
+  return BasketNotifier();
+});
+
 class BasketNotifier extends StateNotifier<List<BasketItemModel>> {
   BasketNotifier() : super([]);
 
-  Future<void> add({
+  Future<void> addToBasket({
     required ProductModel product,
   }) async {
     //: 해당하는 상품이 장바구니에 있는지 확인
