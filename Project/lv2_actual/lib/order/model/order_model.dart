@@ -45,6 +45,7 @@ class OrderProductAndCountModel {
   Map<String, dynamic> toJson() => _$OrderProductAndCountModelToJson(this);
 }
 
+//* 주문하고 받은 응답 (Response)
 @JsonSerializable()
 class OrderModel implements IModelWithId {
   final String id;
