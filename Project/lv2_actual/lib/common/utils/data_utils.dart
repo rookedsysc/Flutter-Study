@@ -3,6 +3,10 @@ import 'dart:convert';
 import 'package:lv2_actual/common/const/data.dart';
 
 class DataUtils {
+  //: String 값을 DateTime Type으로 변환
+  static DateTime stringToDateTime(String value) {
+    return DateTime.parse(value);
+  }
   // 반드시 static으로 선언해줘야 JsonKey에
   static pathToUrl(String thumbUrl) {
     return 'http://$ip/$thumbUrl';
