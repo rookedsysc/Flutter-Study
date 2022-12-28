@@ -18,9 +18,11 @@ import 'package:lv2_actual/restaurant/model/restaurant_model.dart';
 import 'package:lv2_actual/restaurant/provider/retaurant_rating_provider.dart';
 import 'package:lv2_actual/restaurant/repository/restaurant_repository.dart';
 import 'package:lv2_actual/restaurant/provider/restaurant_provider.dart';
+import 'package:lv2_actual/restaurant/view/basket_screen.dart';
 import 'package:lv2_actual/restaurant/view/restaurant_screen.dart';
 import 'package:lv2_actual/user/provider/basket_provider.dart';
 import 'package:skeletons/skeletons.dart';
+import 'package:go_router/go_router.dart';
 
 class RestaurantDetailScreen extends ConsumerStatefulWidget {
   static String get routeName => 'restaruantDetail';
@@ -74,7 +76,13 @@ class _RestaurantDetailScreenState
         title: state.name,
         floatingActionButton: FloatingActionButton(
           backgroundColor: PRIMARY_COLOR,
-          onPressed: () {},
+          onPressed: () {
+            //* go를 하게 되면 routes에 nesting된 (하위)라우트를 그대로 사용하게 되고 
+            //* push를 현재 라우트 위에다가 screen을 stack처럼 올리는 방식을 사용할 수 있음 
+            // context.goNamed(BasketScreen.routeName);
+            context.pushNamed(BasketScreen.routeName);
+            
+          },
           child: Badge(
             //: 언제 보여줄건지
             showBadge: basket.isNotEmpty,
