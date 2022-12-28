@@ -20,23 +20,27 @@ class OrderStateNotifier extends StateNotifier<List<OrderModel>> {
   Future<bool> postOrder() async {
     try {
       //: 시간을 기준으로 랜덤으로 id가 생성이 됨
-      final id = Uuid().v4();
+      final uuid = Uuid();
+      final id = uuid.v4();
 
       final state = ref.read(basketProvider);
       final resp = await repository.postOrder(
         body: PostOrderBody(
           id: id,
           products: state
-              .map((e) =>
-                  PostOrderBodyProduct(count: e.count, productId: e.product.id))
+              .map((e) => PostOrderBodyProduct(
+                    productId: e.product.id,
+                    count: e.count,
+                  ))
               .toList(),
-          createAt: DateTime.now().toString(),
+          createdAt: DateTime.now().toString(),
           totalPrice:
               state.fold<int>(0, (p, n) => p + n.count * n.product.price),
         ),
       );
       return true;
     } catch (e) {
+      debugPrint(e.toString());
       return false;
     }
   }

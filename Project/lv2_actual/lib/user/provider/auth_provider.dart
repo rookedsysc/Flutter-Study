@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lv2_actual/common/view/root_tab.dart';
 import 'package:lv2_actual/common/view/splash_screen.dart';
+import 'package:lv2_actual/order/view/order_done_screen.dart';
 import 'package:lv2_actual/restaurant/view/basket_screen.dart';
 import 'package:lv2_actual/restaurant/view/restaurant_detail_screen.dart';
 import 'package:lv2_actual/restaurant/view/restaurant_screen.dart';
@@ -49,6 +50,12 @@ class AuthProvider extends ChangeNotifier {
           path: '/basket',
           name: BasketScreen.routeName,
           builder: (_, __) => BasketScreen(),
+        ),
+        //: 주문 완료 스크린
+        GoRoute(
+          path: '/order_done',
+          name: OrderDoneScreen.routeName,
+          builder: (_, __) => OrderDoneScreen(),
         ),
         //: 스플래쉬 스크린
         GoRoute(
