@@ -73,26 +73,35 @@ class PaginationListViewState<T extends IModelWithId> extends ConsumerState<Pagi
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Scrollbar(
         controller: controller,
-        child: ListView.separated(
-          controller: controller,
-          itemCount: cp.data.length + 1, // +1은 로딩을 위해서 
-          itemBuilder: (context, index) { 
-            if(index == cp.data.length) {
-              // 데이터가 FetchingMore(로딩 중)인 경우에만 ProgressIndicator를 보여줌
-              return Center(child: cp is CursorPaginationFetchingMore ? const CircularProgressIndicator() : const SizedBox());
-            }
-
-            final pItem = cp.data[index];
-
-            return widget.itemBuilder(
-              context,
-              index,
-              pItem,
-            );
+        //: 아래로 스왑하면 강제로 새로고침 됨
+        child: RefreshIndicator(
+          onRefresh: () async {
+            ref.read(widget.provider.notifier).paginate(forceRefetch: true);
           },
-          separatorBuilder: (context, index) {
-            return const SizedBox(height: 16.0);
-          },
+          child: ListView.separated(
+            //: 리스트 뷰는 화면을 초과하지 않으면 스크롤이 안됨
+            //: 아래(👇)와 같은 옵션을 사용해주면 항상 스크롤이 가능하게 해줌
+            physics: const AlwaysScrollableScrollPhysics(),
+            controller: controller,
+            itemCount: cp.data.length + 1, // +1은 로딩을 위해서 
+            itemBuilder: (context, index) { 
+              if(index == cp.data.length) {
+                // 데이터가 FetchingMore(로딩 중)인 경우에만 ProgressIndicator를 보여줌
+                return Center(child: cp is CursorPaginationFetchingMore ? const CircularProgressIndicator() : const SizedBox());
+              }
+
+              final pItem = cp.data[index];
+
+              return widget.itemBuilder(
+                context,
+                index,
+                pItem,
+              );
+            },
+            separatorBuilder: (context, index) {
+              return const SizedBox(height: 16.0);
+            },
+          ),
         ),
       ),
     );;
