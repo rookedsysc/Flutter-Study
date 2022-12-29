@@ -1,8 +1,27 @@
+import 'dart:html';
+
+import 'package:debounce_throttle/debounce_throttle.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lv2_actual/common/model/cursor_pagination_model.dart';
 import 'package:lv2_actual/common/model/model_with_id.dart';
 import 'package:lv2_actual/common/model/pagination_params.dart';
 import 'package:lv2_actual/common/repository/base_pagination_repository.dart';
+
+class _PaginationInfo {
+  final int fetchCount; // count
+  // 추가로 데이터를 가져오는지 여부
+  // true - 추가로 데이터 더 가져옴
+  // false - 새로고침 (현재 상태를 덮어씌움)
+  final bool fetchMore;
+  // 강제로 다시 로딩하기
+  // true - CursorPaginationLoading 상태로 변경
+  final bool forceRefetch;
+
+  _PaginationInfo(
+      {this.fetchCount = 20,
+      this.fetchMore = false,
+      this.forceRefetch = false});
+}
 
 // U는 IBasePaginationRepository 타입임을 명시해줌
 // 제너릭에서는 implements를 사용할 수 없기 때문에 extends를 사용
@@ -14,9 +33,20 @@ class PaginationProvider<
   // Future<CursorPagination<T>> paginate
   // 각 repository마다 다른 타입의 데이터를 가져올 수 있기 때문에
   final U repository;
+  
+  //* pagination 함수를 throttle을 이용해서 실행함
+  //+ checkEquality : 함수 실행할 때 넣는 값이 같으면 실행하지 않음
+  final paginationThrottle = Throttle(Duration(seconds: 1),
+      initialValue: _PaginationInfo(), checkEquality: false);
+
   PaginationProvider({required this.repository})
       : super(CursorPaginationLoading()) {
         paginate();
+
+        //* setvalue 실행시 loop back 실행됨
+        paginationThrottle.values.listen((state) {
+          _throttlePagination(state);
+        });
       }
 
   Future<void> paginate({
@@ -29,6 +59,19 @@ class PaginationProvider<
     // true - CursorPaginationLoading 상태로 변경
     bool forceRefetch = false,
   }) async {
+    //* pagination throttle을 통해서 실행함
+    //: setValue에는 인자를 하나 밖에 전달할 수 없기 때문에 class로 묶어줌
+    paginationThrottle.setValue(_PaginationInfo(
+      fetchMore: fetchMore,
+      forceRefetch: forceRefetch,
+      fetchCount: fetchCount
+    ));
+  }
+
+  _throttlePagination(_PaginationInfo info) async {
+    final fetchCount = info.fetchCount;
+    final fetchMore = info.fetchMore;
+    final forceRefetch = info.forceRefetch;
     try {
       // CursorPagination - 정상적으로 데이터가 있는 상태
       // CursorPaginationLoading - 데이터가 로딩중인 상태 (현재 캐시 없음0)
