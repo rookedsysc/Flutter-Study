@@ -1,21 +1,22 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lv2_actual/common/model/cursor_pagination_model.dart';
+import 'package:lv2_actual/common/provider/pagination_provider.dart';
 import 'package:lv2_actual/order/model/order_model.dart';
 import 'package:lv2_actual/order/model/post_order_body.dart';
 import 'package:lv2_actual/order/repository/order_repository.dart';
 import 'package:lv2_actual/user/provider/basket_provider.dart';
 import 'package:uuid/uuid.dart';
 
-final orderProvider = StateNotifierProvider<OrderStateNotifier, List<OrderModel>>((ref) {  
+final orderProvider = StateNotifierProvider<OrderStateNotifier, CursorPaginationBase>((ref) {  
   final repo = ref.watch(orderRepositoryProvider);
   return OrderStateNotifier(ref: ref, repository: repo);
 });
 
-class OrderStateNotifier extends StateNotifier<List<OrderModel>> {
+class OrderStateNotifier extends PaginationProvider<OrderModel, OrderRepository> {
   final Ref ref;
-  final OrderRepository repository;
-  OrderStateNotifier({required this.repository, required this.ref}) : super([]);
+  OrderStateNotifier({required super.repository, required this.ref});
 
   Future<bool> postOrder() async {
     try {
@@ -39,8 +40,9 @@ class OrderStateNotifier extends StateNotifier<List<OrderModel>> {
         ),
       );
       return true;
-    } catch (e) {
+    } catch (e, stack) {
       debugPrint(e.toString());
+      debugPrint(stack.toString());
       return false;
     }
   }
