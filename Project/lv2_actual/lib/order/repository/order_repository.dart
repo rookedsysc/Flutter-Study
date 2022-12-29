@@ -23,6 +23,7 @@ final orderRepositoryProvider = Provider<OrderRepository>((ref) {
 abstract class OrderRepository implements IBasePaginationRepository<OrderModel> { //: pagination 
   factory OrderRepository(Dio dio, {String baseUrl}) = _OrderRepository;
 
+  @override
   @GET('/')
   @Headers({
     'accessToken' : 'true'

@@ -33,7 +33,6 @@ class PaginationListViewState<T extends IModelWithId> extends ConsumerState<Pagi
 
   void listner() {
     PaginationUtils.paginate(controller: controller, provider: ref.read(widget.provider.notifier));
-
   }
 
   @override

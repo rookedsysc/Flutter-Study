@@ -53,9 +53,6 @@ class OrderModel implements IModelWithId {
   final List<OrderProductAndCountModel> products;
   final int totalPrice;
   final RestaurantModel restaurant;
-  @JsonKey(
-    fromJson: DataUtils.stringToDateTime
-  )
   final DateTime createdAt;
 
   OrderModel({

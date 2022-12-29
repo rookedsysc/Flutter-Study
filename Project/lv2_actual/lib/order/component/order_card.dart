@@ -20,24 +20,38 @@ class OrderCard extends StatelessWidget {
       required this.price,
       super.key});
 
-      factory OrderCard.fromModel({
-        required OrderModel model
-      }) {
-        //: 상품의 개수가 1개일 때는 첫 번째 상품의 이름을 그냥 보여줌
-        //: 그 외의 상황에는 첫 번째 상품 외에 몇 개의 상품이 더 있는지 보여주게 됨
-        final productsDetail = model.products.length < 2 ? model.products.first.product.name : '${model.products.first.product.name} 외 ${model.products.length - 1}개';
+  factory OrderCard.fromModel({required OrderModel model}) {
+    //: 상품의 개수가 1개일 때는 첫 번째 상품의 이름을 그냥 보여줌
+    //: 그 외의 상황에는 첫 번째 상품 외에 몇 개의 상품이 더 있는지 보여주게 됨
+    final productsDetail = model.products.length < 2
+        ? model.products.first.product.name
+        : '${model.products.first.product.name} 외 ${model.products.length - 1}개';
 
-        return OrderCard(orderDate: model.createdAt, image: Image.network(model.restaurant.thumbUrl, width: 50.0, height: 50.0, fit: BoxFit.cover,), name: model.restaurant.name, productsDetail: productsDetail, price: model.totalPrice);
-      }
+    return OrderCard(
+        orderDate: model.createdAt,
+        image: Image.network(
+          model.restaurant.thumbUrl,
+          width: 50.0,
+          height: 50.0,
+          fit: BoxFit.cover,
+        ),
+        name: model.restaurant.name,
+        productsDetail: productsDetail,
+        price: model.totalPrice);
+  }
 
 
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         //: 2022.09.01
         Text(
-            '{${orderDate.year}.${orderDate.month.toString().padLeft(2, '0')}.${orderDate.day.toString().padLeft(2, '0')} 주문완료'),
+            '${orderDate.year}.${orderDate.month.toString().padLeft(2, '0')}.${orderDate.day.toString().padLeft(2, '0')} 주문완료'),
+        const SizedBox(
+          height: 8.0,
+        ),
         Row(
           children: [
             ClipRRect(
@@ -48,6 +62,7 @@ class OrderCard extends StatelessWidget {
               width: 16.0,
             ),
             Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 //: 상품이름
                 Text(
